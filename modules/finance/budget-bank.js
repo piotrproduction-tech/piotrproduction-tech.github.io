@@ -1,34 +1,44 @@
-console.log("[BudgetBank] Module loaded");
+// ===============================================
+// CityOfGATE — BUDGET BANK (JS)
+// WERSJA 1.0
+// ===============================================
 
-// ✅ Jeśli API_BASE już jest gotowe → startujemy od razu
-if (API_BASE) {
-  console.log("[BudgetBank] API_BASE already ready:", API_BASE);
-  initBudgetBank();
-} else {
-  // ✅ Jeśli nie → czekamy na event
-  document.addEventListener("api-ready", () => {
-    console.log("[BudgetBank] API_BASE ready after event:", API_BASE);
-    initBudgetBank();
-  });
-}
+export function initModule() {
+    console.log("Moduł Finance → Budget Bank został uruchomiony");
 
-function initBudgetBank() {
-  console.log("[BudgetBank] Initializing module...");
+    const loadBtn = document.getElementById("loadDataBtn");
+    const clearBtn = document.getElementById("clearViewBtn");
+    const output = document.getElementById("budgetOutput");
 
-  if (!API_BASE) {
-    console.error("[BudgetBank] ERROR — API_BASE is missing");
-    return;
-  }
+    if (!loadBtn || !clearBtn || !output) {
+        console.error("Brak elementów HTML modułu Budget Bank");
+        return;
+    }
 
-  loadBankData();
-}
+    // ✅ Przycisk: Pobierz dane (na razie mock — backend dodamy później)
+    loadBtn.addEventListener("click", () => {
+        diagnosticsLog("BudgetBank: Pobieram dane (mock)", "info");
 
-async function loadBankData() {
-  console.log("[BudgetBank] Fetching bank data...");
+        // Symulacja danych (do czasu aż podłączymy Apps Script)
+        const mockData = {
+            saldo: 1250.55,
+            ostatniaTransakcja: "2025-01-12",
+            liczbaTransakcji: 14
+        };
 
-  const data = await api_get("finance/bank");
+        output.innerHTML = `
+            <h3>Dane finansowe</h3>
+            <p><strong>Saldo:</strong> ${mockData.saldo} PLN</p>
+            <p><strong>Ostatnia transakcja:</strong> ${mockData.ostatniaTransakcja}</p>
+            <p><strong>Liczba transakcji:</strong> ${mockData.liczbaTransakcji}</p>
+        `;
 
-  console.log("[BudgetBank] Data received:", data);
+        diagnosticsLog("BudgetBank: Dane załadowane (mock)", "info");
+    });
 
-  // ✅ tutaj wstawisz renderowanie tabeli, salda itd.
+    // ✅ Przycisk: Wyczyść widok
+    clearBtn.addEventListener("click", () => {
+        output.innerHTML = `<em>Brak danych — kliknij „Pobierz dane”.</em>`;
+        diagnosticsLog("BudgetBank: Widok wyczyszczony", "info");
+    });
 }
