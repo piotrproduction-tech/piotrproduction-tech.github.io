@@ -1,48 +1,20 @@
-<div class="module">
+<!-- ===============================================
+     CityOfGATE — BUDGET BANK (HTML)
+     WERSJA 1.0
+     =============================================== -->
 
-  <h2>Budget Bank</h2>
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+    <h2>Bank Budżetowy</h2>
+    <p>Moduł finansowy — wersja demonstracyjna.</p>
 
-  <section>
-    <h3>Dodaj transakcję</h3>
-    <form id="add-transaction-form">
-      <label>Kwota:
-        <input type="number" id="amount" required>
-      </label>
+    <div style="margin-top: 20px;">
+        <button id="loadDataBtn">Pobierz dane</button>
+        <button id="clearViewBtn" style="margin-left: 10px;">Wyczyść widok</button>
+    </div>
 
-      <label>Typ:
-        <select id="type">
-          <option value="income">Przychód</option>
-          <option value="expense">Wydatek</option>
-        </select>
-      </label>
+    <hr style="margin: 20px 0;">
 
-      <label>Actor:
-        <input type="text" id="actor" placeholder="np. Piotr" required>
-      </label>
-
-      <button type="submit">Dodaj</button>
-    </form>
-  </section>
-
-  <section>
-    <h3>Bilans</h3>
-    <div id="balance-box">Ładowanie...</div>
-  </section>
-
-  <section>
-    <h3>Transakcje</h3>
-    <table id="transactions-table">
-      <thead>
-        <tr>
-          <th>Data</th>
-          <th>Kwota</th>
-          <th>Typ</th>
-          <th>Actor</th>
-          <th>TxID</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
-
+    <div id="budgetOutput" style="padding: 10px; background: #f7f7f7; border-radius: 6px;">
+        <em>Brak danych — kliknij „Pobierz dane”.</em>
+    </div>
 </div>
