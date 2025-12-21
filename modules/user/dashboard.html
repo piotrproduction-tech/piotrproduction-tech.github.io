@@ -1,0 +1,85 @@
+<!-- ===============================================
+     CityOfGATE — USER DASHBOARD 2.0 (FE‑02)
+     WERSJA 1.0
+     =============================================== -->
+
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+    <h2>👤 User Dashboard 2.0</h2>
+    <p>Centralny panel użytkownika CityOfGATE.</p>
+
+    <!-- Sekcja statystyk -->
+    <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    ">
+
+        <div class="ud-box">
+            <h3>Imię i rola</h3>
+            <div id="udNameRole" class="ud-value">...</div>
+        </div>
+
+        <div class="ud-box">
+            <h3>Poziom reputacji</h3>
+            <div id="udReputation" class="ud-value">...</div>
+        </div>
+
+        <div class="ud-box">
+            <h3>Ostatnia aktywność</h3>
+            <div id="udLastActivity" class="ud-value">...</div>
+        </div>
+
+        <div class="ud-box">
+            <h3>Powiadomienia</h3>
+            <div id="udNotifications" class="ud-value">...</div>
+        </div>
+
+    </div>
+
+    <!-- Sekcja aktywności -->
+    <h3 style="margin-top: 40px;">Historia aktywności</h3>
+    <ul id="udActivity">
+        <li><em>Ładowanie danych...</em></li>
+    </ul>
+
+    <!-- Skróty do modułów -->
+    <h3 style="margin-top: 40px;">Moduły użytkownika</h3>
+    <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    ">
+        <button onclick="loadModule('user/profile')" class="ud-btn">🧩 Profil</button>
+        <button onclick="loadModule('user/settings')" class="ud-btn">⚙️ Ustawienia</button>
+        <button onclick="loadModule('user/activity')" class="ud-btn">📜 Aktywność</button>
+        <button onclick="loadModule('user/notifications')" class="ud-btn">🔔 Powiadomienia</button>
+        <button onclick="loadModule('finance/user-finance')" class="ud-btn">💰 Finanse użytkownika</button>
+    </div>
+</div>
+
+<style>
+.ud-box {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+.ud-value {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.ud-btn {
+    padding: 12px;
+    background-color: #445577;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+}
+.ud-btn:hover {
+    background-color: #334466;
+}
+</style>
