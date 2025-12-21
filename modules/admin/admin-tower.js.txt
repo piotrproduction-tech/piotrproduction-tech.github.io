@@ -1,0 +1,87 @@
+﻿// ===============================================
+// CityOfGATE — ADMIN TOWER (FE‑02)
+// WERSJA 1.0
+// ===============================================
+
+
+export function initModule() {
+    SystemLog.log("AdminTower", "info", "Moduł Admin Tower został uruchomiony");
+
+
+    const usersTable = document.getElementById("adminUsersTable");
+    const userInput = document.getElementById("adminUserInput");
+    const roleSelect = document.getElementById("adminRoleSelect");
+    const assignBtn = document.getElementById("adminAssignBtn");
+    const messageBox = document.getElementById("adminMessage");
+
+
+    if (!usersTable || !userInput || !roleSelect || !assignBtn) {
+        SystemLog.log("AdminTower", "error", "Brak elementów HTML modułu");
+        return;
+    }
+
+
+    // Mock danych użytkowników
+    const users = [
+        { name: "Piotr", role: "admin" },
+        { name: "Anna", role: "editor" },
+        { name: "Marek", role: "viewer" }
+    ];
+
+
+    function renderUsers() {
+        usersTable.innerHTML = users.map(u => `
+            <tr>
+                <td style="border-bottom: 1px solid #eee;">${u.name}</td>
+                <td style="border-bottom: 1px solid #eee;">${u.role}</td>
+                <td style="border-bottom: 1px solid #eee;">
+                    <button onclick="window.__adminEditUser('${u.name}')">Edytuj</button>
+                </td>
+            </tr>
+        `).join("");
+    }
+
+
+    // Funkcja globalna do edycji użytkownika
+    window.__adminEditUser = function(name) {
+        userInput.value = name;
+        SystemLog.log("AdminTower", "info", `Wybrano użytkownika: ${name}`);
+    };
+
+
+    // Przypisywanie roli
+    assignBtn.addEventListener("click", () => {
+        const name = userInput.value.trim();
+        const role = roleSelect.value;
+
+
+        if (!name) {
+            messageBox.style.color = "red";
+            messageBox.textContent = "Podaj nazwę użytkownika.";
+            return;
+        }
+
+
+        const user = users.find(u => u.name.toLowerCase() === name.toLowerCase());
+        if (!user) {
+            messageBox.style.color = "red";
+            messageBox.textContent = "Nie znaleziono użytkownika.";
+            SystemLog.log("AdminTower", "warn", `Próba przypisania roli do nieistniejącego użytkownika: ${name}`);
+            return;
+        }
+
+
+        user.role = role;
+        renderUsers();
+
+
+        messageBox.style.color = "green";
+        messageBox.textContent = `Przypisano rolę ${role} użytkownikowi ${name}.`;
+
+
+        SystemLog.log("AdminTower", "info", `Zmieniono rolę użytkownika ${name} na ${role}`);
+    });
+
+
+    renderUsers();
+}
