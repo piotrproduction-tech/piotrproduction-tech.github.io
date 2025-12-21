@@ -1,0 +1,88 @@
+<!-- ===============================================
+     CityOfGATE — FINANCE DASHBOARD 2.0 (FE‑02)
+     WERSJA 1.0
+     =============================================== -->
+
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+    <h2>💼 Finance Dashboard 2.0</h2>
+    <p>Centralny panel finansów CityOfGATE.</p>
+
+    <!-- Sekcja statystyk -->
+    <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    ">
+
+        <div class="fd-box">
+            <h3>Saldo budżetu</h3>
+            <div id="fdBudget" class="fd-value">...</div>
+        </div>
+
+        <div class="fd-box">
+            <h3>Wartość zasobów (Vault)</h3>
+            <div id="fdVault" class="fd-value">...</div>
+        </div>
+
+        <div class="fd-box">
+            <h3>Łączna wartość faktur</h3>
+            <div id="fdInvoices" class="fd-value">...</div>
+        </div>
+
+        <div class="fd-box">
+            <h3>Łączna wartość płatności</h3>
+            <div id="fdPayments" class="fd-value">...</div>
+        </div>
+
+    </div>
+
+    <!-- Sekcja aktywności -->
+    <h3 style="margin-top: 40px;">Ostatnie aktywności</h3>
+    <ul id="fdActivity">
+        <li><em>Ładowanie danych...</em></li>
+    </ul>
+
+    <!-- Skróty do modułów -->
+    <h3 style="margin-top: 40px;">Moduły finansowe</h3>
+    <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    ">
+        <button onclick="loadModule('finance/budget-bank')" class="fd-btn">🏦 Budget Bank</button>
+        <button onclick="loadModule('finance/treasure-vault')" class="fd-btn">💰 Treasure Vault</button>
+        <button onclick="loadModule('finance/grants-office')" class="fd-btn">🎓 Grants Office</button>
+        <button onclick="loadModule('finance/finance-reports')" class="fd-btn">📈 Finance Reports</button>
+        <button onclick="loadModule('finance/payments')" class="fd-btn">💳 Payments</button>
+        <button onclick="loadModule('finance/invoices')" class="fd-btn">🧾 Invoices</button>
+        <button onclick="loadModule('finance/analytics')" class="fd-btn">📊 Analytics</button>
+        <button onclick="loadModule('finance/user-finance')" class="fd-btn">👤 User Finance</button>
+    </div>
+</div>
+
+<style>
+.fd-box {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+.fd-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.fd-btn {
+    padding: 12px;
+    background-color: #336699;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+}
+.fd-btn:hover {
+    background-color: #2a557a;
+}
+</style>
