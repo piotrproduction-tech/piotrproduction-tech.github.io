@@ -17,7 +17,7 @@
        ============================ -->
   <div class="tiles">
 
-    <!-- Moduł Finance -->
+    <!-- Budget Bank -->
     <button 
       onclick="loadModule('finance/budget-bank')" 
       style="
@@ -32,6 +32,23 @@
       "
     >
       💰 Bank Budżetowy
+    </button>
+
+    <!-- Treasure Vault -->
+    <button 
+      onclick="loadModule('finance/treasure-vault')" 
+      style="
+        padding: 12px 20px;
+        margin: 10px 0;
+        background-color: #009966;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+      "
+    >
+      🏺 Treasure Vault
     </button>
 
     <!-- Panel diagnostyczny -->
@@ -50,21 +67,6 @@
     >
       🔧 Panel diagnostyczny
     </button>
-    <button 
-      onclick="loadModule('finance/treasure-vault')" 
-      style="
-        padding: 12px 20px;
-        margin: 10px 0;
-        background-color: #009966;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 16px;
-      "
-    >
-      🏺 Treasure Vault
-    </button>
 
   </div>
 
@@ -81,9 +83,8 @@
       window.loadModule = loadModule;
   </script>
 
-  <!-- API (opcjonalne, backend później) -->
+  <!-- API (opcjonalne) -->
   <script src="shared/api.js"></script>
 
 </body>
 </html>
-
