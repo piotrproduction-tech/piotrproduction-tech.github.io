@@ -1,0 +1,49 @@
+<!-- ===============================================
+     CityOfGATE — USER PROFILE (FE‑02)
+     WERSJA 1.0
+     =============================================== -->
+
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+    <h2>🧩 User Profile</h2>
+    <p>Podstawowe informacje o użytkowniku.</p>
+
+    <div style="
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 20px;
+        margin-top: 20px;
+        align-items: start;
+    ">
+
+        <!-- Avatar -->
+        <div>
+            <div id="upAvatar" style="
+                width: 180px;
+                height: 180px;
+                background: #ddd;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 60px;
+                color: #666;
+            ">
+                👤
+            </div>
+        </div>
+
+        <!-- Dane użytkownika -->
+        <div>
+            <h3>Dane podstawowe</h3>
+            <p><strong>Imię:</strong> <span id="upName">...</span></p>
+            <p><strong>Rola:</strong> <span id="upRole">...</span></p>
+            <p><strong>Reputacja:</strong> <span id="upReputation">...</span></p>
+            <p><strong>Email:</strong> <span id="upEmail">...</span></p>
+
+            <h3 style="margin-top: 30px;">Preferencje</h3>
+            <p><strong>Język:</strong> <span id="upLanguage">...</span></p>
+            <p><strong>Powiadomienia:</strong> <span id="upNotifications">...</span></p>
+        </div>
+
+    </div>
+</div>
