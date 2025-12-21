@@ -1,14 +1,12 @@
-﻿// ===============================================
+// ===============================================
 // CityOfGATE — LOGS ENGINE CORE
 // Globalny silnik logów frontendowych
 // WERSJA 1.0
 // ===============================================
 
-
 (function () {
     // Prywatna lista logów
     const logs = [];
-
 
     /**
      * Zapisuje wpis logu.
@@ -25,9 +23,7 @@
             message: message || ""
         };
 
-
         logs.push(entry);
-
 
         // Konsola jako fallback
         const prefix = `[${entry.time}] [${entry.module}] [${entry.level}]`;
@@ -40,18 +36,15 @@
         }
     }
 
-
     // Czyści logi w pamięci
     function clear() {
         logs.length = 0;
     }
 
-
     // Zwraca kopię logów
     function getAll() {
         return logs.slice();
     }
-
 
     // Udostępniamy globalnie
     window.SystemLog = {
@@ -60,7 +53,6 @@
         clear,
         getAll
     };
-
 
     // Warstwa kompatybilności: diagnosticsLog, używana w istniejących modułach
     // Sygnatura: diagnosticsLog(message, level?)
