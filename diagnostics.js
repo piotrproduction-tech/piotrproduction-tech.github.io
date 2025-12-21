@@ -1,68 +1,53 @@
-/**
- * ============================================================
- *  CityOfGATE — FRONTEND DIAGNOSTICS
- *  Kompletny test połączenia FE ↔ BE
- * ============================================================
- */
+// ===============================================
+// CityOfGATE — DIAGNOSTICS.JS
+// Centralny system logowania i diagnostyki
+// ===============================================
 
-async function runDiagnostics() {
-    console.log("==============================================");
-    console.log("🔍 CityOfGATE — DIAGNOSTYKA FRONTENDU");
-    console.log("==============================================");
+// Bufor logów (ostatnie 200 wpisów)
+const diagnosticsBuffer = [];
 
-    // 1. Test: Czy API_BASE jest ustawione?
-    console.log("\n[1] Test: API_BASE");
-    if (!API_BASE) {
-        console.warn("⚠️ API_BASE nie jest ustawione — próbuję pobrać...");
-        await loadBackendURL();
+// Maksymalna liczba logów w pamięci
+const MAX_LOGS = 200;
+
+// Główna funkcja logowania
+function diagnosticsLog(message, type = "info") {
+    const timestamp = new Date().toISOString();
+
+    const entry = {
+        timestamp,
+        type,
+        message
+    };
+
+    // Dodaj do bufora
+    diagnosticsBuffer.push(entry);
+
+    // Utrzymuj limit
+    if (diagnosticsBuffer.length > MAX_LOGS) {
+        diagnosticsBuffer.shift();
     }
 
-    if (API_BASE) {
-        console.log("✅ API_BASE OK:", API_BASE);
-    } else {
-        console.error("❌ API_BASE nie zostało ustawione — przerwano diagnostykę.");
-        return;
-    }
-
-    // 2. Test: Czy backend odpowiada?
-    console.log("\n[2] Test: Połączenie z backendem");
-    try {
-        const ping = await apiGET("system/webapp-url");
-        console.log("✅ Backend odpowiada:", ping);
-    } catch (err) {
-        console.error("❌ Backend nie odpowiada:", err);
-        return;
-    }
-
-    // 3. Test: Czy router działa?
-    console.log("\n[3] Test: Router");
-    try {
-        const testRouter = await apiGET("unknown-test-endpoint");
-        console.warn("⚠️ Router NIE zwrócił błędu:", testRouter);
-    } catch (err) {
-        console.log("✅ Router poprawnie zwraca błędy:", err);
-    }
-
-    // 4. Test: Endpoint FINANCE/BANK
-    console.log("\n[4] Test: finance/bank");
-    const bank = await apiGET("finance/bank");
-
-    if (bank.error) {
-        console.error("❌ finance/bank zwrócił błąd:", bank.error);
-    } else {
-        console.log("✅ finance/bank OK:", bank);
-    }
-
-    // 5. Test: BudgetBank — minimalny test funkcjonalny
-    console.log("\n[5] Test: BudgetBank — minimalny test");
-    if (bank.balance !== undefined && Array.isArray(bank.transactions)) {
-        console.log("✅ BudgetBank działa poprawnie");
-    } else {
-        console.error("❌ BudgetBank NIE działa — brak danych");
-    }
-
-    console.log("\n==============================================");
-    console.log("✅ DIAGNOSTYKA ZAKOŃCZONA");
-    console.log("==============================================");
+    // Log do konsoli (czytelny format)
+    console.log(
+        `%c[Diagnostics][${type.toUpperCase()}] ${timestamp} → ${message}`,
+        type === "error"
+            ? "color: red; font-weight: bold;"
+            : type === "warning"
+            ? "color: orange;"
+            : "color: #4CAF50;"
+    );
 }
 
+// Zwraca wszystkie logi
+function diagnosticsGetAll() {
+    return [...diagnosticsBuffer];
+}
+
+// Czyści logi
+function diagnosticsClear() {
+    diagnosticsBuffer.length = 0;
+    console.log("%c[Diagnostics] Logi zostały wyczyszczone", "color: gray;");
+}
+
+// Eksport (jeśli loader lub moduły importują)
+export { diagnosticsLog, diagnosticsGetAll, diagnosticsClear };
