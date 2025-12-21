@@ -68,6 +68,23 @@
       🔧 Panel diagnostyczny
     </button>
 
+    <!-- System Logs Engine -->
+    <button 
+      onclick="loadModule('system/logs-engine')" 
+      style="
+        padding: 12px 20px;
+        margin: 10px 0;
+        background-color: #555;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+      "
+    >
+      📜 System Logs Engine
+    </button>
+
   </div>
 
   <!-- ============================
@@ -76,7 +93,12 @@
   <div id="app"></div>
 
   <!-- ============================
-       IMPORT LOADERA (ES MODULE)
+       CORE SILNIK LOGÓW
+       ============================ -->
+  <script src="shared/logs-engine-core.js"></script>
+
+  <!-- ============================
+       LOADER MODUŁÓW (ES MODULE)
        ============================ -->
   <script type="module">
       import { loadModule } from "./loader.js";
