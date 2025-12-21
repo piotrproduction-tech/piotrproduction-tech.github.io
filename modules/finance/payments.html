@@ -1,0 +1,34 @@
+<!-- ===============================================
+     CityOfGATE — PAYMENTS (FE‑02)
+     WERSJA 1.0
+     =============================================== -->
+
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+    <h2>💳 Payments</h2>
+    <p>Zarządzanie płatnościami w CityOfGATE.</p>
+
+    <h3>Lista płatności</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead>
+            <tr>
+                <th style="border-bottom: 1px solid #ccc; text-align: left;">ID</th>
+                <th style="border-bottom: 1px solid #ccc; text-align: left;">Odbiorca</th>
+                <th style="border-bottom: 1px solid #ccc; text-align: left;">Kwota</th>
+                <th style="border-bottom: 1px solid #ccc; text-align: left;">Status</th>
+                <th style="border-bottom: 1px solid #ccc; text-align: left;">Akcja</th>
+            </tr>
+        </thead>
+        <tbody id="paymentsTable">
+            <tr><td colspan="5"><em>Ładowanie danych...</em></td></tr>
+        </tbody>
+    </table>
+
+    <h3>Dodaj płatność</h3>
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <input id="paymentReceiver" type="text" placeholder="Odbiorca" />
+        <input id="paymentAmount" type="number" placeholder="Kwota" />
+        <button id="paymentAddBtn">Dodaj</button>
+    </div>
+
+    <div id="paymentMessage" style="color: green; font-weight: bold;"></div>
+</div>
