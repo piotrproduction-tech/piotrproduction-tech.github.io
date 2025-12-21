@@ -1,0 +1,57 @@
+<!-- ===============================================
+     CityOfGATE — FINANCE ANALYTICS (FE‑02)
+     WERSJA 1.0
+     =============================================== -->
+
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+    <h2>📊 Finance Analytics</h2>
+    <p>Panel analityczny finansów CityOfGATE.</p>
+
+    <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    ">
+
+        <div class="analytics-box">
+            <h3>Saldo budżetu</h3>
+            <div id="analyticsBudget" class="analytics-value">...</div>
+        </div>
+
+        <div class="analytics-box">
+            <h3>Wartość zasobów (Vault)</h3>
+            <div id="analyticsVault" class="analytics-value">...</div>
+        </div>
+
+        <div class="analytics-box">
+            <h3>Łączna wartość faktur</h3>
+            <div id="analyticsInvoices" class="analytics-value">...</div>
+        </div>
+
+        <div class="analytics-box">
+            <h3>Łączna wartość płatności</h3>
+            <div id="analyticsPayments" class="analytics-value">...</div>
+        </div>
+
+    </div>
+
+    <h3 style="margin-top: 40px;">Ostatnie aktywności finansowe</h3>
+    <ul id="analyticsActivity">
+        <li><em>Ładowanie danych...</em></li>
+    </ul>
+</div>
+
+<style>
+.analytics-box {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+.analytics-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+</style>
