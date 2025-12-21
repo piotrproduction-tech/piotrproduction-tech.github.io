@@ -1,0 +1,48 @@
+<div class="module">
+
+  <h2>Budget Bank</h2>
+
+  <section>
+    <h3>Dodaj transakcję</h3>
+    <form id="add-transaction-form">
+      <label>Kwota:
+        <input type="number" id="amount" required>
+      </label>
+
+      <label>Typ:
+        <select id="type">
+          <option value="income">Przychód</option>
+          <option value="expense">Wydatek</option>
+        </select>
+      </label>
+
+      <label>Actor:
+        <input type="text" id="actor" placeholder="np. Piotr" required>
+      </label>
+
+      <button type="submit">Dodaj</button>
+    </form>
+  </section>
+
+  <section>
+    <h3>Bilans</h3>
+    <div id="balance-box">Ładowanie...</div>
+  </section>
+
+  <section>
+    <h3>Transakcje</h3>
+    <table id="transactions-table">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Kwota</th>
+          <th>Typ</th>
+          <th>Actor</th>
+          <th>TxID</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+</div>
