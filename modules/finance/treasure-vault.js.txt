@@ -1,0 +1,54 @@
+﻿// ===============================================
+// CityOfGATE — TREASURE VAULT (JS)
+// WERSJA 1.0
+// ===============================================
+
+
+export function initModule() {
+    console.log("Moduł Finance → Treasure Vault został uruchomiony");
+
+
+    const loadBtn = document.getElementById("loadRewardsBtn");
+    const clearBtn = document.getElementById("clearRewardsBtn");
+    const output = document.getElementById("treasureOutput");
+
+
+    if (!loadBtn || !clearBtn || !output) {
+        console.error("Brak elementów HTML modułu Treasure Vault");
+        return;
+    }
+
+
+    // ✅ Przycisk: Pobierz nagrody (na razie mock — backend BE‑02 podłączymy później)
+    loadBtn.addEventListener("click", () => {
+        diagnosticsLog("TreasureVault: Pobieram nagrody (mock)", "info");
+
+
+        const mockRewards = [
+            { id: "rew_001", title: "VR Pass", value: 100 },
+            { id: "rew_002", title: "Backstage Tour", value: 250 },
+            { id: "rew_003", title: "Mentoring 1:1", value: 500 }
+        ];
+
+
+        const listHtml = mockRewards.map(r => `
+            <li><strong>${r.id}</strong> — ${r.title} (wartość: ${r.value})</li>
+        `).join("");
+
+
+        output.innerHTML = `
+            <h3>Dostępne nagrody</h3>
+            <ul>${listHtml}</ul>
+        `;
+
+
+        diagnosticsLog("TreasureVault: Nagrody załadowane (mock)", "info");
+    });
+
+
+    // ✅ Przycisk: Wyczyść widok
+    clearBtn.addEventListener("click", () => {
+        output.innerHTML = `<em>Brak danych — kliknij „Pobierz nagrody”.</em>`;
+        diagnosticsLog("TreasureVault: Widok wyczyszczony", "info");
+    });
+}
