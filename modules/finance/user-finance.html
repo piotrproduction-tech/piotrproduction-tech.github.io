@@ -1,0 +1,57 @@
+<!-- ===============================================
+     CityOfGATE — USER FINANCE CONSOLE (FE‑02)
+     WERSJA 1.0
+     =============================================== -->
+
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+    <h2>👤 User Finance Console</h2>
+    <p>Podsumowanie finansów użytkownika w CityOfGATE.</p>
+
+    <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    ">
+
+        <div class="uf-box">
+            <h3>Saldo użytkownika</h3>
+            <div id="ufBalance" class="uf-value">...</div>
+        </div>
+
+        <div class="uf-box">
+            <h3>Ostatnia płatność</h3>
+            <div id="ufLastPayment" class="uf-value">...</div>
+        </div>
+
+        <div class="uf-box">
+            <h3>Ostatnia faktura</h3>
+            <div id="ufLastInvoice" class="uf-value">...</div>
+        </div>
+
+        <div class="uf-box">
+            <h3>Aktywne granty</h3>
+            <div id="ufGrants" class="uf-value">...</div>
+        </div>
+
+    </div>
+
+    <h3 style="margin-top: 40px;">Historia aktywności</h3>
+    <ul id="ufActivity">
+        <li><em>Ładowanie danych...</em></li>
+    </ul>
+</div>
+
+<style>
+.uf-box {
+    background: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+.uf-value {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+</style>
