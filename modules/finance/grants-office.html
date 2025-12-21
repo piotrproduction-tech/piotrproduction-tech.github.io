@@ -1,0 +1,37 @@
+<!-- ===============================================
+     CityOfGATE — GRANTS OFFICE (FE‑02)
+     WERSJA 1.0
+     =============================================== -->
+
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+    <h2>📑 Grants Office</h2>
+    <p>Zarządzanie grantami i wnioskami finansowymi.</p>
+
+    <h3>Lista grantów</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead>
+            <tr>
+                <th style="border-bottom: 1px solid #ccc; text-align: left;">ID</th>
+                <th style="border-bottom: 1px solid #ccc; text-align: left;">Nazwa</th>
+                <th style="border-bottom: 1px solid #ccc; text-align: left;">Status</th>
+                <th style="border-bottom: 1px solid #ccc; text-align: left;">Akcja</th>
+            </tr>
+        </thead>
+        <tbody id="grantsTable">
+            <tr><td colspan="4"><em>Ładowanie danych...</em></td></tr>
+        </tbody>
+    </table>
+
+    <h3>Zmień status grantu</h3>
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <input id="grantIdInput" type="text" placeholder="ID grantu" />
+        <select id="grantStatusSelect">
+            <option value="pending">pending</option>
+            <option value="approved">approved</option>
+            <option value="rejected">rejected</option>
+        </select>
+        <button id="grantUpdateBtn">Zmień status</button>
+    </div>
+
+    <div id="grantMessage" style="color: green; font-weight: bold;"></div>
+</div>
