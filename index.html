@@ -20,7 +20,10 @@
   <div id="module-container"></div>
 
   <!-- poprawione ścieżki -->
-  <script src="shared/loader.js"></script>
+  <script type="module">
+    import { loadModule } from "./loader.js";
+    window.loadModule = loadModule;
+  </script>
   <script src="shared/api.js"></script>
 <!-- ===============================================
      CityOfGATE — Przycisk do panelu diagnostycznego
@@ -45,4 +48,5 @@
 
 </body>
 </html>
+
 
