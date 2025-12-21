@@ -1,0 +1,71 @@
+﻿// ===============================================
+// CityOfGATE — LOGS ENGINE CORE
+// Globalny silnik logów frontendowych
+// WERSJA 1.0
+// ===============================================
+
+
+(function () {
+    // Prywatna lista logów
+    const logs = [];
+
+
+    /**
+     * Zapisuje wpis logu.
+     * @param {string} module  - nazwa modułu (np. "BudgetBank", "TreasureVault", "Loader")
+     * @param {string} level   - "info" | "warn" | "error"
+     * @param {string} message - treść komunikatu
+     */
+    function log(module, level, message) {
+        const entry = {
+            id: logs.length + 1,
+            time: new Date().toISOString(),
+            module: module || "Unknown",
+            level: level || "info",
+            message: message || ""
+        };
+
+
+        logs.push(entry);
+
+
+        // Konsola jako fallback
+        const prefix = `[${entry.time}] [${entry.module}] [${entry.level}]`;
+        if (entry.level === "error") {
+            console.error(prefix, entry.message);
+        } else if (entry.level === "warn") {
+            console.warn(prefix, entry.message);
+        } else {
+            console.log(prefix, entry.message);
+        }
+    }
+
+
+    // Czyści logi w pamięci
+    function clear() {
+        logs.length = 0;
+    }
+
+
+    // Zwraca kopię logów
+    function getAll() {
+        return logs.slice();
+    }
+
+
+    // Udostępniamy globalnie
+    window.SystemLog = {
+        logs,
+        log,
+        clear,
+        getAll
+    };
+
+
+    // Warstwa kompatybilności: diagnosticsLog, używana w istniejących modułach
+    // Sygnatura: diagnosticsLog(message, level?)
+    window.diagnosticsLog = function (message, level) {
+        const lvl = level || "info";
+        log("Frontend", lvl, message || "");
+    };
+})();
