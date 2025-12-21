@@ -1,0 +1,56 @@
+﻿<!-- ===============================================
+     CityOfGATE — LOGS ENGINE PANEL (HTML)
+     WERSJA 1.0
+     =============================================== -->
+
+
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+    <h2>System Logs Engine</h2>
+    <p>Centralny podgląd logów frontendowych CityOfGATE.</p>
+
+
+    <div style="margin: 10px 0; display: flex; gap: 10px; flex-wrap: wrap;">
+        <label>
+            Moduł:
+            <input id="logsFilterModule" type="text" placeholder="np. BudgetBank, TreasureVault, Loader" />
+        </label>
+
+
+        <label>
+            Poziom:
+            <select id="logsFilterLevel">
+                <option value="">(wszystkie)</option>
+                <option value="info">info</option>
+                <option value="warn">warn</option>
+                <option value="error">error</option>
+            </select>
+        </label>
+
+
+        <button id="logsRefreshBtn">Odśwież</button>
+        <button id="logsClearBtn">Wyczyść logi</button>
+    </div>
+
+
+    <hr />
+
+
+    <div id="logsTableContainer" style="max-height: 400px; overflow-y: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+                <tr>
+                    <th style="border-bottom: 1px solid #ccc; text-align: left;">ID</th>
+                    <th style="border-bottom: 1px solid #ccc; text-align: left;">Czas</th>
+                    <th style="border-bottom: 1px solid #ccc; text-align: left;">Moduł</th>
+                    <th style="border-bottom: 1px solid #ccc; text-align: left;">Poziom</th>
+                    <th style="border-bottom: 1px solid #ccc; text-align: left;">Wiadomość</th>
+                </tr>
+            </thead>
+            <tbody id="logsTableBody">
+                <tr>
+                    <td colspan="5"><em>Brak logów.</em></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
