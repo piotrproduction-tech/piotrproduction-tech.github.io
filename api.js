@@ -1,107 +1,88 @@
 /**
  * ============================================================
- *  API CLIENT — CityOfGATE Frontend
- *  Łączy frontend z backendem Google Apps Script
+ *  CityOfGATE — api.js
+ *  Warstwa komunikacji FE → BE (Apps Script WebApp)
+ *  Autor: Piotr + Copilot
  * ============================================================
+ *
+ * Funkcje:
+ *  - callApi(endpoint, payload)
+ *  - automatyczne POST JSON → JSON
+ *  - obsługa błędów
+ *  - integracja z loaderem 3.0
+ *  - integracja z Profile Console 2.0
+ *
+ * Wymagania:
+ *  - WebApp musi być opublikowany jako "Anyone"
+ *  - BackendAPI.gs musi być aktywny
+ *  - EndpointMap.gs musi zawierać endpoint
  */
-
-console.log("[API] Initializing...");
-
-let API_BASE = null;
 
 /**
- * ============================================================
- *  1. Pobieranie URL backendu z endpointu systemowego
- * ============================================================
+ * Ustaw tutaj URL swojego WebApp
+ * (po publikacji: Deploy → New Deployment → WebApp)
  */
+const API_URL = "const API_URL = "https://script.google.com/macros/s/AKfycbyabI_q8Ksx_sCx87FxKma-dIAWDc_rH7t0jNEq67IG-I288Rs_TQDcI94tslsCntlq/exec";
+";
 
-async function loadBackendURL() {
-    console.log("[API] Fetching backend URL...");
+/**
+ * Główna funkcja wywołująca backend
+ */
+async function callApi(endpoint, payload = {}) {
+  try {
+    const body = {
+      endpoint,
+      payload
+    };
 
-    try {
-        const res = await fetch(
-            "https://script.google.com/macros/s/AKfycbx0TfJOOi9wGoP_50PEVPzrSZZSCMN4tvlwt-kD_0vh51qFCnYSb3qABl_i6KkeWs-Mag/exec?path=system/webapp-url"
-        );
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+        "Cache-Control": "no-cache"
+      },
+      body: JSON.stringify(body)
+    });
 
-        const data = await res.json();
+    const json = await res.json();
 
-        if (!data.url) {
-            console.error("[API] ERROR: Backend did not return URL:", data);
-            return;
-        }
-
-        API_BASE = data.url;
-        console.log("[API] Backend URL loaded:", API_BASE);
-
-    } catch (err) {
-        console.error("[API] ERROR while loading backend URL:", err);
+    if (!json.ok) {
+      console.warn("API error:", endpoint, json.error);
+      return { ok: false, error: json.error };
     }
+
+    return { ok: true, data: json.data };
+
+  } catch (err) {
+    console.error("API fatal error:", endpoint, err);
+    return { ok: false, error: "Błąd połączenia z backendem" };
+  }
 }
 
 /**
- * ============================================================
- *  2. Uniwersalny GET
- * ============================================================
+ * Helper: ładuje dane użytkownika (Profile Console 2.0)
  */
-
-async function apiGET(path, params = {}) {
-    if (!API_BASE) {
-        console.warn("[API] API_BASE not ready, loading...");
-        await loadBackendURL();
-    }
-
-    const url = new URL(API_BASE);
-    url.searchParams.set("path", path);
-
-    for (const key in params) {
-        url.searchParams.set(key, params[key]);
-    }
-
-    console.log("[API] GET:", url.toString());
-
-    try {
-        const res = await fetch(url.toString());
-        return await res.json();
-    } catch (err) {
-        console.error("[API] GET ERROR:", err);
-        return { error: err.toString() };
-    }
+async function loadUserProfile(userId) {
+  return await callApi("user/getProfile", { userId });
 }
 
 /**
- * ============================================================
- *  3. Uniwersalny POST
- * ============================================================
+ * Helper: zapisuje dane użytkownika
  */
-
-async function apiPOST(path, body = {}) {
-    if (!API_BASE) {
-        console.warn("[API] API_BASE not ready, loading...");
-        await loadBackendURL();
-    }
-
-    const url = `${API_BASE}?path=${encodeURIComponent(path)}`;
-
-    console.log("[API] POST:", url, "BODY:", body);
-
-    try {
-        const res = await fetch(url, {
-            method: "POST",
-            contentType: "application/json",
-            body: JSON.stringify(body)
-        });
-
-        return await res.json();
-    } catch (err) {
-        console.error("[API] POST ERROR:", err);
-        return { error: err.toString() };
-    }
+async function updateUserProfile(userId, data) {
+  return await callApi("user/updateProfile", { userId, ...data });
 }
 
 /**
- * ============================================================
- *  4. Auto-init backend URL przy starcie aplikacji
- * ============================================================
+ * Helper: pobiera logi systemowe
  */
+async function loadSystemLogs() {
+  return await callApi("system/getLogs", {});
+}
 
-loadBackendURL();
+/**
+ * Helper: ping backendu
+ */
+async function pingBackend() {
+  return await callApi("system/ping", {});
+}
