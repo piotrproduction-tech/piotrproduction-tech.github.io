@@ -1,7 +1,6 @@
 /**
  * ============================================================
  *  FE‑10 — Wellness Garden (v1)
- *  Podstawowy moduł ogrodu dobrostanu
  * ============================================================
  */
 
@@ -26,7 +25,8 @@ function FE_10_Wellness_Garden_start() {
 async function FE_10_loadStats() {
     const userId = window.currentUserId;
 
-    const res = await callApi("wellness/getUserStats", { userId });
+    // 🔧 poprawione: używamy apiRequest zamiast callApi
+    const res = await apiRequest("wellness/getUserStats", { userId });
 
     const el = document.getElementById("wg10-content");
 
