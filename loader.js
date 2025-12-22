@@ -1,78 +1,130 @@
-// ===============================================
-// CityOfGATE — LOADER.JS
-// Dynamiczne ładowanie modułów HTML + JS
-// ===============================================
+/**
+ * ============================================================
+ *  CityOfGATE — Loader 3.0
+ *  Centralny silnik ładowania modułów FE‑XX
+ *  Autor: Piotr + Copilot
+ * ============================================================
+ *
+ * Funkcje:
+ *  - loadModule(name)
+ *  - loadUser()
+ *  - showLoader() / hideLoader()
+ *  - dynamiczne wczytywanie FE‑XX
+ *
+ * Wymagania:
+ *  - api.js musi być załadowany
+ *  - FE‑Common musi być dostępny
+ *  - każdy moduł FE‑XX musi mieć funkcję startową:
+ *        FE_XX_start()
+ */
 
-// Główny kontener, do którego wstrzykujemy moduły
-const APP_CONTAINER_ID = "app";
+/* ============================================================
+   GLOBALNE ZMIENNE
+   ============================================================ */
 
-// Funkcja logująca diagnostykę
-function logDiagnostics(message, type = "info") {
-    console.log(`[Diagnostics][${type.toUpperCase()}] ${message}`);
+window.currentUserId = null;   // ustawiane po zalogowaniu / pobraniu profilu
+window.currentModule = null;   // aktualnie załadowany moduł
 
-    // Jeśli masz diagnostics.js z funkcją diagnosticsLog(),
-    // możesz tu dodać integrację:
-    if (typeof diagnosticsLog === "function") {
-        diagnosticsLog(message, type);
-    }
+/* ============================================================
+   LOADER UI
+   ============================================================ */
+
+function showLoader(text = "Ładowanie...") {
+  const loader = document.getElementById("global-loader");
+  if (loader) {
+    loader.style.display = "flex";
+    loader.querySelector(".loader-text").innerText = text;
+  }
 }
 
-// Główna funkcja ładowania modułu
-async function loadModule(path) {
-    logDiagnostics(`Rozpoczynam ładowanie modułu: ${path}`);
-
-    const htmlPath = `modules/${path}.html`;
-    const jsPath = `modules/${path}.js`;
-
-    try {
-        // 1. Pobierz HTML modułu
-        logDiagnostics(`Pobieram HTML: ${htmlPath}`);
-        const htmlResponse = await fetch(htmlPath);
-
-        if (!htmlResponse.ok) {
-            throw new Error(`Nie znaleziono pliku HTML: ${htmlPath}`);
-        }
-
-        const htmlContent = await htmlResponse.text();
-
-        // 2. Wstaw HTML do kontenera
-        const app = document.getElementById(APP_CONTAINER_ID);
-        if (!app) {
-            throw new Error(`Nie znaleziono kontenera #${APP_CONTAINER_ID}`);
-        }
-
-        app.innerHTML = htmlContent;
-        logDiagnostics(`HTML modułu ${path} został załadowany`);
-
-        // 3. Pobierz i uruchom JS modułu
-        logDiagnostics(`Pobieram JS: ${jsPath}`);
-        const module = await import(`./${jsPath}`);
-
-        if (module && typeof module.initModule === "function") {
-            logDiagnostics(`Uruchamiam initModule() dla ${path}`);
-            module.initModule();
-        } else {
-            logDiagnostics(`Brak funkcji initModule() w ${jsPath}`, "warning");
-        }
-
-        logDiagnostics(`Moduł ${path} został w pełni załadowany`);
-
-    } catch (error) {
-        logDiagnostics(`Błąd ładowania modułu ${path}: ${error.message}`, "error");
-
-        const app = document.getElementById(APP_CONTAINER_ID);
-        if (app) {
-            app.innerHTML = `
-                <div style="padding:20px; color:red;">
-                    <h2>Błąd ładowania modułu</h2>
-                    <p>${error.message}</p>
-                </div>
-            `;
-        }
-    }
+function hideLoader() {
+  const loader = document.getElementById("global-loader");
+  if (loader) loader.style.display = "none";
 }
 
-// ===============================================
-// Eksport funkcji (jeśli loader.js jest importowany)
-// ===============================================
-export { loadModule };
+/* ============================================================
+   ŁADOWANIE UŻYTKOWNIKA (Profile Console 2.0)
+   ============================================================ */
+
+async function loadUser() {
+  showLoader("Ładowanie profilu...");
+
+  // Tymczasowo — w przyszłości pobierzesz userId z logowania
+  const userId = "USER_001";
+  window.currentUserId = userId;
+
+  const res = await loadUserProfile(userId);
+
+  if (!res.ok) {
+    alert("Błąd ładowania profilu: " + res.error);
+    hideLoader();
+    return;
+  }
+
+  window.currentUser = res.data;
+  hideLoader();
+}
+
+/* ============================================================
+   GŁÓWNA FUNKCJA ŁADOWANIA MODUŁÓW
+   ============================================================ */
+
+async function loadModule(moduleName) {
+  try {
+    showLoader("Ładowanie modułu...");
+
+    // 1. Wczytaj plik FE‑XX dynamicznie
+    await loadScript(moduleName + ".js");
+
+    // 2. Znajdź funkcję startową
+    const startFnName = moduleName.replace("-", "_") + "_start";
+    const startFn = window[startFnName];
+
+    if (!startFn) {
+      hideLoader();
+      alert("Moduł nie ma funkcji startowej: " + startFnName);
+      return;
+    }
+
+    // 3. Uruchom moduł
+    startFn();
+
+    window.currentModule = moduleName;
+    hideLoader();
+
+  } catch (err) {
+    hideLoader();
+    alert("Błąd ładowania modułu: " + err);
+  }
+}
+
+/* ============================================================
+   DYNAMICZNE WCZYTYWANIE SKRYPTÓW
+   ============================================================ */
+
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${url}"]`);
+
+    // Jeśli już załadowany — nie ładuj ponownie
+    if (existing) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = url;
+    script.onload = () => resolve();
+    script.onerror = () => reject("Nie można załadować: " + url);
+
+    document.body.appendChild(script);
+  });
+}
+
+/* ============================================================
+   AUTO-INIT (np. na city-map.html)
+   ============================================================ */
+
+window.addEventListener("DOMContentLoaded", async () => {
+  await loadUser();
+});
