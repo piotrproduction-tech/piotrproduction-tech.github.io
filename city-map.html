@@ -1,146 +1,142 @@
-<!-- ===============================================
-     CITY OF GATE — MAPA 2.1
-     Z kaflami: Mój Kokpit + Citizen Console
-     =============================================== -->
+<!-- ==========================================================
+     CITY OF GATE — MAPA 2.2
+     Kolory dzielnic + ikony + styl
+     ========================================================== -->
 
 <div style="padding: 30px; font-family: Arial, sans-serif;">
 
     <h1 style="text-align:center; margin-bottom: 40px;">
-        🌆 City of GATE — Mapa 2.1
+        🌆 City of GATE — Mapa 2.2
     </h1>
 
     <p style="text-align:center; font-size: 18px; margin-bottom: 40px;">
         Wybierz dzielnicę miasta lub przejdź do swojego kokpitu.
     </p>
 
-    <div style="
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 20px;
-    ">
+    <div class="grid">
 
         <!-- ✅ Mój Kokpit -->
-        <div class="district-tile" onclick="loadModule('FE-20_Profile_Console')">
+        <div class="tile user" onclick="loadModule('FE-20_Profile_Console')">
             <h2>👤 Mój Kokpit</h2>
-            <p>Twoje centrum dowodzenia: widżety, aktywność, bilety, zakupy, reputacja.</p>
+            <p>Widżety, aktywność, bilety, zakupy, reputacja.</p>
         </div>
 
         <!-- ✅ Citizen Console -->
-        <div class="district-tile" onclick="loadModule('FE-36_Citizen_Console')">
+        <div class="tile citizen" onclick="loadModule('FE-36_Citizen_Console')">
             <h2>🧭 Citizen Console</h2>
-            <p>Twoja rola w mieście: wpływ, projekty, głosowania, tokeny.</p>
+            <p>Twoja rola w mieście, wpływ, tokeny, projekty.</p>
         </div>
 
         <!-- Stream Square -->
-        <div class="district-tile" onclick="loadModule('FE-22_Stream_Square')">
+        <div class="tile stream" onclick="loadModule('FE-22_Stream_Square')">
             <h2>🎤 Stream Square</h2>
-            <p>Koncerty, spektakle, warsztaty na żywo.</p>
+            <p>Koncerty, spektakle, warsztaty live.</p>
         </div>
 
         <!-- Festival Pavilion -->
-        <div class="district-tile" onclick="loadModule('FE-52_Festival_Hub')">
+        <div class="tile festival" onclick="loadModule('FE-52_Festival_Hub')">
             <h2>🎪 Festival Pavilion</h2>
             <p>Festiwale, konkursy, premiery.</p>
         </div>
 
         <!-- Culture Gallery -->
-        <div class="district-tile" onclick="loadModule('FE-23_Culture_Gallery')">
+        <div class="tile culture" onclick="loadModule('FE-23_Culture_Gallery')">
             <h2>🖼️ Culture Gallery</h2>
             <p>Wystawy, filmy, sztuka, kolekcje.</p>
         </div>
 
         <!-- Marketplace Street -->
-        <div class="district-tile" onclick="loadModule('FE-21_Marketplace')">
+        <div class="tile market" onclick="loadModule('FE-21_Marketplace')">
             <h2>🛒 Marketplace Street</h2>
             <p>Produkty twórców, licencje, zakupy.</p>
         </div>
 
         <!-- Education Library -->
-        <div class="district-tile" onclick="loadModule('FE-05_Education_And_DAO')">
+        <div class="tile edu" onclick="loadModule('FE-05_Education_And_DAO')">
             <h2>📚 Education Library</h2>
             <p>Kursy, webinary, mentoring.</p>
         </div>
 
         <!-- Community House -->
-        <div class="district-tile" onclick="loadModule('FE-31_Community_House')">
+        <div class="tile community" onclick="loadModule('FE-31_Community_House')">
             <h2>🏡 Community House</h2>
             <p>Grupy, fora, rekomendacje.</p>
         </div>
 
         <!-- DAO Town Hall -->
-        <div class="district-tile" onclick="loadModule('FE-30_DAO_Town_Hall')">
+        <div class="tile dao" onclick="loadModule('FE-30_DAO_Town_Hall')">
             <h2>🏛️ DAO Town Hall</h2>
             <p>Głosowania, decyzje, governance.</p>
         </div>
 
         <!-- Innovation Hub -->
-        <div class="district-tile" onclick="loadModule('FE-24_Innovation_Hub')">
+        <div class="tile innovation" onclick="loadModule('FE-24_Innovation_Hub')">
             <h2>💡 Innovation Hub</h2>
             <p>Projekty, prototypy, VR.</p>
         </div>
 
         <!-- Treasure Vault -->
-        <div class="district-tile" onclick="loadModule('FE-25_Treasure_Vault')">
+        <div class="tile vault" onclick="loadModule('FE-25_Treasure_Vault')">
             <h2>💎 Treasure Vault</h2>
             <p>Archiwalia, unikatowe dzieła, skarby.</p>
         </div>
 
         <!-- Wellness Garden -->
-        <div class="district-tile" onclick="loadModule('FE-10_Wellness_Garden')">
+        <div class="tile wellness" onclick="loadModule('FE-10_Wellness_Garden')">
             <h2>🌿 Wellness Garden</h2>
             <p>Dobrostan, medytacja, równowaga.</p>
         </div>
 
         <!-- Sports Arena -->
-        <div class="district-tile" onclick="loadModule('FE-11_Sports_Arena')">
+        <div class="tile sports" onclick="loadModule('FE-11_Sports_Arena')">
             <h2>🏟️ Sports Arena</h2>
             <p>Sport, rywalizacja, transmisje.</p>
         </div>
 
         <!-- Business District -->
-        <div class="district-tile" onclick="loadModule('FE-12_Business_District')">
+        <div class="tile business" onclick="loadModule('FE-12_Business_District')">
             <h2>🏢 Business District</h2>
             <p>Networking, projekty, współpraca.</p>
         </div>
 
         <!-- Grants Office -->
-        <div class="district-tile" onclick="loadModule('FE-13_Grants_Office')">
+        <div class="tile grants" onclick="loadModule('FE-13_Grants_Office')">
             <h2>💰 Grants Office</h2>
             <p>Granty, wnioski, wsparcie.</p>
         </div>
 
         <!-- Volunteer Center -->
-        <div class="district-tile" onclick="loadModule('FE-14_Volunteer_Center')">
+        <div class="tile volunteer" onclick="loadModule('FE-14_Volunteer_Center')">
             <h2>🤝 Volunteer Center</h2>
             <p>Wolontariat, pomoc, inicjatywy.</p>
         </div>
 
         <!-- Budget Bank -->
-        <div class="district-tile" onclick="loadModule('FE-15_Budget_Bank')">
+        <div class="tile budget" onclick="loadModule('FE-15_Budget_Bank')">
             <h2>🏦 Budget Bank</h2>
             <p>Budżety, raporty, transparentność.</p>
         </div>
 
         <!-- Admin Tower -->
-        <div class="district-tile" onclick="loadModule('FE-16_Admin_Tower')">
+        <div class="tile admin" onclick="loadModule('FE-16_Admin_Tower')">
             <h2>🗼 Admin Tower</h2>
             <p>RBAC, audyt, operacje masowe.</p>
         </div>
 
         <!-- City Hall -->
-        <div class="district-tile" onclick="loadModule('FE-17_City_Hall')">
+        <div class="tile cityhall" onclick="loadModule('FE-17_City_Hall')">
             <h2>🏙️ City Hall</h2>
             <p>Centralne decyzje i governance.</p>
         </div>
 
         <!-- Media Tower -->
-        <div class="district-tile" onclick="loadModule('FE-18_Media_Tower')">
+        <div class="tile media" onclick="loadModule('FE-18_Media_Tower')">
             <h2>📡 Media Tower</h2>
             <p>Media, transmisje, oprawa.</p>
         </div>
 
         <!-- Knowledge Hub -->
-        <div class="district-tile" onclick="loadModule('FE-19_Knowledge_Hub')">
+        <div class="tile knowledge" onclick="loadModule('FE-19_Knowledge_Hub')">
             <h2>📘 Knowledge Hub</h2>
             <p>Wiedza, dokumentacja, materiały.</p>
         </div>
@@ -149,20 +145,47 @@
 </div>
 
 <style>
-    .district-tile {
-        background: #f5f5f5;
-        border-radius: 10px;
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .tile {
         padding: 20px;
+        border-radius: 12px;
+        color: white;
         cursor: pointer;
-        border: 1px solid #ddd;
         transition: 0.2s;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
-    .district-tile:hover {
-        background: #e8e8e8;
-        transform: translateY(-3px);
+
+    .tile:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.25);
     }
-    .district-tile h2 {
-        margin-top: 0;
-        margin-bottom: 10px;
-    }
+
+    /* Kolory dzielnic */
+    .user { background: #444; }
+    .citizen { background: #555; }
+
+    .stream { background: #1abc9c; }       /* Turkus */
+    .festival { background: #e67e22; }     /* Pomarańcz */
+    .culture { background: #8e44ad; }      /* Fiolet */
+    .market { background: #f1c40f; color: #333; } /* Złoto */
+    .edu { background: #3498db; }          /* Błękit */
+    .community { background: #2ecc71; }    /* Zieleń */
+    .dao { background: #2c3e50; }          /* Granat */
+    .innovation { background: #bdc3c7; color: #333; } /* Srebro */
+    .vault { background: #7b1e3c; }        /* Burgund */
+    .wellness { background: #27ae60; }     /* Jasna zieleń */
+    .sports { background: #c0392b; }       /* Czerwień */
+    .business { background: #1f2d3d; }     /* Ciemny granat */
+    .grants { background: #8e44ad; }       /* Purpura */
+    .volunteer { background: #e84393; }    /* Róż */
+    .budget { background: #bdc3c7; color: #333; } /* Jasne srebro */
+    .admin { background: #7f8c8d; }        /* Stalowy szary */
+    .cityhall { background: #34495e; }     /* Neutralny granat */
+    .media { background: #2980b9; }        /* Niebieski */
+    .knowledge { background: #6c7a89; }    /* Niebiesko-szary */
 </style>
