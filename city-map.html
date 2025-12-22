@@ -1,16 +1,16 @@
 <!-- ===============================================
-     CITY OF GATE — MAPA 2.0 (WERSJA NAMACALNA)
-     Ekran startowy miasta
+     CITY OF GATE — MAPA 2.1
+     Z kaflami: Mój Kokpit + Citizen Console
      =============================================== -->
 
 <div style="padding: 30px; font-family: Arial, sans-serif;">
 
     <h1 style="text-align:center; margin-bottom: 40px;">
-        🌆 City of GATE — Mapa 2.0
+        🌆 City of GATE — Mapa 2.1
     </h1>
 
     <p style="text-align:center; font-size: 18px; margin-bottom: 40px;">
-        Wybierz dzielnicę miasta, do której chcesz się teleportować.
+        Wybierz dzielnicę miasta lub przejdź do swojego kokpitu.
     </p>
 
     <div style="
@@ -18,6 +18,18 @@
         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
         gap: 20px;
     ">
+
+        <!-- ✅ Mój Kokpit -->
+        <div class="district-tile" onclick="loadModule('FE-20_Profile_Console')">
+            <h2>👤 Mój Kokpit</h2>
+            <p>Twoje centrum dowodzenia: widżety, aktywność, bilety, zakupy, reputacja.</p>
+        </div>
+
+        <!-- ✅ Citizen Console -->
+        <div class="district-tile" onclick="loadModule('FE-36_Citizen_Console')">
+            <h2>🧭 Citizen Console</h2>
+            <p>Twoja rola w mieście: wpływ, projekty, głosowania, tokeny.</p>
+        </div>
 
         <!-- Stream Square -->
         <div class="district-tile" onclick="loadModule('FE-22_Stream_Square')">
