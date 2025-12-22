@@ -1,8 +1,7 @@
 /**
  * ============================================================
- *  CityOfGATE — Loader 3.0
+ *  CityOfGATE — Loader 3.1 (Anti‑Cache Edition)
  *  Centralny silnik ładowania modułów FE‑XX
- *  Autor: Piotr + Copilot
  * ============================================================
  *
  * Funkcje:
@@ -22,8 +21,8 @@
    GLOBALNE ZMIENNE
    ============================================================ */
 
-window.currentUserId = null;   // ustawiane po zalogowaniu / pobraniu profilu
-window.currentModule = null;   // aktualnie załadowany moduł
+window.currentUserId = null;
+window.currentModule = null;
 
 /* ============================================================
    LOADER UI
@@ -43,17 +42,16 @@ function hideLoader() {
 }
 
 /* ============================================================
-   ŁADOWANIE UŻYTKOWNIKA (Profile Console 2.0)
+   ŁADOWANIE UŻYTKOWNIKA
    ============================================================ */
 
 async function loadUser() {
   showLoader("Ładowanie profilu...");
 
-  // Tymczasowo — w przyszłości pobierzesz userId z logowania
   const userId = "USER_001";
   window.currentUserId = userId;
 
-  const res = await loadUserProfile(userId);
+  const res = await callApi("user/getProfile", { userId });
 
   if (!res.ok) {
     alert("Błąd ładowania profilu: " + res.error);
@@ -73,7 +71,7 @@ async function loadModule(moduleName) {
   try {
     showLoader("Ładowanie modułu...");
 
-    // 1. Wczytaj plik FE‑XX dynamicznie
+    // 1. Wczytaj plik FE‑XX dynamicznie (z anty‑cache)
     await loadScript(moduleName + ".js");
 
     // 2. Znajdź funkcję startową
@@ -88,8 +86,8 @@ async function loadModule(moduleName) {
 
     // 3. Uruchom moduł
     startFn();
-
     window.currentModule = moduleName;
+
     hideLoader();
 
   } catch (err) {
@@ -99,32 +97,15 @@ async function loadModule(moduleName) {
 }
 
 /* ============================================================
-   DYNAMICZNE WCZYTYWANIE SKRYPTÓW
+   DYNAMICZNE WCZYTYWANIE SKRYPTÓW (ANTI‑CACHE)
    ============================================================ */
 
 function loadScript(url) {
   return new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[src="${url}"]`);
-
-    // Jeśli już załadowany — nie ładuj ponownie
-    if (existing) {
-      resolve();
-      return;
-    }
+    // Usuwamy poprzednią wersję skryptu, jeśli istnieje
+    const existing = document.querySelector(`script[data-module="${url}"]`);
+    if (existing) existing.remove();
 
     const script = document.createElement("script");
-    script.src = url;
-    script.onload = () => resolve();
-    script.onerror = () => reject("Nie można załadować: " + url);
 
-    document.body.appendChild(script);
-  });
-}
-
-/* ============================================================
-   AUTO-INIT (np. na city-map.html)
-   ============================================================ */
-
-window.addEventListener("DOMContentLoaded", async () => {
-  await loadUser();
-});
+    // ANTY‑CACHE: zawsze pobieraj świeżą wersję
