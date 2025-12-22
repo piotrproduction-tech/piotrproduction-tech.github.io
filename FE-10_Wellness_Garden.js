@@ -25,8 +25,8 @@ function FE_10_Wellness_Garden_start() {
 async function FE_10_loadStats() {
     const userId = window.currentUserId;
 
-    // 🔧 poprawione: używamy apiRequest zamiast callApi
-    const res = await apiRequest("wellness/getUserStats", { userId });
+    // ✔ poprawione — używamy callApi, bo TYLKO ta funkcja istnieje
+    const res = await callApi("wellness/getUserStats", { userId });
 
     const el = document.getElementById("wg10-content");
 
