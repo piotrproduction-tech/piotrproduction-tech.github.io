@@ -22,9 +22,8 @@
  * Ustaw tutaj URL swojego WebApp
  * (po publikacji: Deploy → New Deployment → WebApp)
  */
-const API_URL = "const API_URL = "const API_URL = "https://script.google.com/macros/s/AKfycbxTDcP7HZruQfdiSdkk_UstwqHUcvNEalwctDTSgLhRoHp64h7QoIxXXBNvSL_dhtPo/exec";
-";
-";
+const API_URL = "https://script.google.com/macros/s/AKfycbxTDcP7HZruQfdiSdkk_UstwqHUcvNEalwctDTSgLhRoHp64h7QoIxXXBNvSL_dhtPo/exec";
+
 
 /**
  * Główna funkcja wywołująca backend
@@ -87,4 +86,5 @@ async function loadSystemLogs() {
 async function pingBackend() {
   return await callApi("system/ping", {});
 }
+
 
