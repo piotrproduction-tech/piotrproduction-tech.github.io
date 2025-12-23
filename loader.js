@@ -1,46 +1,78 @@
 /* ============================================================
-   DYNAMICZNE WCZYTYWANIE SKRYPTÓW (ANTI‑CACHE)
+   SYSTEM MODUŁÓW CITYOFGATE — LOADER 2.0
    ============================================================ */
 
-function loadScript(url) {
-  return new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[data-module="${url}"]`);
-    if (existing) existing.remove();
+async function loadModule(moduleFolder) {
+    console.log(`[${moduleFolder}] Loading module…`);
 
-    const script = document.createElement("script");
-    script.src = `${url}?v=${Date.now()}`;
-    script.dataset.module = url;
+    const container = document.getElementById("module-container");
+    if (!container) {
+        console.error("Brak elementu #module-container");
+        return;
+    }
 
-    script.onload = () => resolve();
-    script.onerror = () => reject(`Błąd ładowania skryptu: ${url}`);
+    const basePath = `modules/${moduleFolder}`;
 
-    document.body.appendChild(script);
-  });
-}
+    /* ------------------------------
+       1. Pobierz manifest
+    ------------------------------ */
+    let manifest;
+    try {
+        const manifestResponse = await fetch(`${basePath}/manifest.json?v=${Date.now()}`);
+        manifest = await manifestResponse.json();
+        console.log(`[${manifest.id}] Manifest loaded`);
+    } catch (err) {
+        console.error(`[${moduleFolder}] Błąd ładowania manifest.json`, err);
+        return;
+    }
 
-/* ============================================================
-   ŁADOWANIE MODUŁÓW
-   ============================================================ */
+    /* ------------------------------
+       2. Wczytaj HTML modułu
+    ------------------------------ */
+    try {
+        const htmlResponse = await fetch(`${basePath}/${manifest.id}.html?v=${Date.now()}`);
+        const html = await htmlResponse.text();
+        container.innerHTML = html;
+        console.log(`[${manifest.id}] HTML loaded`);
+    } catch (err) {
+        console.error(`[${manifest.id}] Błąd ładowania HTML`, err);
+        return;
+    }
 
-function loadModule(moduleId) {
-  console.log("Ładuję moduł:", moduleId);
+    /* ------------------------------
+       3. Wczytaj CSS modułu (opcjonalnie)
+    ------------------------------ */
+    try {
+        const cssUrl = `${basePath}/${manifest.id}.css?v=${Date.now()}`;
+        const cssCheck = await fetch(cssUrl);
 
-  const container = document.getElementById("module-container");
-  if (!container) {
-    console.error("Brak elementu #module-container");
-    return;
-  }
+        if (cssCheck.ok) {
+            const link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.href = cssUrl;
+            document.head.appendChild(link);
+            console.log(`[${manifest.id}] CSS loaded`);
+        } else {
+            console.log(`[${manifest.id}] CSS not found (optional)`);
+        }
+    } catch (err) {
+        console.warn(`[${manifest.id}] CSS load skipped`, err);
+    }
 
-  // Wczytaj HTML modułu
-  fetch(`modules/${moduleId}.html?v=${Date.now()}`)
-    .then(response => response.text())
-    .then(html => {
-      container.innerHTML = html;
+    /* ------------------------------
+       4. Wczytaj JS modułu jako ES module
+    ------------------------------ */
+    try {
+        const moduleJs = await import(`./${basePath}/${manifest.id}.js?v=${Date.now()}`);
+        console.log(`[${manifest.id}] JS loaded`);
 
-      // Wczytaj JS modułu
-      return loadScript(`modules/${moduleId}.js`);
-    })
-    .catch(err => {
-      console.error("Błąd ładowania modułu:", err);
-    });
+        if (moduleJs.init) {
+            moduleJs.init();
+            console.log(`[${manifest.id}] Ready`);
+        } else {
+            console.warn(`[${manifest.id}] Brak funkcji init()`);
+        }
+    } catch (err) {
+        console.error(`[${manifest.id}] Błąd ładowania JS`, err);
+    }
 }
