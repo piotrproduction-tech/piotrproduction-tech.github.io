@@ -1,0 +1,60 @@
+{
+  "moduleId": "BE-21",
+  "moduleName": "Marketplace",
+  "reputation": {
+    "enabled": true,
+    "weights": {
+      "positive": 5,
+      "negative": -5,
+      "neutral": 0
+    },
+    "eventMapping": {
+      "created": 3,
+      "sold": 20,
+      "review_positive": 10,
+      "review_negative": -10
+    }
+  },
+  "tokens": {
+    "enabled": true,
+    "baseReward": 0,
+    "eventMapping": {
+      "created": 5,
+      "sold": 25,
+      "review_positive": 5
+    }
+  },
+  "rewards": {
+    "enabled": true,
+    "tiers": [
+      {
+        "id": "seller",
+        "name": "Trusted Seller",
+        "minReputation": 40,
+        "minTokens": 100
+      },
+      {
+        "id": "merchant",
+        "name": "Master Merchant",
+        "minReputation": 80,
+        "minTokens": 200
+      }
+    ]
+  },
+  "antiAbuse": {
+    "enabled": true,
+    "suspiciousKeywords": [
+      "fake",
+      "scam",
+      "fraud",
+      "manipulation"
+    ],
+    "rateLimits": {
+      "perMinute": 30,
+      "perHour": 300
+    },
+    "cooldowns": {
+      "onFlag": 60000
+    }
+  }
+}

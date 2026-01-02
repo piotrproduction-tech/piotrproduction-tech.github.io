@@ -1,0 +1,68 @@
+{
+  "moduleId": "BE-02",
+  "moduleName": "Marketplace_Engine",
+  "reputation": {
+    "enabled": true,
+    "weights": {
+      "positive": 5,
+      "negative": -5,
+      "neutral": 0
+    },
+    "eventMapping": {
+      "created": 5,
+      "approved": 10,
+      "joined": 3,
+      "rejected": -10,
+      "removed": -5,
+      "flagged": -15
+    }
+  },
+  "tokens": {
+    "enabled": true,
+    "baseReward": 0,
+    "eventMapping": {
+      "created": 10,
+      "approved": 20,
+      "joined": 5
+    }
+  },
+  "rewards": {
+    "enabled": true,
+    "tiers": [
+      {
+        "id": "tier_1",
+        "name": "Active Citizen",
+        "minReputation": 20,
+        "minTokens": 50
+      },
+      {
+        "id": "tier_2",
+        "name": "City Builder",
+        "minReputation": 50,
+        "minTokens": 100
+      },
+      {
+        "id": "tier_3",
+        "name": "City Legend",
+        "minReputation": 100,
+        "minTokens": 200
+      }
+    ]
+  },
+  "antiAbuse": {
+    "enabled": true,
+    "suspiciousKeywords": [
+      "spam",
+      "abuse",
+      "bot",
+      "duplicate"
+    ],
+    "rateLimits": {
+      "perMinute": 30,
+      "perHour": 300
+    },
+    "cooldowns": {
+      "onFlag": 60000
+    }
+  }
+}

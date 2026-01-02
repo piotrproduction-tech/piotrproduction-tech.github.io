@@ -1,0 +1,32 @@
+
+
+
+/* FE_FESTIVAL_ADMIN_ACCESS_CSS */
+
+.admin-access-panel {
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.access-section {
+  margin-bottom: 20px;
+}
+
+.override-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.override-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.override-key {
+  width: 200px;
+  font-weight: bold;
+}

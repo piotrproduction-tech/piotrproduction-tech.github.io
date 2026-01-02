@@ -1,0 +1,25 @@
+{
+  "tiles": [
+    {
+      "id": "city_hall",
+      "label": "City Hall",
+      "module": "FE-00__City",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "id": "festival_pavilion",
+      "label": "Festival Pavilion",
+      "module": "FE-01__Festival_Pavilion",
+      "x": 1,
+      "y": 0
+    },
+    {
+      "id": "marketplace",
+      "label": "Marketplace Street",
+      "module": "FE-02__Marketplace",
+      "x": 2,
+      "y": 0
+    }
+  ]
+}

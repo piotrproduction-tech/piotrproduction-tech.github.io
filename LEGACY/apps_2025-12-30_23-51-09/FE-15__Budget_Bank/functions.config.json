@@ -1,0 +1,12 @@
+{
+  "enabledActions": [
+    "addSubmission",
+    "editSubmission",
+    "reviewSubmission",
+    "rateSubmission",
+    "assignJury",
+    "manageWorkflow"
+  ],
+  "enabledIntegrations": ["youtube", "zoom"],
+  "workflowEnabled": true
+}

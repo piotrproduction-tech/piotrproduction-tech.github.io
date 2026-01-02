@@ -1,0 +1,41 @@
+
+
+
+/* FE_FESTIVAL_NOTIFICATIONS_CSS */
+.festival-notifications {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9998;
+}
+
+.notif {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  max-width: 280px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.notif-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.notif-narrative { border-left: 4px solid #ffd27f; }
+.notif-reputation { border-left: 4px solid #7fff9f; }
+.notif-governance { border-left: 4px solid #ffb27f; }
+.notif-security { border-left: 4px solid #ff7fb2; }
+.notif-identity { border-left: 4px solid #7fffff; }
+.notif-economy { border-left: 4px solid #fff27f; }
+.notif-simulation { border-left: 4px solid #b27fff; }
+.notif-pulse { border-left: 4px solid #ff7f7f; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

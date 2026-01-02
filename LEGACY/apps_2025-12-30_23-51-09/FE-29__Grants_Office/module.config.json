@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-29__Grants_Office",
+  "moduleName": "Grants Office",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Granty, wnioski, oceny."
+}

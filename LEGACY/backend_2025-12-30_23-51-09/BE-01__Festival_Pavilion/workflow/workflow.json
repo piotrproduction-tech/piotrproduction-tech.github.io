@@ -1,0 +1,50 @@
+{
+  "entity": "WorkSubmission",
+  "states": [
+    "draft",
+    "submitted",
+    "legal_check",
+    "fingerprint_check",
+    "jury_assignment",
+    "jury_review",
+    "ai_analysis",
+    "finalist_selection",
+    "certified",
+    "rejected"
+  ],
+  "actions": {
+    "updateDraft": ["draft"],
+    "submit": ["draft"],
+    "runLegalCheck": ["submitted"],
+    "approveLegal": ["legal_check"],
+    "rejectLegal": ["legal_check"],
+    "approveFingerprint": ["fingerprint_check"],
+    "rejectFingerprint": ["fingerprint_check"],
+    "assignJury": ["jury_assignment"],
+    "unassignJury": ["jury_assignment"],
+    "addJuryScore": ["jury_review"],
+    "finalizeJuryScores": ["jury_review"],
+    "runAI": ["ai_analysis"],
+    "approveAI": ["ai_analysis"],
+    "rejectAI": ["ai_analysis"],
+    "selectAsFinalist": ["finalist_selection"],
+    "rejectAsNonFinalist": ["finalist_selection"],
+    "issueCertificate": ["certified"],
+    "publishResults": ["certified"],
+    "archiveSubmission": ["rejected"]
+  },
+  "transitions": [
+    { "from": "draft", "action": "submit", "to": "submitted" },
+    { "from": "submitted", "action": "runLegalCheck", "to": "legal_check" },
+    { "from": "legal_check", "action": "approveLegal", "to": "fingerprint_check" },
+    { "from": "legal_check", "action": "rejectLegal", "to": "rejected" },
+    { "from": "fingerprint_check", "action": "approveFingerprint", "to": "jury_assignment" },
+    { "from": "fingerprint_check", "action": "rejectFingerprint", "to": "rejected" },
+    { "from": "jury_assignment", "action": "assignJury", "to": "jury_review" },
+    { "from": "jury_review", "action": "finalizeJuryScores", "to": "ai_analysis" },
+    { "from": "ai_analysis", "action": "approveAI", "to": "finalist_selection" },
+    { "from": "ai_analysis", "action": "rejectAI", "to": "rejected" },
+    { "from": "finalist_selection", "action": "selectAsFinalist", "to": "certified" },
+    { "from": "finalist_selection", "action": "rejectAsNonFinalist", "to": "rejected" }
+  ]
+}

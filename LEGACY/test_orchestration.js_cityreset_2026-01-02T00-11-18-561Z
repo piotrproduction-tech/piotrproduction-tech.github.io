@@ -1,0 +1,14 @@
+import { runFestivalOrchestration } from "./apps/FE-bootstrap/festival_engine_bootstrap.js";
+import { DirectorInsightPacket } from "./apps/GFAL-20__Festival_AI_Director_Insights_Layer/models/directorInsightPacket.js";
+
+const packet = new DirectorInsightPacket({
+  festivalId: 1,
+  trendingFilms: [{ filmId: 10, views: 120, avgRating: 4.6 }],
+  socialPulse: { recentEvents: 55 },
+  dropOffAlerts: []
+});
+
+runFestivalOrchestration({
+  profileId: "hype",
+  insightPacket: packet
+});

@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-36__Citizen_Console",
+  "moduleName": "Citizen Console",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Panel obywatela."
+}

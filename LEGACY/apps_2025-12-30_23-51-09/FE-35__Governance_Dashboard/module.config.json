@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-35__Governance_Dashboard",
+  "moduleName": "Governance Dashboard",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Zarządzanie DAO."
+}

@@ -1,0 +1,62 @@
+
+
+
+/* FE_FESTIVAL_OVERLAY_SCENARIO_AI_ORCHESTRATOR_CONTROLLER_CSS */
+
+.overlay-ai-orchestrator-controller {
+  position: fixed;
+  bottom: 12px;
+  left: 1680px;
+  padding: 12px;
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  border-radius: 8px;
+  z-index: 9999;
+  width: 260px;
+  font-size: 13px;
+}
+
+.orch-section {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.orch-btn {
+  padding: 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.orch-btn.active {
+  background: rgba(80,255,80,0.3);
+}
+
+.orch-value {
+  padding: 6px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 6px;
+}
+
+.orch-state {
+  padding: 8px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.orch-run-btn {
+  margin-top: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  background: rgba(255,200,80,0.3);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}

@@ -1,0 +1,28 @@
+
+
+
+/* FE_FESTIVAL_OVERLAY_CONTROLLER_CSS */
+
+.overlay-controller {
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+  padding: 12px;
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  border-radius: 8px;
+  z-index: 9999;
+  font-size: 13px;
+}
+
+.controller-section {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.overlay-controller select {
+  padding: 4px;
+  border-radius: 4px;
+}

@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-50__Admin_Tower",
+  "moduleName": "Admin Tower",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Zarządzanie miastem."
+}

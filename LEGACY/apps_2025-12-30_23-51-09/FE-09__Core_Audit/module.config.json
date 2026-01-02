@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-09__Core_Audit",
+  "moduleName": "Core Audit",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Logi, bezpieczeństwo, audyty."
+}

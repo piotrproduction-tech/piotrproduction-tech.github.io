@@ -1,0 +1,9 @@
+{
+  "moduleId": "BE-13__Grants_Office",
+  "description": "Backend grantów: wnioski, oceny.",
+  "routes": [],
+  "services": [],
+  "workflow": [],
+  "ai": [],
+  "certificates": []
+}

@@ -1,0 +1,59 @@
+{
+  "moduleId": "BE-49",
+  "moduleName": "Budget_Bank",
+  "reputation": {
+    "enabled": true,
+    "weights": {
+      "positive": 5,
+      "negative": -5,
+      "neutral": 0
+    },
+    "eventMapping": {
+      "created": 5,
+      "joined": 10,
+      "volunteer": 15,
+      "event": 8
+    }
+  },
+  "tokens": {
+    "enabled": true,
+    "baseReward": 0,
+    "eventMapping": {
+      "created": 3,
+      "joined": 5,
+      "volunteer": 10
+    }
+  },
+  "rewards": {
+    "enabled": true,
+    "tiers": [
+      {
+        "id": "helper",
+        "name": "Community Helper",
+        "minReputation": 20,
+        "minTokens": 30
+      },
+      {
+        "id": "leader",
+        "name": "Community Leader",
+        "minReputation": 60,
+        "minTokens": 80
+      }
+    ]
+  },
+  "antiAbuse": {
+    "enabled": true,
+    "suspiciousKeywords": [
+      "spam",
+      "troll",
+      "harassment"
+    ],
+    "rateLimits": {
+      "perMinute": 30,
+      "perHour": 300
+    },
+    "cooldowns": {
+      "onFlag": 60000
+    }
+  }
+}

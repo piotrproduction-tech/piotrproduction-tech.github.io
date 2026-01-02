@@ -1,0 +1,58 @@
+{
+  "moduleId": "BE-52",
+  "moduleName": "Festival_Hub",
+  "reputation": {
+    "enabled": true,
+    "weights": {
+      "positive": 5,
+      "negative": -5,
+      "neutral": 0
+    },
+    "eventMapping": {
+      "submission": 10,
+      "accepted": 20,
+      "jury_vote": 5
+    }
+  },
+  "tokens": {
+    "enabled": true,
+    "baseReward": 0,
+    "eventMapping": {
+      "submission": 10,
+      "accepted": 50,
+      "jury_vote": 5
+    }
+  },
+  "rewards": {
+    "enabled": true,
+    "tiers": [
+      {
+        "id": "creator",
+        "name": "Festival Creator",
+        "minReputation": 30,
+        "minTokens": 50
+      },
+      {
+        "id": "laureate",
+        "name": "Festival Laureate",
+        "minReputation": 80,
+        "minTokens": 150
+      }
+    ]
+  },
+  "antiAbuse": {
+    "enabled": true,
+    "suspiciousKeywords": [
+      "plagiarism",
+      "duplicate",
+      "fake"
+    ],
+    "rateLimits": {
+      "perMinute": 30,
+      "perHour": 300
+    },
+    "cooldowns": {
+      "onFlag": 60000
+    }
+  }
+}

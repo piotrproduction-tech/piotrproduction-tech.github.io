@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-42__Sports_Arena",
+  "moduleName": "Sports Arena",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Sport, rywalizacja."
+}

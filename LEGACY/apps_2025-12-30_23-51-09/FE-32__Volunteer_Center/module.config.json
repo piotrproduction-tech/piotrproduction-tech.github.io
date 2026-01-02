@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-32__Volunteer_Center",
+  "moduleName": "Volunteer Center",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Wolontariat, akcje społeczne."
+}

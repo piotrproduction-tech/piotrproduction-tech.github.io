@@ -1,0 +1,13 @@
+{
+  "metrics": {
+    "totalItems": {
+      "description": "Łączna liczba ofert w Marketplace"
+    },
+    "activeItems": {
+      "description": "Liczba aktywnych ofert"
+    },
+    "uniqueOwners": {
+      "description": "Liczba unikalnych twórców ofert"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-41__Culture_Gallery",
+  "moduleName": "Culture Gallery",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Galeria sztuki, ekspozycje."
+}

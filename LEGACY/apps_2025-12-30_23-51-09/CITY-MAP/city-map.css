@@ -1,0 +1,62 @@
+.city-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+    padding: 30px;
+    perspective: 900px;
+}
+
+.tile {
+    background: #1a1a1a;
+    padding: 25px;
+    border-radius: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transform-style: preserve-3d;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.tile i {
+    font-size: 32px;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.tile span {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.tile:hover {
+    transform: translateY(-8px) rotateX(6deg);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+}
+
+/* Kolory dzielnic */
+.festival { background: #6a1b9a; }
+.finance { background: #c49b00; }
+.community { background: #2e7d32; }
+.innovation { background: #0288d1; }
+.education { background: #1565c0; }
+.audit { background: #455a64; }
+.rbac { background: #5d4037; }
+.config { background: #37474f; }
+.vault { background: #4e342e; }
+.wellness { background: #66bb6a; }
+.sports { background: #d32f2f; }
+.business { background: #283593; }
+.grants { background: #8e24aa; }
+.volunteer { background: #ec407a; }
+.budget { background: #90a4ae; }
+.admin { background: #546e7a; }
+.cityhall { background: #3f51b5; }
+.media { background: #f57c00; }
+.knowledge { background: #5c6bc0; }
+.profile { background: #00897b; }
+.marketplace { background: #fbc02d; }
+.stream { background: #00acc1; }
+.gallery { background: #7e57c2; }
+.innovation2 { background: #26a69a; }
+.production { background: #8d6e63; }

@@ -1,0 +1,26 @@
+{
+  "workCertificates": {
+    "festival_basic": {
+      "requirements": {
+        "legality": true,
+        "fingerprint": true,
+        "aiQualityScore": 0.6
+      },
+      "grants": {
+        "status": "CERTIFIED"
+      }
+    }
+  },
+  "userCertificates": {
+    "creator_basic": {
+      "requirements": {
+        "reputation": 40,
+        "tokens": 200,
+        "festivalParticipation": true
+      },
+      "grants": {
+        "role": "creator"
+      }
+    }
+  }
+}

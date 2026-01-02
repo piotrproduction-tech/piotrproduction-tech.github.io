@@ -1,0 +1,15 @@
+
+
+
+/* FE_FESTIVAL_OVERLAY_CSS */
+
+.festival-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9997;
+}
+
+.mode-transparent { opacity: 0.4; }
+.mode-semi { opacity: 0.75; }
+.mode-full { opacity: 1; }

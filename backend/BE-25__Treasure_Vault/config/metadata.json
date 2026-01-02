@@ -1,0 +1,9 @@
+{
+  "id": "BE-25",
+  "name": "Treasure_Vault",
+  "title": "Treasure Vault",
+  "role": "district",
+  "districtType": "treasure",
+  "createdFrom": "LEGACY_2025-12-30",
+  "version": 1
+}

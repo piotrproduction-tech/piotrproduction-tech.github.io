@@ -1,0 +1,57 @@
+{
+  "moduleId": "BE-53",
+  "moduleName": "Media_Tower",
+  "reputation": {
+    "enabled": true,
+    "weights": {
+      "positive": 5,
+      "negative": -5,
+      "neutral": 0
+    },
+    "eventMapping": {
+      "broadcast": 5,
+      "announcement": 3,
+      "trending": 15
+    }
+  },
+  "tokens": {
+    "enabled": true,
+    "baseReward": 0,
+    "eventMapping": {
+      "broadcast": 5,
+      "trending": 20
+    }
+  },
+  "rewards": {
+    "enabled": true,
+    "tiers": [
+      {
+        "id": "reporter",
+        "name": "City Reporter",
+        "minReputation": 30,
+        "minTokens": 40
+      },
+      {
+        "id": "anchor",
+        "name": "Media Anchor",
+        "minReputation": 70,
+        "minTokens": 120
+      }
+    ]
+  },
+  "antiAbuse": {
+    "enabled": true,
+    "suspiciousKeywords": [
+      "fake_news",
+      "misinfo",
+      "spam"
+    ],
+    "rateLimits": {
+      "perMinute": 30,
+      "perHour": 300
+    },
+    "cooldowns": {
+      "onFlag": 60000
+    }
+  }
+}

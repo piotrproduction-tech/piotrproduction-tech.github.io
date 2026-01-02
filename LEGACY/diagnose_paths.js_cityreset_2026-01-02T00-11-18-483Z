@@ -1,0 +1,38 @@
+// diagnose_paths.js
+const fs = require("fs");
+const path = require("path");
+
+console.log("=== DIAGNOSTYKA ŚCIEŻEK CITYOF-GATE ===\n");
+
+// 1. Aktualny katalog roboczy
+console.log("1. process.cwd():");
+console.log(process.cwd());
+console.log("");
+
+// 2. Absolutna ścieżka do backend/
+const backendPath = path.join(process.cwd(), "backend");
+console.log("2. backend path:");
+console.log(backendPath, fs.existsSync(backendPath) ? "(EXISTS)" : "(MISSING)");
+console.log("");
+
+// 3. Absolutna ścieżka do BE‑21__Marketplace
+const be21Path = path.join(backendPath, "BE-21__Marketplace");
+console.log("3. BE‑21__Marketplace path:");
+console.log(be21Path, fs.existsSync(be21Path) ? "(EXISTS)" : "(MISSING)");
+console.log("");
+
+// 4. Ścieżka do life/
+const lifePath = path.join(be21Path, "life");
+console.log("4. life/ path:");
+console.log(lifePath, fs.existsSync(lifePath) ? "(EXISTS)" : "(MISSING)");
+console.log("");
+
+// 5. Jeśli life istnieje — wypisz pliki
+if (fs.existsSync(lifePath)) {
+  console.log("5. Files in life/:");
+  console.log(fs.readdirSync(lifePath));
+} else {
+  console.log("5. life/ does not exist — generator działał w innym katalogu.");
+}
+
+console.log("\n=== KONIEC DIAGNOSTYKI ===");

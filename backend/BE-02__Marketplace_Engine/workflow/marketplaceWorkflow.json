@@ -1,0 +1,16 @@
+{
+  "entity": "marketplaceItem",
+  "states": [
+    "draft",
+    "active",
+    "paused",
+    "archived"
+  ],
+  "transitions": {
+    "draft": ["active"],
+    "active": ["paused", "archived"],
+    "paused": ["active", "archived"],
+    "archived": []
+  },
+  "defaultState": "draft"
+}

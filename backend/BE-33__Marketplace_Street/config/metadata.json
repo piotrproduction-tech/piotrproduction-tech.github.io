@@ -1,0 +1,9 @@
+{
+  "id": "BE-33",
+  "name": "Marketplace_Street",
+  "title": "Marketplace Street",
+  "role": "district",
+  "districtType": "marketplace",
+  "createdFrom": "LEGACY_2025-12-30",
+  "version": 1
+}

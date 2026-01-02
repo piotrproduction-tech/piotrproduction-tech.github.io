@@ -1,0 +1,8 @@
+{
+  "id": "BE-07",
+  "name": "Policy_Engine_RBAC",
+  "title": "Policy Engine RBAC",
+  "districtType": "governance",
+  "createdFrom": "LEGACY_2025-12-30",
+  "version": 1
+}

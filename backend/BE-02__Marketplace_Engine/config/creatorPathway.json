@@ -1,0 +1,28 @@
+{
+  "stages": [
+    {
+      "id": "marketplace",
+      "label": "Marketplace",
+      "description": "Pierwszy krok — wystawiasz swoje rzeczy w Marketplace.",
+      "requirements": []
+    },
+    {
+      "id": "marketplace_street",
+      "label": "Marketplace Street",
+      "description": "Twoje rzeczy zaczynają być widoczne jako stała obecność.",
+      "requirements": ["minItems:3"]
+    },
+    {
+      "id": "creator",
+      "label": "Creator",
+      "description": "Masz już rozpoznawalny styl i aktywność.",
+      "requirements": ["minItems:5", "minActiveDays:30"]
+    },
+    {
+      "id": "certified_creator",
+      "label": "Certified Creator",
+      "description": "Oficjalnie certyfikowany twórca w CITYOF-GATE.",
+      "requirements": ["festivalParticipation:true", "communityApproval:true"]
+    }
+  ]
+}

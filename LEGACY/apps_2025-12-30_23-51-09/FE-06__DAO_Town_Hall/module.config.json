@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-06__DAO_Town_Hall",
+  "moduleName": "DAO Town Hall",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Głosowania, propozycje, governance."
+}

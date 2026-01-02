@@ -1,0 +1,28 @@
+{
+  "levels": {
+    "1": {
+      "name": "Viewer",
+      "panels": ["DATA"],
+      "actions": ["view"],
+      "requirements": {}
+    },
+    "2": {
+      "name": "Creator",
+      "panels": ["DATA", "FORMS", "AI"],
+      "actions": ["addSubmission"],
+      "requirements": { "reputation": 10 }
+    },
+    "3": {
+      "name": "Curator",
+      "panels": ["RELATIONS", "ANALYTICS"],
+      "actions": ["reviewSubmission"],
+      "requirements": { "reputation": 30 }
+    },
+    "4": {
+      "name": "Organizer",
+      "panels": ["WORKFLOW", "ANALYTICS"],
+      "actions": ["manageWorkflow"],
+      "requirements": { "reputation": 50, "tokens": 500 }
+    }
+  }
+}

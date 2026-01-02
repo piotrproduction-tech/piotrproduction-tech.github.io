@@ -1,0 +1,6 @@
+{
+  "id": "FE-03",
+  "name": "Profile",
+  "baseRoute": "/profile",
+  "description": "Moduł FE-03__Profile"
+}

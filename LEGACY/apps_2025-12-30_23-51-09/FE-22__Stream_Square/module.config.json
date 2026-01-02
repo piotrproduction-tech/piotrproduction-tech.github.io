@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-22__Stream_Square",
+  "moduleName": "Stream Square",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Streaming, wydarzenia live."
+}

@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-25__Treasure_Vault",
+  "moduleName": "Treasure Vault",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Tokeny, zasoby, NFT."
+}

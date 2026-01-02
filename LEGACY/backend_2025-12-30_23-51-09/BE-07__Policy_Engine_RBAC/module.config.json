@@ -1,0 +1,9 @@
+{
+  "moduleId": "BE-07__Policy_Engine_RBAC",
+  "description": "Backend RBAC: role, uprawnienia, polityki.",
+  "routes": [],
+  "services": [],
+  "workflow": [],
+  "ai": [],
+  "certificates": []
+}

@@ -1,0 +1,57 @@
+{
+  "moduleId": "BE-42",
+  "moduleName": "Sports_Arena",
+  "reputation": {
+    "enabled": true,
+    "weights": {
+      "positive": 5,
+      "negative": -5,
+      "neutral": 0
+    },
+    "eventMapping": {
+      "match_won": 20,
+      "record": 30,
+      "participation": 5
+    }
+  },
+  "tokens": {
+    "enabled": true,
+    "baseReward": 0,
+    "eventMapping": {
+      "match_won": 20,
+      "record": 50
+    }
+  },
+  "rewards": {
+    "enabled": true,
+    "tiers": [
+      {
+        "id": "athlete",
+        "name": "City Athlete",
+        "minReputation": 40,
+        "minTokens": 80
+      },
+      {
+        "id": "champion",
+        "name": "City Champion",
+        "minReputation": 100,
+        "minTokens": 200
+      }
+    ]
+  },
+  "antiAbuse": {
+    "enabled": true,
+    "suspiciousKeywords": [
+      "cheat",
+      "exploit",
+      "bot"
+    ],
+    "rateLimits": {
+      "perMinute": 30,
+      "perHour": 300
+    },
+    "cooldowns": {
+      "onFlag": 60000
+    }
+  }
+}

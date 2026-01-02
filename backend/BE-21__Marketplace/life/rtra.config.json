@@ -1,0 +1,15 @@
+{
+  "districtType": "marketplace",
+  "reputation": {
+    "marketplace.offer.created": 3,
+    "marketplace.offer.published": 5,
+    "marketplace.offer.sold": 20,
+    "marketplace.review.positive": 10,
+    "marketplace.review.negative": -10,
+    "marketplace.service.completed": 10
+  },
+  "tokens": {
+    "marketplace.offer.sold": 25,
+    "marketplace.service.completed": 15
+  }
+}

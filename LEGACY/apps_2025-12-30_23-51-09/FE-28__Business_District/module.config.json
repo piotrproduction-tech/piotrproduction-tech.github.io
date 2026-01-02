@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-28__Business_District",
+  "moduleName": "Business District",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Firmy, oferty, współpraca."
+}

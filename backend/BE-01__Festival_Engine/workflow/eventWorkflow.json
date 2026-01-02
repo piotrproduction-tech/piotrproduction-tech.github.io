@@ -1,0 +1,14 @@
+{
+  "entity": "festivalEvent",
+  "defaultState": "planned",
+  "states": [
+    "planned",
+    "published",
+    "archived"
+  ],
+  "transitions": {
+    "planned": ["published"],
+    "published": ["archived"],
+    "archived": []
+  }
+}

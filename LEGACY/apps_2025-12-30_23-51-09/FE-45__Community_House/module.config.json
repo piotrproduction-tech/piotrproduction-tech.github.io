@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-45__Community_House",
+  "moduleName": "Community House",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Społeczność, relacje."
+}

@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-19__Knowledge_Hub",
+  "moduleName": "Knowledge Hub",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Biblioteka, wiedza, AI."
+}

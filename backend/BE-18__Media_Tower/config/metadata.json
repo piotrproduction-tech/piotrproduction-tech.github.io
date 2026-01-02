@@ -1,0 +1,9 @@
+{
+  "id": "BE-18",
+  "name": "Media_Tower",
+  "title": "Media Tower",
+  "role": "district",
+  "districtType": "media",
+  "createdFrom": "LEGACY_2025-12-30",
+  "version": 1
+}

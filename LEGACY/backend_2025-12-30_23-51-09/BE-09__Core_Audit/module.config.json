@@ -1,0 +1,9 @@
+{
+  "moduleId": "BE-09__Core_Audit",
+  "description": "Backend audytów i logów.",
+  "routes": [],
+  "services": [],
+  "workflow": [],
+  "ai": [],
+  "certificates": []
+}

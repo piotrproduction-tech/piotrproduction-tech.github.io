@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-38__AI_Companion",
+  "moduleName": "AI Companion",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Warstwa meta AI."
+}

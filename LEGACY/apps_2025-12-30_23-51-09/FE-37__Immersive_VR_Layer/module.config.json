@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-37__Immersive_VR_Layer",
+  "moduleName": "Immersive VR Layer",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "VR, immersja."
+}

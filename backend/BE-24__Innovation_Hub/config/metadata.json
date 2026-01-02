@@ -1,0 +1,9 @@
+{
+  "id": "BE-24",
+  "name": "Innovation_Hub",
+  "title": "Innovation Hub",
+  "role": "district",
+  "districtType": "innovation",
+  "createdFrom": "LEGACY_2025-12-30",
+  "version": 1
+}

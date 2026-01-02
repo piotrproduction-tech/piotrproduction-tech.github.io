@@ -1,0 +1,4 @@
+[
+  { "id": "1", "title": "Film 1", "director": "Autor 1", "status": "submitted", "synopsis": "Opis 1", "duration": 90 },
+  { "id": "2", "title": "Film 2", "director": "Autor 2", "status": "selected", "synopsis": "Opis 2", "duration": 120 }
+]

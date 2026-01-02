@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-21__Marketplace",
+  "moduleName": "Marketplace",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Handel, listingi, reputacja."
+}

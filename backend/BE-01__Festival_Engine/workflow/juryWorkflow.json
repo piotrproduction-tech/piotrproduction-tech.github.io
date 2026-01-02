@@ -1,0 +1,14 @@
+{
+  "entity": "juryEvaluation",
+  "defaultState": "assigned",
+  "states": [
+    "assigned",
+    "evaluating",
+    "completed"
+  ],
+  "transitions": {
+    "assigned": ["evaluating"],
+    "evaluating": ["completed"],
+    "completed": []
+  }
+}

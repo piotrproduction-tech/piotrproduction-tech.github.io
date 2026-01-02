@@ -1,0 +1,48 @@
+
+
+
+/* FE_FESTIVAL_AI_DIRECTOR_HUD_CSS */
+
+.director-hud {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 220px;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  padding: 10px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 11px;
+  z-index: 999999;
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 0 12px rgba(0,255,255,0.2);
+}
+
+.director-hud-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.director-hud-label {
+  opacity: 0.7;
+}
+
+.director-hud-value {
+  font-weight: 600;
+}
+
+.director-hud-row.decision {
+  margin-top: 10px;
+}
+
+.decision-text {
+  font-size: 10px;
+  opacity: 0.9;
+  max-width: 120px;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

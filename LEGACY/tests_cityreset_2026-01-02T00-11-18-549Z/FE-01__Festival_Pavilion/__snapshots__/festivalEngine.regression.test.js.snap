@@ -1,0 +1,132 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`FestivalEngine Regression Tests — Snapshot Scenes & Overlays snapshot: director highlight intent 1`] = `
+{
+  "decision": {
+    "finalDirectorIntent": "highlight",
+    "finalOverlay": "CINEMATIC",
+    "finalScene": "cinematic_highlight",
+    "source": "director",
+  },
+  "effects": {
+    "distortion": 0.1,
+    "flicker": 0.05,
+    "flow": 0.4,
+    "glow": 0.5333333333333333,
+    "glowBoost": 0.2,
+    "pulseStrength": "soft",
+    "ramp": 0.5,
+    "sweep": 0.32000000000000006,
+  },
+  "hud": "HUD",
+  "overlay": "RISING",
+  "priority": "director",
+  "scene": "cinematic_highlight",
+}
+`;
+
+exports[`FestivalEngine Regression Tests — Snapshot Scenes & Overlays snapshot: dramatic climax + neutral energy 1`] = `
+{
+  "decision": {
+    "finalDirectorIntent": null,
+    "finalOverlay": "RISING",
+    "finalScene": "crowd_rising",
+    "source": "scene",
+  },
+  "effects": {
+    "distortion": 0.1,
+    "flicker": 0.05,
+    "flow": 0.4,
+    "glow": 0.5333333333333333,
+    "glowBoost": 0.2,
+    "pulseStrength": "soft",
+    "ramp": 0.5,
+    "sweep": 0.32000000000000006,
+  },
+  "hud": "HUD",
+  "overlay": "RISING",
+  "priority": "scene",
+  "scene": "crowd_rising",
+}
+`;
+
+exports[`FestivalEngine Regression Tests — Snapshot Scenes & Overlays snapshot: low energy calm phase 1`] = `
+{
+  "decision": {
+    "finalDirectorIntent": null,
+    "finalOverlay": "CHAOS",
+    "finalScene": "chaotic_phase",
+    "source": "scene",
+  },
+  "effects": {
+    "chromatic": 0.6,
+    "distortion": 0.1,
+    "flicker": 0.05,
+    "flow": 0.4,
+    "glitch": 0.9,
+    "glow": 0.5333333333333333,
+    "glowBoost": 0.2,
+    "pulseStrength": "soft",
+    "ramp": 0.5,
+    "shake": 0.6,
+    "sweep": 0.32000000000000006,
+  },
+  "hud": "HUD_ULTRA",
+  "overlay": "CHAOS",
+  "priority": "scene",
+  "scene": "chaotic_phase",
+}
+`;
+
+exports[`FestivalEngine Regression Tests — Snapshot Scenes & Overlays snapshot: music drop + high energy 1`] = `
+{
+  "decision": {
+    "finalDirectorIntent": null,
+    "finalOverlay": "RISING",
+    "finalScene": "crowd_peak",
+    "source": "scene",
+  },
+  "effects": {
+    "distortion": 0.1,
+    "flicker": 0.05,
+    "flow": 0.4,
+    "glow": 0.5333333333333333,
+    "glowBoost": 0.2,
+    "pulseStrength": "soft",
+    "ramp": 0.5,
+    "sweep": 0.32000000000000006,
+  },
+  "hud": "HUD",
+  "overlay": "RISING",
+  "priority": "scene",
+  "scene": "crowd_peak",
+}
+`;
+
+exports[`FestivalEngine Regression Tests — Snapshot Scenes & Overlays snapshot: operator forced overlay 1`] = `
+{
+  "decision": {
+    "finalDirectorIntent": "chaos",
+    "finalOverlay": "CHAOS",
+    "finalScene": "chaotic_phase",
+    "source": "director",
+  },
+  "effects": {
+    "chromatic": 0.6,
+    "distortion": 0.1,
+    "flicker": 0.05,
+    "flow": 0.4,
+    "glitch": 0.9,
+    "glow": 0.5333333333333333,
+    "glowBoost": 0.2,
+    "pulseStrength": "soft",
+    "ramp": 0.5,
+    "shake": 0.6,
+    "sweep": 0.32000000000000006,
+  },
+  "hud": "HUD_ULTRA",
+  "overlay": "CHAOS",
+  "priority": "director",
+  "scene": "chaotic_phase",
+}
+`;

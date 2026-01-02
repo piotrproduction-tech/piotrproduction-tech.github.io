@@ -1,0 +1,28 @@
+
+
+
+/* FE_FESTIVAL_AI_DIRECTOR_VISION_MODE_SWITCHER_CSS */
+
+.vision-switcher {
+  display: flex;
+  gap: 6px;
+  background: rgba(0,0,0,0.6);
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.vision-switcher button {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.vision-switcher button.active {
+  background: rgba(0,255,255,0.3);
+  font-weight: bold;
+}

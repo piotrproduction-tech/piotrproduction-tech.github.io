@@ -1,0 +1,13 @@
+{
+  "entity": "marketplaceItem",
+  "relations": {
+    "owner": {
+      "type": "user",
+      "field": "ownerId"
+    },
+    "transactions": {
+      "type": "transaction",
+      "via": "itemId"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-53__Media_Tower",
+  "moduleName": "Media Tower",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Media, publikacje, transmisje."
+}

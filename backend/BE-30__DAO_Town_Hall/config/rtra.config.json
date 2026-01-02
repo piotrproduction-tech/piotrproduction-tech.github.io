@@ -1,0 +1,58 @@
+{
+  "moduleId": "BE-30",
+  "moduleName": "DAO_Town_Hall",
+  "reputation": {
+    "enabled": true,
+    "weights": {
+      "positive": 5,
+      "negative": -5,
+      "neutral": 0
+    },
+    "eventMapping": {
+      "vote": 5,
+      "proposal": 15,
+      "approved": 20
+    }
+  },
+  "tokens": {
+    "enabled": true,
+    "baseReward": 0,
+    "eventMapping": {
+      "vote": 2,
+      "proposal": 10,
+      "approved": 20
+    }
+  },
+  "rewards": {
+    "enabled": true,
+    "tiers": [
+      {
+        "id": "voter",
+        "name": "Active Voter",
+        "minReputation": 20,
+        "minTokens": 40
+      },
+      {
+        "id": "governor",
+        "name": "City Governor",
+        "minReputation": 80,
+        "minTokens": 150
+      }
+    ]
+  },
+  "antiAbuse": {
+    "enabled": true,
+    "suspiciousKeywords": [
+      "sybil",
+      "manipulation",
+      "spam"
+    ],
+    "rateLimits": {
+      "perMinute": 30,
+      "perHour": 300
+    },
+    "cooldowns": {
+      "onFlag": 60000
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-03__Community_And_Social",
+  "moduleName": "Community And Social",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Społeczność, relacje, wydarzenia."
+}

@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-24__Innovation_Hub",
+  "moduleName": "Innovation Hub",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Projekty, R&D."
+}

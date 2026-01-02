@@ -1,0 +1,31 @@
+import fs from "fs";
+
+function compareFiles(file1, file2) {
+  const buf1 = fs.readFileSync(file1);
+  const buf2 = fs.readFileSync(file2);
+
+  if (buf1.length !== buf2.length) {
+    console.log("❌ Różne rozmiary plików:");
+    console.log(`  ${file1}: ${buf1.length} bajtów`);
+    console.log(`  ${file2}: ${buf2.length} bajtów`);
+    return;
+  }
+
+  for (let i = 0; i < buf1.length; i++) {
+    if (buf1[i] !== buf2[i]) {
+      console.log(`❌ Różnica na bajcie ${i}`);
+      return;
+    }
+  }
+
+  console.log("✔ Pliki są identyczne bajt‑po‑bajcie.");
+}
+
+const [,, f1, f2] = process.argv;
+
+if (!f1 || !f2) {
+  console.log("Użycie: node compare-files.js <plik1> <plik2>");
+  process.exit(1);
+}
+
+compareFiles(f1, f2);

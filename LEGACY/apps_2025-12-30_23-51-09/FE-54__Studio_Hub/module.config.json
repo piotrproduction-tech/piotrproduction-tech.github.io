@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-54__Studio_Hub",
+  "moduleName": "Studio Hub",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Tworzenie treści."
+}

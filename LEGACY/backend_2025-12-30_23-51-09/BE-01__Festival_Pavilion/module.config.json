@@ -1,0 +1,9 @@
+{
+  "moduleId": "BE-01__Festival_Pavilion",
+  "description": "Backend festiwalu: certyfikacja dzieł, jury, workflow filmów.",
+  "routes": [],
+  "services": [],
+  "workflow": [],
+  "ai": [],
+  "certificates": []
+}

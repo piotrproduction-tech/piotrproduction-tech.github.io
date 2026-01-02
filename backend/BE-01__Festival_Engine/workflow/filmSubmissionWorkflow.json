@@ -1,0 +1,20 @@
+{
+  "entity": "filmSubmission",
+  "defaultState": "draft",
+  "states": [
+    "draft",
+    "submitted",
+    "under_review",
+    "accepted",
+    "rejected",
+    "awarded"
+  ],
+  "transitions": {
+    "draft": ["submitted"],
+    "submitted": ["under_review"],
+    "under_review": ["accepted", "rejected"],
+    "accepted": ["awarded"],
+    "rejected": [],
+    "awarded": []
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "BE-50",
+  "name": "Admin_Tower",
+  "title": "Admin Tower",
+  "role": "district",
+  "districtType": "generic",
+  "createdFrom": "LEGACY_2025-12-30",
+  "version": 1
+}

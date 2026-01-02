@@ -1,0 +1,154 @@
+
+
+
+/* FE_FESTIVAL_OVERLAY_SCENARIO_AI_HYPERSUITE_DOCK_MINIMAP_PRO_CSS */
+
+.mini-map-pro {
+  position: fixed;
+  bottom: 12px;
+  left: 2600px;
+  width: 220px;
+  padding: 10px;
+  background: radial-gradient(circle at top left, rgba(80,80,120,0.9), rgba(0,0,0,0.9));
+  border-radius: 10px;
+  color: #fff;
+  font-size: 11px;
+  z-index: 100000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 0 18px rgba(0,0,0,0.8);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.mini-map-pro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.9;
+}
+
+.mini-map-pro-title {
+  font-weight: 600;
+}
+
+.mini-map-pro-tag {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  font-size: 9px;
+}
+
+.mini-map-pro-row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.mini-map-pro-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mini-map-pro-label {
+  opacity: 0.7;
+  font-size: 10px;
+}
+
+.mini-map-pro-pulse {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  justify-content: center;
+  animation: miniMapProPulse 1.2s infinite ease-in-out;
+}
+
+.mini-map-pro-pulse-value {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.mini-map-pro-pulse-unit {
+  font-size: 9px;
+  opacity: 0.8;
+}
+
+@keyframes miniMapProPulse {
+  0% { transform: scale(1); color: #fff; }
+  50% { transform: scale(1.08); color: #ff8080; }
+  100% { transform: scale(1); color: #fff; }
+}
+
+.mini-map-pro-chart {
+  width: 100%;
+  height: 40px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.mini-map-pro-chart svg {
+  width: 100%;
+  height: 100%;
+}
+
+.mini-map-pro-wave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.mini-map-pro-wave-bar {
+  width: 14px;
+  height: 40px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.mini-map-pro-wave-fill {
+  width: 100%;
+  background: linear-gradient(to top, #4fff8a, #4ffff0);
+  position: absolute;
+  bottom: 0;
+  transition: height 0.25s ease-out;
+}
+
+.mini-map-pro-wave-value {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.mood-block .mini-map-pro-mood {
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 11px;
+  text-shadow: 0 0 6px rgba(0,0,0,0.8);
+}
+
+.meta-block .mini-map-pro-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  font-size: 10px;
+}
+
+.mini-map-pro-meta-label {
+  opacity: 0.6;
+  display: block;
+}
+
+.mini-map-pro-meta-value {
+  font-weight: 600;
+}

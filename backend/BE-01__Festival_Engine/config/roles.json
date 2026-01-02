@@ -1,0 +1,6 @@
+{
+  "user": ["createSubmission"],
+  "jury": ["reviewSubmission"],
+  "ai": ["aiAnalyze"],
+  "admin": ["adminAccess"]
+}

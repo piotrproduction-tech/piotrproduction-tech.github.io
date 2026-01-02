@@ -1,0 +1,6 @@
+{
+  "basic": ["user"],
+  "jury": ["jury"],
+  "ai": ["ai"],
+  "admin": ["admin"]
+}

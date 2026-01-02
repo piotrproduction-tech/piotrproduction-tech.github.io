@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-04__Innovation_And_Business",
+  "moduleName": "Innovation And Business",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Startupy, innowacje, projekty biznesowe."
+}

@@ -1,0 +1,130 @@
+
+
+
+/* FE_FESTIVAL_OVERLAY_SCENARIO_AI_HYPERSUITE_DOCK_MINIMAP_ULTRA_CSS */
+
+.mini-map-ultra {
+  position: fixed;
+  bottom: 12px;
+  left: 2750px;
+  width: 260px;
+  padding: 12px;
+  background: rgba(0,0,20,0.85);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 11px;
+  z-index: 100000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 0 20px rgba(0,255,255,0.2);
+}
+
+.ultra-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.ultra-title {
+  font-weight: 600;
+}
+
+.ultra-tag {
+  padding: 2px 6px;
+  background: rgba(0,255,255,0.15);
+  border-radius: 999px;
+}
+
+.ultra-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.ultra-card {
+  background: rgba(255,255,255,0.05);
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ultra-label {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.ultra-radar {
+  width: 100%;
+  height: 80px;
+}
+
+.ultra-radar-ring {
+  fill: none;
+  stroke: rgba(0,255,255,0.2);
+  stroke-width: 2;
+}
+
+.ultra-radar-line {
+  stroke: #4ffff0;
+  stroke-width: 2;
+}
+
+.ultra-radar-dot {
+  fill: #4ffff0;
+}
+
+.ultra-radar-phase {
+  text-align: center;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+.ultra-rep-ring {
+  position: relative;
+  width: 100%;
+  height: 80px;
+}
+
+.ultra-rep-bg {
+  fill: none;
+  stroke: rgba(255,255,255,0.1);
+  stroke-width: 6;
+}
+
+.ultra-rep-fill {
+  fill: none;
+  stroke: #4fff8a;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dasharray 0.3s ease;
+}
+
+.ultra-rep-text {
+  position: absolute;
+  top: 22px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.ultra-trust {
+  padding: 6px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.ultra-waves {
+  width: 100%;
+  height: 60px;
+}

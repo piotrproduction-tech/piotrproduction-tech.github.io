@@ -1,0 +1,6 @@
+{
+  "id": "FE-02",
+  "name": "Marketplace",
+  "baseRoute": "/marketplace",
+  "description": "Moduł FE-02__Marketplace"
+}

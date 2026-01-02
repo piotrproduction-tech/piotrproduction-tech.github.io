@@ -1,0 +1,9 @@
+{
+  "id": "BE-26",
+  "name": "Wellness_Garden",
+  "title": "Wellness Garden",
+  "role": "district",
+  "districtType": "wellness",
+  "createdFrom": "LEGACY_2025-12-30",
+  "version": 1
+}

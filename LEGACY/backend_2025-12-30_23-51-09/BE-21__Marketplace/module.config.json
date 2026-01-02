@@ -1,0 +1,9 @@
+{
+  "moduleId": "BE-21__Marketplace",
+  "description": "Backend marketplace: listingi, transakcje, reputacja.",
+  "routes": [],
+  "services": [],
+  "workflow": [],
+  "ai": [],
+  "certificates": []
+}

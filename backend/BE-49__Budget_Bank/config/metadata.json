@@ -1,0 +1,9 @@
+{
+  "id": "BE-49",
+  "name": "Budget_Bank",
+  "title": "Budget Bank",
+  "role": "district",
+  "districtType": "finance",
+  "createdFrom": "LEGACY_2025-12-30",
+  "version": 1
+}

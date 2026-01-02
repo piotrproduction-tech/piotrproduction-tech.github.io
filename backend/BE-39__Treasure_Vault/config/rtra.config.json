@@ -1,0 +1,55 @@
+{
+  "moduleId": "BE-39",
+  "moduleName": "Treasure_Vault",
+  "reputation": {
+    "enabled": true,
+    "weights": {
+      "positive": 5,
+      "negative": -5,
+      "neutral": 0
+    },
+    "eventMapping": {
+      "reward_claimed": 5,
+      "vault_access": 10
+    }
+  },
+  "tokens": {
+    "enabled": true,
+    "baseReward": 0,
+    "eventMapping": {
+      "reward_claimed": 20
+    }
+  },
+  "rewards": {
+    "enabled": true,
+    "tiers": [
+      {
+        "id": "collector",
+        "name": "Treasure Collector",
+        "minReputation": 20,
+        "minTokens": 50
+      },
+      {
+        "id": "legend",
+        "name": "Treasure Legend",
+        "minReputation": 80,
+        "minTokens": 200
+      }
+    ]
+  },
+  "antiAbuse": {
+    "enabled": true,
+    "suspiciousKeywords": [
+      "exploit",
+      "duplicate",
+      "fraud"
+    ],
+    "rateLimits": {
+      "perMinute": 30,
+      "perHour": 300
+    },
+    "cooldowns": {
+      "onFlag": 60000
+    }
+  }
+}

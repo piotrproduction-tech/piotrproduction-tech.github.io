@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-52__Festival_Hub",
+  "moduleName": "Festival Hub",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Centrum festiwalowe."
+}

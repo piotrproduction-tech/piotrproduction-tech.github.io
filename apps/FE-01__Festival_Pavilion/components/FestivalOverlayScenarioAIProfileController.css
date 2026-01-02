@@ -1,0 +1,37 @@
+
+
+
+/* FE_FESTIVAL_OVERLAY_SCENARIO_AI_PROFILE_CONTROLLER_CSS */
+
+.overlay-ai-profile-controller {
+  position: fixed;
+  bottom: 12px;
+  left: 1360px;
+  padding: 12px;
+  background: rgba(0,0,0,0.75);
+  color: #fff;
+  border-radius: 8px;
+  z-index: 9999;
+  width: 260px;
+  font-size: 13px;
+}
+
+.profile-details {
+  margin-top: 10px;
+  padding: 8px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-run-btn {
+  margin-top: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  background: rgba(80,160,255,0.3);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}

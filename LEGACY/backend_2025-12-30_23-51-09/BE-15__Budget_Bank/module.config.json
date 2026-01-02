@@ -1,0 +1,9 @@
+{
+  "moduleId": "BE-15__Budget_Bank",
+  "description": "Backend banku: tokeny, budżety, transakcje.",
+  "routes": [],
+  "services": [],
+  "workflow": [],
+  "ai": [],
+  "certificates": []
+}

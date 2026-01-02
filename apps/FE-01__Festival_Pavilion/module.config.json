@@ -1,0 +1,6 @@
+{
+  "id": "FE-01",
+  "name": "Festival Pavilion",
+  "baseRoute": "/festival",
+  "description": "Moduł Festiwalowy CITYOF-GATE"
+}

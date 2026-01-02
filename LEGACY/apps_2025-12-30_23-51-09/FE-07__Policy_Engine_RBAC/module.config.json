@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-07__Policy_Engine_RBAC",
+  "moduleName": "Policy Engine RBAC",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Role, uprawnienia, polityki dostępu."
+}

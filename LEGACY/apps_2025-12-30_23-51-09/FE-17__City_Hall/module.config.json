@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-17__City_Hall",
+  "moduleName": "City Hall",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Centrum obywatelskie."
+}

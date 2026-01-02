@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-33__Marketplace_Street",
+  "moduleName": "Marketplace Street",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Twórcy, listingi, reputacja."
+}

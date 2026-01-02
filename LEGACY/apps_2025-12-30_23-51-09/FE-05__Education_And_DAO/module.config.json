@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-05__Education_And_DAO",
+  "moduleName": "Education And DAO",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Edukacja, kursy, governance DAO."
+}

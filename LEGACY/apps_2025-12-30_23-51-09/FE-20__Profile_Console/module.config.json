@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-20__Profile_Console",
+  "moduleName": "Profile Console",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Profil użytkownika."
+}

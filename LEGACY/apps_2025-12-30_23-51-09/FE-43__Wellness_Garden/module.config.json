@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-43__Wellness_Garden",
+  "moduleName": "Wellness Garden",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Zdrowie, wellbeing."
+}

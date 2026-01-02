@@ -1,0 +1,9 @@
+{
+  "moduleId": "BE-06__DAO_Town_Hall",
+  "description": "Backend Town Hall: głosowania, propozycje, governance.",
+  "routes": [],
+  "services": [],
+  "workflow": [],
+  "ai": [],
+  "certificates": []
+}

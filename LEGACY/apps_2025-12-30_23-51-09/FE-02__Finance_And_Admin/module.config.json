@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-02__Finance_And_Admin",
+  "moduleName": "Finance And Admin",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Budżety, administracja finansowa, audyty."
+}

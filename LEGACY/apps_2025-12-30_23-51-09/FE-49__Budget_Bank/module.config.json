@@ -1,0 +1,13 @@
+{
+  "moduleId": "FE-49__Budget_Bank",
+  "moduleName": "Budget Bank",
+  "enabledPanels": [
+    "DATA",
+    "FORMS",
+    "RELATIONS",
+    "WORKFLOW",
+    "ANALYTICS",
+    "AI"
+  ],
+  "description": "Tokeny, budżety, transakcje."
+}

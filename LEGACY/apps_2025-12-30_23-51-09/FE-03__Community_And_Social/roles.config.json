@@ -1,0 +1,24 @@
+{
+  "roles": {
+    "viewer": {
+      "panels": ["DATA"],
+      "actions": ["view"],
+      "aiMode": "basic"
+    },
+    "creator": {
+      "panels": ["DATA", "FORMS", "AI"],
+      "actions": ["addSubmission"],
+      "aiMode": "creator"
+    },
+    "curator": {
+      "panels": ["RELATIONS", "ANALYTICS", "AI"],
+      "actions": ["reviewSubmission"],
+      "aiMode": "curator"
+    },
+    "organizer": {
+      "panels": ["WORKFLOW", "ANALYTICS"],
+      "actions": ["manageWorkflow"],
+      "aiMode": "organizer"
+    }
+  }
+}
