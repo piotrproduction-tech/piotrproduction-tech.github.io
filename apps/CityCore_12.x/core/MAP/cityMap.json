@@ -1,5 +1,20 @@
 {
-  "districts": [],
+  "districts": [
+    {
+      "id": "FE-21",
+      "name": "Marketplace",
+      "type": "marketplace",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "id": "FE-33",
+      "name": "Marketplace Street",
+      "type": "marketplace",
+      "x": 1,
+      "y": 0
+    }
+  ],
   "roads": [],
   "landmarks": []
 }

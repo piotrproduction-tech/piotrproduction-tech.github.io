@@ -1,0 +1,20 @@
+{
+  "moduleId": "FE-33",
+  "name": "Marketplace Street",
+  "type": "economy",
+  "scope": "CITY",
+  "identity": {
+    "archetype": "",
+    "symbol": "",
+    "color": "",
+    "version": "12.x",
+    "origin": "AppsScript-Classic"
+  },
+  "capabilities": {},
+  "economy": {},
+  "reputation": {},
+  "access": {},
+  "events": {},
+  "integrations": {},
+  "ui": {}
+}
