@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-32",
+    "ui":  {
+
+           },
+    "type":  "social",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Volunteer Center (User)",
+    "identity":  {
+                     "color":  "#CD853F",
+                     "version":  "12.x",
+                     "archetype":  "empathy",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F932}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "USER"
+}

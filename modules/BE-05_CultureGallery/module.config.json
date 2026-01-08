@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-05",
+    "ui":  {
+
+           },
+    "type":  "creative",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Culture Gallery",
+    "identity":  {
+                     "color":  "#800080",
+                     "version":  "12.x",
+                     "archetype":  "art",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F5BC}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

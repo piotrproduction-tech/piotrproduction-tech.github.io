@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-16",
+    "ui":  {
+
+           },
+    "type":  "economy",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Budget Bank",
+    "identity":  {
+                     "color":  "#D3D3D3",
+                     "version":  "12.x",
+                     "archetype":  "transparency",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F4B8}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

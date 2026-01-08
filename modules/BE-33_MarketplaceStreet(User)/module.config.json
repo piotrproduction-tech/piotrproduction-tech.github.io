@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-33",
+    "ui":  {
+
+           },
+    "type":  "economy",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Marketplace Street (User)",
+    "identity":  {
+                     "color":  "#FFD700",
+                     "version":  "12.x",
+                     "archetype":  "commerce",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F6CD}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "USER"
+}

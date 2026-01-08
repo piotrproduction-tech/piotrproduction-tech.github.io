@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-46",
+    "ui":  {
+
+           },
+    "type":  "governance",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "DAO Town Hall (City)",
+    "identity":  {
+                     "color":  "#000080",
+                     "version":  "12.x",
+                     "archetype":  "governance",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{2696}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

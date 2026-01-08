@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-06",
+    "ui":  {
+
+           },
+    "type":  "social",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Education Library",
+    "identity":  {
+                     "color":  "#87CEEB",
+                     "version":  "12.x",
+                     "archetype":  "knowledge",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F4D8}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

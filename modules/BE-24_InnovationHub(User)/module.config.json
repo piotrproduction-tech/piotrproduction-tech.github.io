@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-24",
+    "ui":  {
+
+           },
+    "type":  "creative",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Innovation Hub (User)",
+    "identity":  {
+                     "color":  "#FF8C00",
+                     "version":  "12.x",
+                     "archetype":  "innovation",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F9EC}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "USER"
+}

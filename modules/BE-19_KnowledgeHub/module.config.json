@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-19",
+    "ui":  {
+
+           },
+    "type":  "social",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Knowledge Hub",
+    "identity":  {
+                     "color":  "#1E90FF",
+                     "version":  "12.x",
+                     "archetype":  "knowledge",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F4DA}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

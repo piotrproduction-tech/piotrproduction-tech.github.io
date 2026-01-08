@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-23",
+    "ui":  {
+
+           },
+    "type":  "creative",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Culture Gallery (User)",
+    "identity":  {
+                     "color":  "#9932CC",
+                     "version":  "12.x",
+                     "archetype":  "art",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F3A8}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "USER"
+}

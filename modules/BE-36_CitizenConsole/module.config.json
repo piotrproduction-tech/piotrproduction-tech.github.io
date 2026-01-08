@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-36",
+    "ui":  {
+
+           },
+    "type":  "utility",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Citizen Console",
+    "identity":  {
+                     "color":  "#1E90FF",
+                     "version":  "12.x",
+                     "archetype":  "identity",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F9ED}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "USER"
+}

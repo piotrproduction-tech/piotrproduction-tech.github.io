@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-52",
+    "ui":  {
+
+           },
+    "type":  "creative",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Festival Hub",
+    "identity":  {
+                     "color":  "#FF7F50",
+                     "version":  "12.x",
+                     "archetype":  "festival",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F3AC}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

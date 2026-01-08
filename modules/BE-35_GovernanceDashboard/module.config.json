@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-35",
+    "ui":  {
+
+           },
+    "type":  "governance",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Governance Dashboard",
+    "identity":  {
+                     "color":  "#4B0082",
+                     "version":  "12.x",
+                     "archetype":  "governance",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F4CA}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

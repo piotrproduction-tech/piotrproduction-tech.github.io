@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-25",
+    "ui":  {
+
+           },
+    "type":  "utility",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Treasure Vault (User)",
+    "identity":  {
+                     "color":  "#8B4513",
+                     "version":  "12.x",
+                     "archetype":  "archive",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F5C3}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "USER"
+}

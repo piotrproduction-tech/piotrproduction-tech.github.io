@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-27",
+    "ui":  {
+
+           },
+    "type":  "social",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Sports Arena (User)",
+    "identity":  {
+                     "color":  "#DC143C",
+                     "version":  "12.x",
+                     "archetype":  "sports",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{26BD}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "USER"
+}

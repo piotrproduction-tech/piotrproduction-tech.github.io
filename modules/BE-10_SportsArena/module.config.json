@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-10",
+    "ui":  {
+
+           },
+    "type":  "social",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Sports Arena",
+    "identity":  {
+                     "color":  "#FF0000",
+                     "version":  "12.x",
+                     "archetype":  "sports",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F3DF}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

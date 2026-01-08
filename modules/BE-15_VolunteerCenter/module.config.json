@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-15",
+    "ui":  {
+
+           },
+    "type":  "social",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Volunteer Center",
+    "identity":  {
+                     "color":  "#FFC0CB",
+                     "version":  "12.x",
+                     "archetype":  "empathy",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F91D}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

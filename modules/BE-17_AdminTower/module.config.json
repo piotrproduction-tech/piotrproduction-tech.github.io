@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-17",
+    "ui":  {
+
+           },
+    "type":  "governance",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Admin Tower",
+    "identity":  {
+                     "color":  "#708090",
+                     "version":  "12.x",
+                     "archetype":  "control",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F5FC}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

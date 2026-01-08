@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-02",
+    "ui":  {
+
+           },
+    "type":  "economy",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Finance \u0026 Admin",
+    "identity":  {
+                     "color":  "#C0C0C0",
+                     "version":  "12.x",
+                     "archetype":  "finance",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F3E6}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-45",
+    "ui":  {
+
+           },
+    "type":  "social",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Community House (City)",
+    "identity":  {
+                     "color":  "#2E8B57",
+                     "version":  "12.x",
+                     "archetype":  "community",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F3E0}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

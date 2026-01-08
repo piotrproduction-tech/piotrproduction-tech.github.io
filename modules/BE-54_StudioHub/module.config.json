@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-54",
+    "ui":  {
+
+           },
+    "type":  "creative",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Studio Hub",
+    "identity":  {
+                     "color":  "#9370DB",
+                     "version":  "12.x",
+                     "archetype":  "creation",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F39B}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "USER"
+}

@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-26",
+    "ui":  {
+
+           },
+    "type":  "social",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Wellness Garden (User)",
+    "identity":  {
+                     "color":  "#7CFC00",
+                     "version":  "12.x",
+                     "archetype":  "wellbeing",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F331}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "USER"
+}

@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-38",
+    "ui":  {
+
+           },
+    "type":  "utility",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "AI Companion",
+    "identity":  {
+                     "color":  "#00CED1",
+                     "version":  "12.x",
+                     "archetype":  "ai",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F916}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "USER"
+}

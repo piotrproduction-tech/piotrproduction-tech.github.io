@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-37",
+    "ui":  {
+
+           },
+    "type":  "creative",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Immersive VR Layer",
+    "identity":  {
+                     "color":  "#483D8B",
+                     "version":  "12.x",
+                     "archetype":  "vr",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F576}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

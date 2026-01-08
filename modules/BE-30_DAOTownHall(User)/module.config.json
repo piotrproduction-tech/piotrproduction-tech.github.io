@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-30",
+    "ui":  {
+
+           },
+    "type":  "governance",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "DAO Town Hall (User)",
+    "identity":  {
+                     "color":  "#191970",
+                     "version":  "12.x",
+                     "archetype":  "governance",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F3DB}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "USER"
+}

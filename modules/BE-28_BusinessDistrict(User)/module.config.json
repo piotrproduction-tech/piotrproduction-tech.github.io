@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-28",
+    "ui":  {
+
+           },
+    "type":  "economy",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Business District (User)",
+    "identity":  {
+                     "color":  "#0000CD",
+                     "version":  "12.x",
+                     "archetype":  "business",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F4BC}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "USER"
+}

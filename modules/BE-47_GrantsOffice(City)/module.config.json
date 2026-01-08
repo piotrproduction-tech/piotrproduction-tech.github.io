@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-47",
+    "ui":  {
+
+           },
+    "type":  "economy",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Grants Office (City)",
+    "identity":  {
+                     "color":  "#8B008B",
+                     "version":  "12.x",
+                     "archetype":  "support",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F4B0}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

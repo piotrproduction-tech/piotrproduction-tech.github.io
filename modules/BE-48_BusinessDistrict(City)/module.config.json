@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-48",
+    "ui":  {
+
+           },
+    "type":  "economy",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Business District (City)",
+    "identity":  {
+                     "color":  "#1C3FAA",
+                     "version":  "12.x",
+                     "archetype":  "business",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F3D9}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "CITY"
+}

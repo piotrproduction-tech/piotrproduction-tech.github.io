@@ -1,0 +1,34 @@
+﻿{
+    "moduleId":  "BE-34",
+    "ui":  {
+
+           },
+    "type":  "governance",
+    "economy":  {
+
+                },
+    "reputation":  {
+
+                   },
+    "capabilities":  {
+
+                     },
+    "events":  {
+
+               },
+    "name":  "Admin Tower (User)",
+    "identity":  {
+                     "color":  "#778899",
+                     "version":  "12.x",
+                     "archetype":  "control",
+                     "origin":  "AppsScript-Classic",
+                     "symbol":  "\\u{1F5FC}"
+                 },
+    "integrations":  {
+
+                     },
+    "access":  {
+
+               },
+    "scope":  "USER"
+}
