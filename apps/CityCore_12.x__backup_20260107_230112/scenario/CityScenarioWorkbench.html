@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>City Scenario Workbench 12.x</title>
+  <style>
+    body {
+      background: #0d0d0d;
+      color: #e0e0e0;
+      font-family: monospace;
+      padding: 20px;
+    }
+    h1 { color: #4cffd7; }
+    label { display: block; margin-top: 10px; }
+    input, select, textarea {
+      width: 100%;
+      margin-top: 5px;
+      padding: 8px;
+      background: #111;
+      color: #fff;
+      border: 1px solid #333;
+      border-radius: 6px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #4cffd7;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover { background: #33c9a8; }
+    pre {
+      background: #000;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>City Scenario Workbench 12.x</h1>
+
+  <label>District:</label>
+  <select id="sc-district"></select>
+
+  <label>View:</label>
+  <input id="sc-view" placeholder="np. mainView" />
+
+  <label>Event:</label>
+  <input id="sc-event" placeholder="np. update" />
+
+  <label>Payload (JSON):</label>
+  <textarea id="sc-payload" rows="4">{}</textarea>
+
+  <button id="sc-run">Uruchom scenariusz</button>
+
+  <h3>Wynik:</h3>
+  <pre id="sc-output"></pre>
+
+  <script>
+    // Oczekuje, że runtime ustawi window.scenarioWorkbench i window.app
+    const districts = window.app.runtime.router.districts.map(d => d.id);
+    const select = document.getElementById("sc-district");
+    select.innerHTML = districts.map(d => `<option value="${d}">${d}</option>`).join("");
+
+    document.getElementById("sc-run").onclick = () => {
+      const district = document.getElementById("sc-district").value;
+      const view = document.getElementById("sc-view").value;
+      const event = document.getElementById("sc-event").value;
+      const payload = JSON.parse(document.getElementById("sc-payload").value || "{}");
+
+      const actions = [];
+      if (district) actions.push({ type: "gotoDistrict", district });
+      if (view) actions.push({ type: "gotoView", view });
+      if (event) actions.push({ type: "emit", district, event, payload });
+
+      const result = window.scenarioWorkbench.run(actions);
+      document.getElementById("sc-output").textContent = JSON.stringify(result, null, 2);
+    };
+  </script>
+
+</body>
+</html>

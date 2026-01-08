@@ -1,0 +1,1 @@
+export function useMarketplaceEvents() { return { listEvents:async()=>[], getEvent:async(id)=>null, triggerEvent:async(id)=>({triggered:true}), scheduleDrop:async(d)=>({success:true}), scheduleFlashSale:async(d)=>({success:true}) }; }

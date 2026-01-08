@@ -1,0 +1,792 @@
+===== FILE: engine\FestivalAccessEngine_11_1.js =====
+
+// FestivalAccessEngine_11_1
+// Multi-festival unified access engine for CITYOF-GATE 11.x
+
+import { UserAccess } from "../../GFAL-01__Access_Layer/models/access.js";
+import { TicketingEngine } from "../../GFAL-04__Ticketing_And_Accreditation/engine/ticketingEngine.js";
+
+export class GlobalUserAccess_11_1 {
+  constructor({ userId }) {
+    this.userId = userId;
+
+    this.festivals = {}; // { festivalId: { films: [], events: [], passes: [], accreditations: [] } }
+    this.roles = new Set(); // global roles
+    this.reputation = 0; // placeholder for future integration
+  }
+
+  addFestivalAccess(festivalId) {
+    if (!this.festivals[festivalId]) {
+      this.festivals[festivalId] = {
+        films: [],
+        events: [],
+        passes: [],
+        accreditations: []
+      };
+    }
+  }
+
+  addFilmAccess(festivalId, filmId) {
+    this.addFestivalAccess(festivalId);
+    this.festivals[festivalId].films.push(filmId);
+  }
+
+  addEventAccess(festivalId, eventId) {
+    this.addFestivalAccess(festivalId);
+    this.festivals[festivalId].events.push(eventId);
+  }
+
+  addPass(festivalId, passType) {
+    this.addFestivalAccess(festivalId);
+    this.festivals[festivalId].passes.push(passType);
+  }
+
+  addAccreditation(festivalId, accType) {
+    this.addFestivalAccess(festivalId);
+    this.festivals[festivalId].accreditations.push(accType);
+  }
+
+  addRole(role) {
+    this.roles.add(role);
+  }
+
+  toJSON() {
+    return {
+      userId: this.userId,
+      roles: Array.from(this.roles),
+      reputation: this.reputation,
+      festivals: this.festivals
+    };
+  }
+}
+
+export class FestivalAccessEngine_11_1 {
+  constructor({ festivalMarketplaceEngine, ticketingRepository, roleRepository }) {
+    this.festivalMarketplaceEngine = festivalMarketplaceEngine;
+
+    this.ticketingEngine = new TicketingEngine({
+      tickets: ticketingRepository.tickets,
+      passes: ticketingRepository.passes,
+      accreditations: ticketingRepository.accreditations
+    });
+
+    this.roleRepository = roleRepository; // optional, for future integration
+  }
+
+  generateGlobalAccessForUser(userId) {
+    const globalAccess = new GlobalUserAccess_11_1({ userId });
+
+    const festivals = this.festivalMarketplaceEngine.listFestivals();
+
+    for (const f of festivals) {
+      const festivalId = f.id;
+
+      const accessList = this.ticketingEngine.generateAccessForUser(userId, festivalId);
+
+      for (const access of accessList) {
+        if (access.accessType === "ticket_single_film") {
+          globalAccess.addFilmAccess(festivalId, access.scope.filmId);
+        }
+
+        if (access.accessType === "ticket_single_event") {
+          globalAccess.addEventAccess(festivalId, access.scope.eventId);
+        }
+
+        if (access.accessType === "pass_all_films") {
+          globalAccess.addPass(festivalId, "all_films");
+
+          const program = this.festivalMarketplaceEngine.getFestivalProgram(festivalId);
+          for (const film of program.films) {
+            globalAccess.addFilmAccess(festivalId, film.id);
+          }
+        }
+
+        if (access.accessType === "pass_all_events") {
+          globalAccess.addPass(festivalId, "all_events");
+
+          const program = this.festivalMarketplaceEngine.getFestivalProgram(festivalId);
+          for (const event of program.events) {
+            globalAccess.addEventAccess(festivalId, event.id);
+          }
+        }
+
+        if (access.accessType === "accreditation_jury") {
+          globalAccess.addAccreditation(festivalId, "jury");
+          globalAccess.addRole("jury");
+        }
+
+        if (access.accessType === "accreditation_media") {
+          globalAccess.addAccreditation(festivalId, "media");
+          globalAccess.addRole("media");
+        }
+      }
+    }
+
+    return globalAccess;
+  }
+
+  getUserFestivalAccess(userId, festivalId) {
+    const global = this.generateGlobalAccessForUser(userId);
+    return global.festivals[festivalId] || null;
+  }
+
+  getUserRoles(userId) {
+    const global = this.generateGlobalAccessForUser(userId);
+    return Array.from(global.roles);
+  }
+
+  getUserFilmAccess(userId, festivalId) {
+    const festivalAccess = this.getUserFestivalAccess(userId, festivalId);
+    return festivalAccess ? festivalAccess.films : [];
+  }
+
+  getUserEventAccess(userId, festivalId) {
+    const festivalAccess = this.getUserFestivalAccess(userId, festivalId);
+    return festivalAccess ? festivalAccess.events : [];
+  }
+}
+
+===== END FILE: engine\FestivalAccessEngine_11_1.js =====
+
+===== FILE: engine\FestivalContentEngine_11_2.js =====
+
+// FestivalContentEngine_11_2
+// Globalny katalog treści festiwalowych (filmy + wydarzenia) ponad wieloma festiwalami.
+
+export class FestivalContentEngine_11_2 {
+  constructor({ festivalMarketplaceEngine, accessEngine }) {
+    this.festivalMarketplaceEngine = festivalMarketplaceEngine; // FestivalMarketplaceEngine_11_0
+    this.accessEngine = accessEngine; // FestivalAccessEngine_11_1
+  }
+
+  getGlobalFilmCatalog() {
+    const festivals = this.festivalMarketplaceEngine.listFestivals();
+    const films = [];
+
+    for (const f of festivals) {
+      const program = this.festivalMarketplaceEngine.getFestivalProgram(f.id);
+      for (const film of program.films) {
+        films.push({
+          id: film.id,
+          festivalId: f.id,
+          festivalName: f.name,
+          title: film.title,
+          synopsis: film.synopsis,
+          duration: film.duration,
+          language: film.language,
+          ageRating: film.ageRating,
+          mode: f.mode,
+          visibility: f.visibility,
+          startDate: f.startDate,
+          endDate: f.endDate
+        });
+      }
+    }
+
+    return films;
+  }
+
+  getGlobalEventCatalog() {
+    const festivals = this.festivalMarketplaceEngine.listFestivals();
+    const events = [];
+
+    for (const f of festivals) {
+      const program = this.festivalMarketplaceEngine.getFestivalProgram(f.id);
+      for (const event of program.events) {
+        events.push({
+          id: event.id,
+          festivalId: f.id,
+          festivalName: f.name,
+          title: event.title,
+          type: event.type,
+          startTime: event.startTime,
+          endTime: event.endTime,
+          location: event.location,
+          mode: f.mode,
+          visibility: f.visibility,
+          startDate: f.startDate,
+          endDate: f.endDate
+        });
+      }
+    }
+
+    return events;
+  }
+
+  getUserVisibleFilms(userId) {
+    const festivals = this.festivalMarketplaceEngine.listFestivals();
+    const result = [];
+
+    for (const f of festivals) {
+      const filmAccess = this.accessEngine.getUserFilmAccess(userId, f.id);
+      if (!filmAccess || filmAccess.length === 0) continue;
+
+      const program = this.festivalMarketplaceEngine.getFestivalProgram(f.id);
+      const filmMap = new Map(program.films.map(film => [film.id, film]));
+
+      for (const filmId of filmAccess) {
+        const film = filmMap.get(filmId);
+        if (!film) continue;
+
+        result.push({
+          id: film.id,
+          festivalId: f.id,
+          festivalName: f.name,
+          title: film.title,
+          synopsis: film.synopsis,
+          duration: film.duration,
+          language: film.language,
+          ageRating: film.ageRating,
+          mode: f.mode,
+          visibility: f.visibility,
+          startDate: f.startDate,
+          endDate: f.endDate
+        });
+      }
+    }
+
+    return result;
+  }
+
+  getUserVisibleEvents(userId) {
+    const festivals = this.festivalMarketplaceEngine.listFestivals();
+    const result = [];
+
+    for (const f of festivals) {
+      const eventAccess = this.accessEngine.getUserEventAccess(userId, f.id);
+      if (!eventAccess || eventAccess.length === 0) continue;
+
+      const program = this.festivalMarketplaceEngine.getFestivalProgram(f.id);
+      const eventMap = new Map(program.events.map(event => [event.id, event]));
+
+      for (const eventId of eventAccess) {
+        const event = eventMap.get(eventId);
+        if (!event) continue;
+
+        result.push({
+          id: event.id,
+          festivalId: f.id,
+          festivalName: f.name,
+          title: event.title,
+          type: event.type,
+          startTime: event.startTime,
+          endTime: event.endTime,
+          location: event.location,
+          mode: f.mode,
+          visibility: f.visibility,
+          startDate: f.startDate,
+          endDate: f.endDate
+        });
+      }
+    }
+
+    return result;
+  }
+
+  getFestivalContentSummary(festivalId) {
+    const program = this.festivalMarketplaceEngine.getFestivalProgram(festivalId);
+
+    return {
+      festivalId,
+      films: program.films.length,
+      events: program.events.length
+    };
+  }
+
+  getGlobalContentSummary() {
+    const festivals = this.festivalMarketplaceEngine.listFestivals();
+    const summaries = [];
+
+    for (const f of festivals) {
+      const program = this.festivalMarketplaceEngine.getFestivalProgram(f.id);
+      summaries.push({
+        festivalId: f.id,
+        festivalName: f.name,
+        films: program.films.length,
+        events: program.events.length,
+        mode: f.mode,
+        visibility: f.visibility
+      });
+    }
+
+    return summaries;
+  }
+}
+
+===== END FILE: engine\FestivalContentEngine_11_2.js =====
+
+===== FILE: engine\FestivalMarketplaceEngine_11_0.js =====
+
+// FestivalMarketplaceEngine_11_0
+// Globalny marketplace festiwali — publikacja, rejestracja, dostęp, integracja z ticketingiem.
+
+import { Festival } from "../../GFAL-01__Access_Layer/models/festival.js";
+import { UserAccess } from "../../GFAL-01__Access_Layer/models/access.js";
+import { TicketingEngine } from "../../GFAL-04__Ticketing_And_Accreditation/engine/ticketingEngine.js";
+
+import { OrganizerFestivalInput } from "../../GFAL-09__Festival_Organizer_API/models/organizerFestivalInput.js";
+import { OrganizerFilmInput } from "../../GFAL-09__Festival_Organizer_API/models/organizerFilmInput.js";
+import { OrganizerEventInput } from "../../GFAL-09__Festival_Organizer_API/models/organizerEventInput.js";
+
+export class FestivalMarketplaceEngine_11_0 {
+  constructor({ festivalRepository, filmRepository, eventRepository, ticketingRepository }) {
+    this.festivalRepository = festivalRepository;
+    this.filmRepository = filmRepository;
+    this.eventRepository = eventRepository;
+    this.ticketingRepository = ticketingRepository;
+
+    this.ticketingEngine = new TicketingEngine({
+      tickets: ticketingRepository.tickets,
+      passes: ticketingRepository.passes,
+      accreditations: ticketingRepository.accreditations
+    });
+  }
+
+  publishFestival(festivalInput) {
+    const festival = new Festival({
+      id: festivalInput.id,
+      name: festivalInput.name,
+      description: festivalInput.description,
+      startDate: festivalInput.startDate,
+      endDate: festivalInput.endDate,
+      mode: festivalInput.mode,
+      visibility: festivalInput.visibility
+    });
+
+    this.festivalRepository.saveFestival(festival);
+    return { success: true, festivalId: festival.id };
+  }
+
+  publishFilm(filmInput) {
+    const film = new OrganizerFilmInput({
+      id: filmInput.id,
+      festivalId: filmInput.festivalId,
+      title: filmInput.title,
+      synopsis: filmInput.synopsis,
+      duration: filmInput.duration,
+      language: filmInput.language,
+      ageRating: filmInput.ageRating,
+      streamUrl: filmInput.streamUrl,
+      startTime: filmInput.startTime,
+      endTime: filmInput.endTime,
+      room: filmInput.room
+    });
+
+    this.filmRepository.saveFilm(film);
+    return { success: true, filmId: film.id };
+  }
+
+  publishEvent(eventInput) {
+    const event = new OrganizerEventInput({
+      id: eventInput.id,
+      festivalId: eventInput.festivalId,
+      title: eventInput.title,
+      type: eventInput.type,
+      startTime: eventInput.startTime,
+      endTime: eventInput.endTime,
+      streamUrl: eventInput.streamUrl,
+      location: eventInput.location
+    });
+
+    this.eventRepository.saveEvent(event);
+    return { success: true, eventId: event.id };
+  }
+
+  publishFullProgram({ festival, films, events }) {
+    this.publishFestival(festival);
+
+    for (const film of films) {
+      this.publishFilm(film);
+    }
+
+    for (const event of events) {
+      this.publishEvent(event);
+    }
+
+    return {
+      success: true,
+      festivalId: festival.id,
+      films: films.length,
+      events: events.length
+    };
+  }
+
+  getUserAccess(userId, festivalId) {
+    return this.ticketingEngine.generateAccessForUser(userId, festivalId);
+  }
+
+  getFestivalProgram(festivalId) {
+    const films = this.filmRepository.getFilmsByFestival(festivalId);
+    const events = this.eventRepository.getEventsByFestival(festivalId);
+
+    return {
+      films,
+      events
+    };
+  }
+
+  getFestivalSummary(festivalId) {
+    const festival = this.festivalRepository.getFestival(festivalId);
+    const program = this.getFestivalProgram(festivalId);
+
+    return {
+      id: festival.id,
+      name: festival.name,
+      description: festival.description,
+      mode: festival.mode,
+      visibility: festival.visibility,
+      startDate: festival.startDate,
+      endDate: festival.endDate,
+      films: program.films.length,
+      events: program.events.length
+    };
+  }
+
+  listFestivals() {
+    return this.festivalRepository.getAllFestivals().map(f => ({
+      id: f.id,
+      name: f.name,
+      description: f.description,
+      mode: f.mode,
+      visibility: f.visibility,
+      startDate: f.startDate,
+      endDate: f.endDate
+    }));
+  }
+}
+
+===== END FILE: engine\FestivalMarketplaceEngine_11_0.js =====
+
+===== FILE: __tests__\festival-access-engine.test.js =====
+
+import { FestivalAccessEngine_11_1 } from "../engine/FestivalAccessEngine_11_1.js";
+
+class MockMarketplace {
+  listFestivals() {
+    return [
+      { id: "F1", name: "Fest A" },
+      { id: "F2", name: "Fest B" }
+    ];
+  }
+
+  getFestivalProgram(id) {
+    return id === "F1"
+      ? { films: [{ id: "FILM1" }], events: [{ id: "EV1" }] }
+      : { films: [{ id: "FILM2" }, { id: "FILM3" }], events: [] };
+  }
+}
+
+class MockTicketingRepo {
+  constructor() {
+    this.tickets = [
+      { userId: "U1", festivalId: "F1", accessType: "ticket_single_film", scope: { filmId: "FILM1" } },
+      { userId: "U1", festivalId: "F2", accessType: "pass_all_films", scope: {} }
+    ];
+    this.passes = [];
+    this.accreditations = [];
+  }
+
+  getTicketsForUser(userId, festivalId) {
+    return this.tickets.filter(t => t.userId === userId && t.festivalId === festivalId);
+  }
+
+  getPassesForUser() {
+    return [];
+  }
+
+  getAccreditationsForUser() {
+    return [];
+  }
+}
+
+class MockRoleRepo {}
+
+describe("FestivalAccessEngine_11_1", () => {
+  let engine;
+
+  beforeEach(() => {
+    engine = new FestivalAccessEngine_11_1({
+      festivalMarketplaceEngine: new MockMarketplace(),
+      ticketingRepository: new MockTicketingRepo(),
+      roleRepository: new MockRoleRepo()
+    });
+  });
+
+  test("returns an array for user film access for F1", () => {
+    const films = engine.getUserFilmAccess("U1", "F1");
+    expect(Array.isArray(films)).toBe(true);
+  });
+
+  test("returns an array for user film access for F2", () => {
+    const films = engine.getUserFilmAccess("U1", "F2");
+    expect(Array.isArray(films)).toBe(true);
+  });
+});
+
+===== END FILE: __tests__\festival-access-engine.test.js =====
+
+===== FILE: __tests__\festival-content-engine.test.js =====
+
+import { FestivalContentEngine_11_2 } from "../engine/FestivalContentEngine_11_2.js";
+
+class MockMarketplace {
+  listFestivals() {
+    return [
+      { id: "F1", name: "Fest A", mode: "online", visibility: "public", startDate: "", endDate: "" }
+    ];
+  }
+  getFestivalProgram() {
+    return {
+      films: [{ id: "FILM1", title: "Film A", synopsis: "", duration: 90, language: "EN", ageRating: "PG" }],
+      events: [{ id: "EV1", title: "Opening", type: "opening", startTime: "", endTime: "", location: "" }]
+    };
+  }
+}
+
+class MockAccessEngine {
+  getUserFilmAccess() { return ["FILM1"]; }
+  getUserEventAccess() { return ["EV1"]; }
+}
+
+describe("FestivalContentEngine_11_2", () => {
+  let engine;
+
+  beforeEach(() => {
+    engine = new FestivalContentEngine_11_2({
+      festivalMarketplaceEngine: new MockMarketplace(),
+      accessEngine: new MockAccessEngine()
+    });
+  });
+
+  test("returns global film catalog", () => {
+    const films = engine.getGlobalFilmCatalog();
+    expect(films.length).toBe(1);
+  });
+
+  test("returns user visible films", () => {
+    const films = engine.getUserVisibleFilms("U1");
+    expect(films[0].id).toBe("FILM1");
+  });
+
+  test("returns global event catalog", () => {
+    const events = engine.getGlobalEventCatalog();
+    expect(events.length).toBe(1);
+  });
+});
+
+===== END FILE: __tests__\festival-content-engine.test.js =====
+
+===== FILE: __tests__\festival-marketplace-engine.test.js =====
+
+import { FestivalMarketplaceEngine_11_0 } from "../engine/FestivalMarketplaceEngine_11_0.js";
+
+// Mock repositories
+class MockFestivalRepo {
+  constructor() {
+    this.festivals = {};
+  }
+  saveFestival(f) {
+    this.festivals[f.id] = f;
+  }
+  getFestival(id) {
+    return this.festivals[id];
+  }
+  getAllFestivals() {
+    return Object.values(this.festivals);
+  }
+}
+
+class MockFilmRepo {
+  constructor() {
+    this.films = {};
+  }
+  saveFilm(f) {
+    this.films[f.id] = f;
+  }
+  getFilmsByFestival(festivalId) {
+    return Object.values(this.films).filter(f => f.festivalId === festivalId);
+  }
+}
+
+class MockEventRepo {
+  constructor() {
+    this.events = {};
+  }
+  saveEvent(e) {
+    this.events[e.id] = e;
+  }
+  getEventsByFestival(festivalId) {
+    return Object.values(this.events).filter(e => e.festivalId === festivalId);
+  }
+}
+
+class MockTicketingRepo {
+  constructor() {
+    this.tickets = [];
+    this.passes = [];
+    this.accreditations = [];
+  }
+}
+
+describe("FestivalMarketplaceEngine_11_0", () => {
+  let engine;
+  let festivalRepo;
+  let filmRepo;
+  let eventRepo;
+  let ticketingRepo;
+
+  beforeEach(() => {
+    festivalRepo = new MockFestivalRepo();
+    filmRepo = new MockFilmRepo();
+    eventRepo = new MockEventRepo();
+    ticketingRepo = new MockTicketingRepo();
+
+    engine = new FestivalMarketplaceEngine_11_0({
+      festivalRepository: festivalRepo,
+      filmRepository: filmRepo,
+      eventRepository: eventRepo,
+      ticketingRepository: ticketingRepo
+    });
+  });
+
+  test("publishes a festival", () => {
+    const festival = {
+      id: "F1",
+      name: "Test Festival",
+      description: "Desc",
+      startDate: "2026-01-01",
+      endDate: "2026-01-10",
+      mode: "online",
+      visibility: "public"
+    };
+
+    const result = engine.publishFestival(festival);
+    expect(result.success).toBe(true);
+    expect(festivalRepo.getFestival("F1").name).toBe("Test Festival");
+  });
+
+  test("publishes films and events", () => {
+    const film = {
+      id: "FILM1",
+      festivalId: "F1",
+      title: "Film A",
+      synopsis: "Test",
+      duration: 90,
+      language: "EN",
+      ageRating: "16+",
+      streamUrl: "http://stream",
+      startTime: null,
+      endTime: null,
+      room: null
+    };
+
+    const event = {
+      id: "EV1",
+      festivalId: "F1",
+      title: "Opening Gala",
+      type: "opening",
+      startTime: "2026-01-01T18:00",
+      endTime: "2026-01-01T20:00",
+      streamUrl: null,
+      location: "Main Hall"
+    };
+
+    engine.publishFilm(film);
+    engine.publishEvent(event);
+
+    expect(filmRepo.getFilmsByFestival("F1").length).toBe(1);
+    expect(eventRepo.getEventsByFestival("F1").length).toBe(1);
+  });
+
+  test("publishes full program", () => {
+    const festival = {
+      id: "F2",
+      name: "Full Program Fest",
+      description: "Desc",
+      startDate: "2026-02-01",
+      endDate: "2026-02-10",
+      mode: "hybrid",
+      visibility: "public"
+    };
+
+    const films = [
+      { id: "FILM2", festivalId: "F2", title: "Film B", synopsis: "", duration: 100, language: "EN", ageRating: "12+", streamUrl: "", startTime: null, endTime: null, room: null }
+    ];
+
+    const events = [
+      { id: "EV2", festivalId: "F2", title: "Closing Gala", type: "closing", startTime: "2026-02-10T20:00", endTime: "2026-02-10T22:00", streamUrl: null, location: "Hall A" }
+    ];
+
+    const result = engine.publishFullProgram({ festival, films, events });
+
+    expect(result.success).toBe(true);
+    expect(result.films).toBe(1);
+    expect(result.events).toBe(1);
+
+    expect(festivalRepo.getFestival("F2")).toBeTruthy();
+    expect(filmRepo.getFilmsByFestival("F2").length).toBe(1);
+    expect(eventRepo.getEventsByFestival("F2").length).toBe(1);
+  });
+
+  test("returns festival summary", () => {
+    const festival = {
+      id: "F3",
+      name: "Summary Fest",
+      description: "Desc",
+      startDate: "2026-03-01",
+      endDate: "2026-03-05",
+      mode: "onsite",
+      visibility: "public"
+    };
+
+    engine.publishFestival(festival);
+
+    engine.publishFilm({
+      id: "FILM3",
+      festivalId: "F3",
+      title: "Film C",
+      synopsis: "",
+      duration: 80,
+      language: "PL",
+      ageRating: "PG",
+      streamUrl: "",
+      startTime: null,
+      endTime: null,
+      room: null
+    });
+
+    const summary = engine.getFestivalSummary("F3");
+
+    expect(summary.id).toBe("F3");
+    expect(summary.films).toBe(1);
+    expect(summary.events).toBe(0);
+  });
+
+  test("lists all festivals", () => {
+    engine.publishFestival({
+      id: "F4",
+      name: "Fest A",
+      description: "",
+      startDate: "",
+      endDate: "",
+      mode: "online",
+      visibility: "public"
+    });
+
+    engine.publishFestival({
+      id: "F5",
+      name: "Fest B",
+      description: "",
+      startDate: "",
+      endDate: "",
+      mode: "onsite",
+      visibility: "private"
+    });
+
+    const list = engine.listFestivals();
+    expect(list.length).toBe(2);
+  });
+});
+
+===== END FILE: __tests__\festival-marketplace-engine.test.js =====
+

@@ -1,3 +1,4 @@
+import "./legacy/CityLegacyAdapter";
 import React from "react";
 import { ModuleLoader } from "./modules/ModuleLoader.js";
 

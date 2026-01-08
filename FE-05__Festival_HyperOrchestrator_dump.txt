@@ -1,0 +1,225 @@
+===== FILE: engine\hyperOrchestratorEngine.js =====
+
+import { DirectorAction } from "../models/directorAction.js";
+
+export class HyperOrchestratorEngine {
+  constructor({ directorEngine, uiAdapter, scenarioAdapter, notificationAdapter }) {
+    this.directorEngine = directorEngine;
+    this.uiAdapter = uiAdapter;
+    this.scenarioAdapter = scenarioAdapter;
+    this.notificationAdapter = notificationAdapter;
+  }
+
+  handleEvent(event) {
+    if (this.directorEngine?.evaluate) {
+      return this.directorEngine.evaluate(event);
+    }
+    return null;
+  }
+
+  orchestrate({ profileId, insightPacket }) {
+    const rawActions = this.directorEngine.evaluate(profileId, insightPacket);
+    const actions = rawActions.map(a => new DirectorAction(a));
+
+    const now = Date.now();
+    const validActions = actions.filter(a => !a.ttl || now <= a.ttl);
+
+    validActions.sort((a, b) => b.priority - a.priority);
+
+    validActions.forEach(action => this.executeAction(action));
+
+    return validActions;
+  }
+
+  executeAction(action) {
+    switch (action.type) {
+      case "PROMOTE_FILM":
+        this.uiAdapter?.promoteFilm?.(action.payload);
+        break;
+
+      case "PROMOTE_EVENT":
+        this.uiAdapter?.promoteEvent?.(action.payload);
+        break;
+
+      case "SPOTLIGHT_DIRECTOR":
+        this.uiAdapter?.spotlightDirector?.(action.payload);
+        break;
+
+      case "RESCUE_EVENT":
+        this._handleRescueEvent(action.payload);
+        break;
+
+      case "DROP_OFF_ALERT":
+        this._handleDropOffAlert(action.payload);
+        break;
+
+      case "ENGAGEMENT_RECOVERY":
+        this._handleEngagementRecovery(action.payload);
+        break;
+
+      case "LANGUAGE_PUSH":
+        this.uiAdapter?.setLanguagePreference?.(action.payload);
+        break;
+
+      case "RECOMMENDATION_TUNE":
+        this.uiAdapter?.tuneRecommendations?.(action.payload);
+        break;
+
+      case "SOCIAL_BEAT":
+      case "SOCIAL_TREND_PUSH":
+        this.uiAdapter?.boostSocialFeed?.(action.payload);
+        break;
+
+      case "ACHIEVEMENT_SPOTLIGHT":
+        this.uiAdapter?.showAchievementSpotlight?.(action.payload);
+        break;
+
+      case "FESTIVAL_BEAT":
+      case "CURATOR_BEAT":
+      case "HYPE_BEAT":
+        this.scenarioAdapter?.triggerBeat?.(action.payload);
+        break;
+
+      case "DIRECTOR_NOTE":
+        this.notificationAdapter?.sendDirectorNote?.(action.payload);
+        break;
+
+      case "DIRECTOR_STATE_UPDATE":
+        this.uiAdapter?.updateDirectorState?.(action.payload);
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  _handleRescueEvent(payload) {
+    const strategy = payload.strategy || "highlight";
+
+    if (strategy === "push_notification") {
+      this.notificationAdapter?.sendEventRescueNotification?.(payload);
+    }
+
+    if (strategy === "highlight") {
+      this.uiAdapter?.promoteEvent?.(payload);
+    }
+
+    if (strategy === "social_boost") {
+      this.uiAdapter?.boostSocialFeed?.({
+        intensity: "high",
+        eventId: payload.eventId
+      });
+    }
+  }
+
+  _handleDropOffAlert(payload) {
+    this.uiAdapter?.showDropOffWarning?.(payload);
+  }
+
+  _handleEngagementRecovery(payload) {
+    const strategy = payload.strategy || "promote_trending";
+
+    if (strategy === "promote_trending") {
+      this.scenarioAdapter?.triggerBeat?.({
+        beatType: "mid_peak",
+        message: "Boosting trending content"
+      });
+    }
+
+    if (strategy === "push_event") {
+      this.notificationAdapter?.sendEngagementRecoveryNotification?.(payload);
+    }
+
+    if (strategy === "social_feed") {
+      this.uiAdapter?.boostSocialFeed?.({ intensity: "medium" });
+    }
+  }
+}
+
+===== END FILE: engine\hyperOrchestratorEngine.js =====
+
+===== FILE: models\directorAction.js =====
+
+export class DirectorAction {
+  constructor({
+    type,
+    priority,
+    payload,
+    ttl,
+    source
+  }) {
+    this.type = type;
+    this.priority = priority || 3;
+    this.payload = payload || {};
+    this.ttl = ttl || null;
+    this.source = source || "ai_director";
+  }
+}
+
+===== END FILE: models\directorAction.js =====
+
+===== FILE: __tests__\hyper-orchestrator-engine.test.js =====
+
+import { jest } from "@jest/globals";
+import { HyperOrchestratorEngine } from "../engine/hyperOrchestratorEngine.js";
+
+describe("FE-05 HyperOrchestrator Engine", () => {
+  const mockDirectorEngine = {
+    evaluate: jest.fn()
+  };
+
+  const mockUiAdapter = {
+    promoteFilm: jest.fn(),
+    promoteEvent: jest.fn(),
+    boostSocialFeed: jest.fn()
+  };
+
+  const mockScenarioAdapter = {
+    triggerBeat: jest.fn()
+  };
+
+  const mockNotificationAdapter = {
+    sendEventRescueNotification: jest.fn()
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("orchestrates actions from director engine", () => {
+    mockDirectorEngine.evaluate.mockReturnValue([
+      {
+        type: "PROMOTE_FILM",
+        priority: 2,
+        payload: { filmId: 10 }
+      },
+      {
+        type: "RESCUE_EVENT",
+        priority: 1,
+        payload: { eventId: 5, strategy: "push_notification" }
+      }
+    ]);
+
+    const engine = new HyperOrchestratorEngine({
+      directorEngine: mockDirectorEngine,
+      uiAdapter: mockUiAdapter,
+      scenarioAdapter: mockScenarioAdapter,
+      notificationAdapter: mockNotificationAdapter
+    });
+
+    const actions = engine.orchestrate({
+      profileId: "curator",
+      insightPacket: { festivalId: 1 }
+    });
+
+    expect(actions.length).toBe(2);
+    expect(mockUiAdapter.promoteFilm).toHaveBeenCalledWith({ filmId: 10 });
+    expect(mockNotificationAdapter.sendEventRescueNotification).toHaveBeenCalledWith({
+      eventId: 5,
+      strategy: "push_notification"
+    });
+  });
+});
+
+===== END FILE: __tests__\hyper-orchestrator-engine.test.js =====
+

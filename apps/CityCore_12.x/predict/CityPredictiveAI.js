@@ -1,0 +1,37 @@
+﻿export function createCityPredictiveAI({ app, engine = app, healthMonitor }) {
+  if (!engine) throw new Error("PredictiveAI requires engine");
+  if (!healthMonitor) throw new Error("PredictiveAI requires healthMonitor");
+
+  let lastPrediction = null;
+
+  function predict() {
+    const health = healthMonitor.get();
+    const state = engine.getState ? engine.getState() : {};
+
+    lastPrediction = {
+      timestamp: Date.now(),
+      health,
+      stateSnapshot: state,
+      forecast: health > 0.5 ? "stable" : "unstable",
+
+      // --- pola wymagane przez FateEngine ---
+      nextDistrict: state.district || "unknown",
+      nextView: state.view || null,
+      nextLoad: {
+        ai: state.aiLoad || 0,
+        workflow: state.workflowLoad || 0
+      }
+    };
+
+    return lastPrediction;
+  }
+
+  function getLastPrediction() {
+    return lastPrediction;
+  }
+
+  return {
+    predict,
+    getLastPrediction
+  };
+}

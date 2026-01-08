@@ -1,0 +1,2565 @@
+===== FILE: index.js =====
+
+import React from "react";
+import { ModuleLoader } from "./modules/ModuleLoader.js";
+
+export function CityApp() {
+  return (
+    <div>
+      <h1>CITYOF-GATE</h1>
+      <ModuleLoader />
+    </div>
+  );
+}
+
+
+// --- AUTO-INJECT: City Notifications Stream ---
+import { pushCityNotification } from "./LIFE/CityNotifications";
+import { emitMapSignal } from "./MAP/CityMapAnimations";
+
+const evt = new EventSource("/api/city/notify/stream");
+evt.onmessage = (e) => pushCityNotification(JSON.parse(e.data));
+
+const evt2 = new EventSource("/api/city/map/signal/stream");
+evt2.onmessage = (e) => emitMapSignal(JSON.parse(e.data));
+
+===== END FILE: index.js =====
+
+===== FILE: access\cityAccess.js =====
+
+export const cityAccess = {};
+cityAccess["FE-21__Marketplace"] = {
+  marketplace: true,
+  creator: true,
+  street: true
+};
+
+===== END FILE: access\cityAccess.js =====
+
+===== FILE: ai\cityAIEngine.js =====
+
+import { cityMemory } from "../memory/cityMemoryEngine";
+import { cityPulse } from "../pulse/cityPulseEngine";
+import { cityMood } from "../mood/cityMoodEngine";
+import { cityWeather } from "../weather/cityWeatherEngine";
+import { cityRhythm } from "../rhythm/cityRhythmEngine";
+import { cityBroadcast } from "../broadcast/cityBroadcastEngine";
+
+export const cityAI = {
+  listeners: [],
+  predictions: {
+    nextHotDistrict: null,
+    nextMood: null,
+    nextWeather: null
+  },
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this.predictions));
+  },
+
+  analyze() {
+    const trends = cityMemory.trends;
+
+    // Predict next hot district
+    const sorted = Object.entries(trends).sort((a, b) => b[1] - a[1]);
+    this.predictions.nextHotDistrict = sorted[0]?.[0] || "city";
+
+    // Predict next mood
+    if (cityPulse.bpm > 120) this.predictions.nextMood = "Energetic";
+    else if (cityPulse.bpm > 80) this.predictions.nextMood = "Creative";
+    else this.predictions.nextMood = "Calm";
+
+    // Predict next weather
+    if (cityPulse.bpm > 120) this.predictions.nextWeather = "NeonRain";
+    else if (cityMood.mood === "Celebratory") this.predictions.nextWeather = "Fireworks";
+    else this.predictions.nextWeather = "Clear";
+
+    this.notify();
+
+    // Intelligent reactions
+    this.react();
+  },
+
+  react() {
+    // If festival is trending → broadcast celebration
+    if (this.predictions.nextHotDistrict === "festival") {
+      cityBroadcast.push("Miasto przewiduje falę festiwalową!");
+    }
+
+    // If creator activity is rising → encourage creativity
+    if (this.predictions.nextHotDistrict === "creator") {
+      cityBroadcast.push("Twórcy przejmują miasto!");
+    }
+
+    // If marketplace is heating up → highlight deals
+    if (this.predictions.nextHotDistrict === "marketplace") {
+      cityBroadcast.push("Marketplace wchodzi w gorącą fazę!");
+    }
+  }
+};
+
+// Auto-run AI every 5 seconds
+setInterval(() => cityAI.analyze(), 5000);
+
+===== END FILE: ai\cityAIEngine.js =====
+
+===== FILE: broadcast\cityBroadcastEngine.js =====
+
+export const cityBroadcast = {
+  queue: [],
+  listeners: [],
+  active: null,
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this.active));
+  },
+
+  push(message) {
+    this.queue.push(message);
+    this.processQueue();
+  },
+
+  processQueue() {
+    if (this.active) return;
+
+    this.active = this.queue.shift();
+    this.notify();
+
+    // auto-clear after 4 seconds
+    setTimeout(() => {
+      this.active = null;
+      this.notify();
+      if (this.queue.length > 0) this.processQueue();
+    }, 4000);
+  }
+};
+
+===== END FILE: broadcast\cityBroadcastEngine.js =====
+
+===== FILE: broadcast\cityBroadcastListener.js =====
+
+import { cityBroadcast } from "./cityBroadcastEngine";
+import { citySync } from "../sync/citySyncEngine";
+
+citySync.subscribe(event => {
+  const prefix = event.type.split(".")[0];
+
+  const messages = {
+    marketplace: "Nowa aktywność w Marketplace!",
+    creator: "Twórca zdobył progres!",
+    street: "Nowy sygnał ulicy!",
+    festival: "Nowy event festiwalowy!",
+    community: "Aktywność społeczności!",
+    city: "Globalne wydarzenie miasta!"
+  };
+
+  const msg = messages[prefix] || "Nowy event w mieście!";
+  cityBroadcast.push(msg);
+});
+
+===== END FILE: broadcast\cityBroadcastListener.js =====
+
+===== FILE: config\districts.json =====
+
+[
+  {
+    "id": "FE-21",
+    "name": "Marketplace",
+    "path": "/marketplace",
+    "type": "district"
+  }
+]
+
+===== END FILE: config\districts.json =====
+
+===== FILE: economy\cityEconomyEngine.js =====
+
+import { cityMemory } from "../memory/cityMemoryEngine";
+import { cityAI } from "../ai/cityAIEngine";
+import { cityBroadcast } from "../broadcast/cityBroadcastEngine";
+import { cityPersonality } from "../personality/cityPersonalityEngine";
+
+export const cityEconomy = {
+  tokens: {
+    GATE: { supply: 0, demand: 0, price: 1 },
+    CREA: { supply: 0, demand: 0, price: 1 },
+    STREET: { supply: 0, demand: 0, price: 1 },
+    FEST: { supply: 0, demand: 0, price: 1 }
+  },
+  inflation: {
+    GATE: 0,
+    CREA: 0,
+    STREET: 0,
+    FEST: 0
+  },
+  cycle: "Stable", // Boom, Stable, Drop, Recovery
+  listeners: [],
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this));
+  },
+
+  registerDemand(token, amount) {
+    if (!this.tokens[token]) return;
+    this.tokens[token].demand += amount;
+    this.recalculate(token);
+  },
+
+  registerSupply(token, amount) {
+    if (!this.tokens[token]) return;
+    this.tokens[token].supply += amount;
+    this.recalculate(token);
+  },
+
+  recalculate(token) {
+    const t = this.tokens[token];
+    const demand = t.demand || 1;
+    const supply = t.supply || 1;
+
+    // Prosty model ceny: popyt / podaż
+    t.price = Math.max(0.01, demand / supply);
+
+    // Inflacja: gdy podaż > popyt
+    this.inflation[token] = supply > demand ? (supply - demand) / supply : 0;
+
+    this.updateCycle();
+    this.notify();
+  },
+
+  updateCycle() {
+    const totalDemand = Object.values(this.tokens).reduce((acc, t) => acc + t.demand, 0);
+    const totalSupply = Object.values(this.tokens).reduce((acc, t) => acc + t.supply, 0);
+
+    if (totalDemand > totalSupply * 1.3) this.cycle = "Boom";
+    else if (totalSupply > totalDemand * 1.3) this.cycle = "Drop";
+    else if (this.cycle === "Drop" && totalDemand >= totalSupply) this.cycle = "Recovery";
+    else this.cycle = "Stable";
+
+    this.reactToCycle();
+  },
+
+  reactToCycle() {
+    const personality = cityPersonality.personality;
+
+    const prefixMap = {
+      Neutral: "Ekonomia:",
+      Energetic: "⚡ Rynek:",
+      Creative: "🎨 Ekonomia twórców:",
+      Calm: "🌙 Rynek spokojny:",
+      Chaotic: "🌪️ Rynek szaleje:",
+      Celebratory: "🎉 Ekonomia świętuje:"
+    };
+
+    const prefix = prefixMap[personality] || "Ekonomia:";
+
+    if (this.cycle === "Boom") {
+      cityBroadcast.push(`${prefix} miasto wchodzi w fazę BOOM.`);
+    } else if (this.cycle === "Drop") {
+      cityBroadcast.push(`${prefix} rynek wchodzi w fazę spadku.`);
+    } else if (this.cycle === "Recovery") {
+      cityBroadcast.push(`${prefix} rynek odbija po spadku.`);
+    }
+  }
+};
+
+// Integracja z CityMemory: eventy → popyt/podaż
+cityMemory.subscribe(mem => {
+  const last = mem.events[mem.events.length - 1];
+  if (!last) return;
+
+  const prefix = last.type.split(".")[0];
+
+  // Prosty mapping eventów na tokeny
+  if (prefix === "marketplace") {
+    cityEconomy.registerDemand("GATE", 1);
+    cityEconomy.registerDemand("CREA", 1);
+  }
+
+  if (prefix === "creator") {
+    cityEconomy.registerDemand("CREA", 2);
+  }
+
+  if (prefix === "street") {
+    cityEconomy.registerDemand("STREET", 1);
+  }
+
+  if (prefix === "festival") {
+    cityEconomy.registerDemand("FEST", 2);
+  }
+
+  if (prefix === "community") {
+    cityEconomy.registerDemand("GATE", 0.5);
+  }
+});
+
+===== END FILE: economy\cityEconomyEngine.js =====
+
+===== FILE: economy\cityEconomyListener.js =====
+
+import { cityEconomy } from "./cityEconomyEngine";
+import { cityAI } from "../ai/cityAIEngine";
+
+// Prosty hook: AI może reagować na stan ekonomii
+cityEconomy.subscribe(econ => {
+  // Przykład: jeśli BOOM → AI może przewidywać wzrost aktywności
+  if (econ.cycle === "Boom") {
+    cityAI.predictions.nextMood = "Energetic";
+  }
+});
+
+===== END FILE: economy\cityEconomyListener.js =====
+
+===== FILE: emergence\cityEmergenceEngine.js =====
+
+import { citySimulation } from "../simulation/citySimulationEngine";
+import { cityEconomy } from "../economy/cityEconomyEngine";
+import { cityReputation } from "../reputation/cityReputationEngine";
+import { cityGovernance } from "../governance/cityGovernanceEngine";
+import { cityNarrative } from "../narrative/cityNarrativeEngine";
+import { cityBroadcast } from "../broadcast/cityBroadcastEngine";
+import { cityPersonality } from "../personality/cityPersonalityEngine";
+import { cityAI } from "../ai/cityAIEngine";
+
+export const cityEmergence = {
+  tick: 0,
+  patterns: [],
+  listeners: [],
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this));
+  },
+
+  detectPatterns() {
+    this.tick++;
+
+    const econ = cityEconomy;
+    const rep = cityReputation;
+    const gov = cityGovernance;
+    const sim = citySimulation;
+    const ai = cityAI.predictions;
+
+    const cycle = econ.cycle;
+    const topUsers = Object.entries(rep.users || {})
+      .sort(([, a], [, b]) => b.score - a.score)
+      .slice(0, 3)
+      .map(([id]) => id);
+
+    const activeProposals = (gov.activeVotes || []).length;
+    const lastSim = sim.lastSimulatedEvent;
+
+    const pattern = {
+      tick: this.tick,
+      cycle,
+      topUsers,
+      activeProposals,
+      lastSimType: lastSim?.type || null,
+      lastSimDistrict: lastSim?.payload?.district || null,
+      predictedHotDistrict: ai.nextHotDistrict || null
+    };
+
+    this.patterns.push(pattern);
+    this.react(pattern);
+    this.notify();
+  },
+
+  react(pattern) {
+    const personality = cityPersonality.personality;
+
+    // Przykładowe emergentne zachowania:
+    // 1. Jeśli BOOM + dużo głosowań → miasto ogłasza "społeczną falę"
+    if (pattern.cycle === "Boom" && pattern.activeProposals >= 3) {
+      const msg =
+        personality === "Energetic"
+          ? "⚡ Miasto wchodzi w społeczną hiperaktywność!"
+          : "Miasto doświadcza fali społecznej aktywności.";
+      cityBroadcast.push(msg);
+    }
+
+    // 2. Jeśli Drop + brak głosowań + brak top userów → miasto sygnalizuje stagnację
+    if (pattern.cycle === "Drop" && pattern.activeProposals === 0 && pattern.topUsers.length === 0) {
+      const msg =
+        personality === "Calm"
+          ? "🌙 Miasto zapada w spokojną stagnację."
+          : "Miasto doświadcza okresu stagnacji.";
+      cityBroadcast.push(msg);
+    }
+
+    // 3. Jeśli powtarza się ten sam district w symulacji + AI wskazuje ten sam → miasto tworzy "hot zone"
+    if (
+      pattern.lastSimDistrict &&
+      pattern.predictedHotDistrict &&
+      pattern.lastSimDistrict === pattern.predictedHotDistrict
+    ) {
+      const msg =
+        personality === "Creative"
+          ? `🎨 Dzielnica ${pattern.lastSimDistrict} staje się kreatywną hot‑zoną miasta.`
+          : `Dzielnica ${pattern.lastSimDistrict} staje się strefą wysokiej aktywności.`;
+      cityBroadcast.push(msg);
+
+      // Możemy też dodać mikro‑historię
+      cityNarrative.stories.push({
+        text: `Miasto rozpoznaje nowy wzór: dzielnica ${pattern.lastSimDistrict} przyciąga coraz więcej aktywności.`,
+        timestamp: Date.now()
+      });
+    }
+  }
+};
+
+// Detekcja wzorców co 10 sekund
+setInterval(() => cityEmergence.detectPatterns(), 10000);
+
+===== END FILE: emergence\cityEmergenceEngine.js =====
+
+===== FILE: governance\cityGovernanceEngine.js =====
+
+import { cityReputation } from "../reputation/cityReputationEngine";
+import { cityBroadcast } from "../broadcast/cityBroadcastEngine";
+import { cityPersonality } from "../personality/cityPersonalityEngine";
+
+export const cityGovernance = {
+  proposals: [],
+  activeVotes: [],
+  listeners: [],
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this));
+  },
+
+  createProposal(type, payload) {
+    // Governance ograniczone: tylko dotacje, nominacje, wyróżnienia
+    const allowed = ["grant", "nomination", "award"];
+    if (!allowed.includes(type)) {
+      console.warn("Proposal type not allowed:", type);
+      return null;
+    }
+
+    const proposal = {
+      id: "prop_" + Date.now(),
+      type,
+      payload,
+      votes: {},
+      createdAt: Date.now(),
+      status: "active"
+    };
+
+    this.proposals.push(proposal);
+    this.activeVotes.push(proposal);
+
+    this.announceProposal(proposal);
+    this.notify();
+
+    return proposal;
+  },
+
+  vote(proposalId, userId, value) {
+    const proposal = this.activeVotes.find(p => p.id === proposalId);
+    if (!proposal) return;
+
+    const rep = cityReputation.users[userId]?.score || 0;
+    const weight = Math.max(1, Math.floor(rep / 10)); // reputacja = waga głosu
+
+    proposal.votes[userId] = { value, weight };
+
+    this.notify();
+  },
+
+  closeProposal(proposalId) {
+    const proposal = this.activeVotes.find(p => p.id === proposalId);
+    if (!proposal) return;
+
+    proposal.status = "closed";
+
+    const result = this.calculateResult(proposal);
+    this.announceResult(proposal, result);
+
+    this.activeVotes = this.activeVotes.filter(p => p.id !== proposalId);
+    this.notify();
+
+    return result;
+  },
+
+  calculateResult(proposal) {
+    let yes = 0;
+    let no = 0;
+
+    Object.values(proposal.votes).forEach(v => {
+      if (v.value === "yes") yes += v.weight;
+      else no += v.weight;
+    });
+
+    return yes >= no ? "accepted" : "rejected";
+  },
+
+  announceProposal(proposal) {
+    const personality = cityPersonality.personality;
+
+    const prefixMap = {
+      Neutral: "Nowa propozycja:",
+      Energetic: "⚡ Nowa inicjatywa społeczności!",
+      Creative: "🎨 Nowa propozycja twórcza!",
+      Calm: "🌙 Spokojna inicjatywa:",
+      Chaotic: "🌪️ Burzliwa propozycja!",
+      Celebratory: "🎉 Propozycja do świętowania!"
+    };
+
+    const prefix = prefixMap[personality] || "Propozycja:";
+    const msg = `${prefix} ${proposal.type} — głosowanie otwarte.`;
+
+    cityBroadcast.push(msg);
+  },
+
+  announceResult(proposal, result) {
+    const personality = cityPersonality.personality;
+
+    const prefixMap = {
+      Neutral: "Wynik głosowania:",
+      Energetic: "⚡ Wynik!",
+      Creative: "🎨 Decyzja społeczności:",
+      Calm: "🌙 Wynik głosowania:",
+      Chaotic: "🌪️ Wynik!",
+      Celebratory: "🎉 Wynik głosowania!"
+    };
+
+    const prefix = prefixMap[personality] || "Wynik:";
+    const msg = `${prefix} ${proposal.type} → ${result}.`;
+
+    cityBroadcast.push(msg);
+  }
+};
+
+===== END FILE: governance\cityGovernanceEngine.js =====
+
+===== FILE: heatmap\cityHeatmapEngine.js =====
+
+export const cityHeatmap = {
+  districts: {},
+  update(districtId) {
+    if (!this.districts[districtId]) {
+      this.districts[districtId] = { intensity: 0, lastEvent: null };
+    }
+
+    const d = this.districts[districtId];
+    d.intensity = Math.min(1, d.intensity + 0.25);
+    d.lastEvent = Date.now();
+
+    // decay
+    setTimeout(() => {
+      d.intensity = Math.max(0, d.intensity - 0.25);
+    }, 3000);
+  }
+};
+
+===== END FILE: heatmap\cityHeatmapEngine.js =====
+
+===== FILE: heatmap\cityHeatmapListener.js =====
+
+import { cityHeatmap } from "./cityHeatmapEngine";
+import { superEngineClient } from "../../FE-21__Marketplace/utils/SuperEngineClient";
+
+// Map event types to districts
+const districtMap = {
+  "marketplace": "FE-21",
+  "creator": "FE-21",
+  "street": "FE-21",
+  "festival": "FE-33",
+  "community": "FE-03",
+  "city": "FE-00"
+};
+
+superEngineClient.subscribe(event => {
+  const prefix = event.type.split(".")[0];
+  const districtId = districtMap[prefix];
+
+  if (districtId) {
+    cityHeatmap.update(districtId);
+  }
+});
+
+===== END FILE: heatmap\cityHeatmapListener.js =====
+
+===== FILE: LIFE\CityLifePanel.js =====
+
+import React, { useEffect, useState } from "react";
+
+export function CityLifePanel() {
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/life/heartbeat")
+      .then((res) => res.json())
+      .then((data) => setEvents(data || []));
+  }, []);
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h2 style={{ marginBottom: 12 }}>Życie Miasta</h2>
+      <div
+        style={{
+          borderRadius: 16,
+          border: "1px solid rgba(0,0,0,0.06)",
+          background: "rgba(255,255,255,0.96)",
+          boxShadow: "0 12px 32px rgba(0,0,0,0.04)",
+          padding: 16,
+          maxHeight: 320,
+          overflow: "auto"
+        }}
+      >
+        {events.length === 0 && (
+          <div style={{ fontSize: 13, color: "#666" }}>
+            Miasto jest spokojne. Brak zarejestrowanych zdarzeń.
+          </div>
+        )}
+        {events
+          .slice()
+          .reverse()
+          .map((e, i) => (
+            <div
+              key={i}
+              style={{
+                padding: "6px 0",
+                borderBottom:
+                  i === events.length - 1
+                    ? "none"
+                    : "1px solid rgba(0,0,0,0.04)",
+                fontSize: 13,
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 12
+              }}
+            >
+              <span style={{ color: "#111" }}>{e.type}</span>
+              <span style={{ color: "#999" }}>
+                {new Date(e.ts).toLocaleTimeString()}
+              </span>
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+}
+
+===== END FILE: LIFE\CityLifePanel.js =====
+
+===== FILE: LIFE\CityNotifications.js =====
+
+import React, { useEffect, useState } from "react";
+
+let listeners = [];
+
+export function pushCityNotification(notification) {
+  listeners.forEach((l) => l(notification));
+}
+
+export function CityNotifications() {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const listener = (n) => {
+      setItems((prev) => {
+        const next = [...prev, { ...n, id: Date.now() }];
+        return next.slice(-4);
+      });
+    };
+    listeners.push(listener);
+    return () => {
+      listeners = listeners.filter((l) => l !== listener);
+    };
+  }, []);
+
+  if (!items.length) return null;
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 20,
+        right: 20,
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+        zIndex: 9999
+      }}
+    >
+      {items.map((n) => (
+        <div
+          key={n.id}
+          style={{
+            minWidth: 260,
+            maxWidth: 360,
+            padding: "10px 14px",
+            borderRadius: 12,
+            background: "rgba(255,255,255,0.96)",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+            border: "1px solid rgba(0,0,0,0.06)",
+            fontSize: 13,
+            color: "#111",
+            display: "flex",
+            flexDirection: "column",
+            gap: 4
+          }}
+        >
+          <div style={{ fontWeight: 600 }}>{n.title || "Miasto"}</div>
+          <div>{n.message}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+===== END FILE: LIFE\CityNotifications.js =====
+
+===== FILE: MAP\cityMap.js =====
+
+export const cityMap = [];
+cityMap.push({
+  districtId: "FE-21",
+  name: "Marketplace",
+  icon: "🛒",
+  path: "/marketplace",
+  color: "#ffb347"
+});
+
+===== END FILE: MAP\cityMap.js =====
+
+===== FILE: MAP\cityMap.json =====
+
+{
+  "tiles": [
+    {
+      "id": "city_hall",
+      "label": "City Hall",
+      "module": "FE-00__City",
+      "x": 0,
+      "y": 0
+    },
+    {
+      "id": "festival_pavilion",
+      "label": "Festival Pavilion",
+      "module": "FE-01__Festival_Pavilion",
+      "x": 1,
+      "y": 0
+    },
+    {
+      "id": "marketplace",
+      "label": "Marketplace Street",
+      "module": "FE-02__Marketplace",
+      "x": 2,
+      "y": 0
+    }
+  ]
+}
+
+===== END FILE: MAP\cityMap.json =====
+
+===== FILE: MAP\CityMapAnimations.js =====
+
+import { useEffect, useState } from "react";
+
+let mapSignalListeners = [];
+
+export function emitMapSignal(signal) {
+  mapSignalListeners.forEach((l) => l(signal));
+}
+
+export function useTileGlow(tileId) {
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    const listener = (signal) => {
+      if (signal.tileId === tileId) {
+        setActive(true);
+        setTimeout(() => setActive(false), 1200);
+      }
+    };
+    mapSignalListeners.push(listener);
+    return () => {
+      mapSignalListeners = mapSignalListeners.filter((l) => l !== listener);
+    };
+  }, [tileId]);
+
+  return active;
+}
+
+===== END FILE: MAP\CityMapAnimations.js =====
+
+===== FILE: MAP\CityMapEngine.js =====
+
+import map from "./cityMap.json";
+
+export function getCityTiles() {
+  return map.tiles || [];
+}
+
+export function getModuleTile(moduleName) {
+  return map.tiles.find((t) => t.module === moduleName);
+}
+
+===== END FILE: MAP\CityMapEngine.js =====
+
+===== FILE: MAP\cityMapGlow.js =====
+
+export const cityMapGlow = {};
+// Glow logic for FE‑21 Marketplace
+cityMapGlow["FE-21"] = {
+  active: false,
+  intensity: 0,
+  lastEvent: null,
+  trigger(event) {
+    this.active = true;
+    this.intensity = 1;
+    this.lastEvent = event;
+
+    // fade out after 3 seconds
+    setTimeout(() => {
+      this.intensity = 0;
+      this.active = false;
+    }, 3000);
+  }
+};
+
+===== END FILE: MAP\cityMapGlow.js =====
+
+===== FILE: MAP\cityMapGlowListener.js =====
+
+import { cityMapGlow } from "./cityMapGlow";
+import { superEngineClient } from "../../FE-21__Marketplace/utils/SuperEngineClient";
+
+superEngineClient.subscribe(event => {
+  // Marketplace events
+  if (event.type.startsWith("marketplace.")) {
+    cityMapGlow["FE-21"].trigger(event);
+  }
+
+  // Creator events
+  if (event.type.startsWith("creator.")) {
+    cityMapGlow["FE-21"].trigger(event);
+  }
+
+  // Street signals
+  if (event.type.startsWith("street.")) {
+    cityMapGlow["FE-21"].trigger(event);
+  }
+});
+
+===== END FILE: MAP\cityMapGlowListener.js =====
+
+===== FILE: memory\cityMemoryEngine.js =====
+
+export const cityMemory = {
+  events: [],
+  trends: {
+    marketplace: 0,
+    creator: 0,
+    street: 0,
+    festival: 0,
+    community: 0,
+    city: 0
+  },
+  listeners: [],
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this));
+  },
+
+  record(event) {
+    this.events.push({
+      type: event.type,
+      payload: event.payload,
+      timestamp: Date.now()
+    });
+
+    const prefix = event.type.split(".")[0];
+    if (this.trends[prefix] !== undefined) {
+      this.trends[prefix] += 1;
+    }
+
+    this.notify();
+  }
+};
+
+===== END FILE: memory\cityMemoryEngine.js =====
+
+===== FILE: memory\cityMemoryListener.js =====
+
+import { cityMemory } from "./cityMemoryEngine";
+import { citySync } from "../sync/citySyncEngine";
+
+citySync.subscribe(event => {
+  cityMemory.record(event);
+});
+
+===== END FILE: memory\cityMemoryListener.js =====
+
+===== FILE: menu\cityMenu.js =====
+
+export const cityMenu = [];
+cityMenu.push({
+  id: "FE-21__Marketplace",
+  label: "Marketplace",
+  path: "/marketplace",
+  icon: "🛒"
+});
+
+===== END FILE: menu\cityMenu.js =====
+
+===== FILE: modules\gate_city_reset_v3.js =====
+
+/**
+ * CITY RESET v3 — ARCHITEKTURA, NIE LOGIKA
+ * ----------------------------------------
+ * Ten reset:
+ * 1. Archiwizuje stare pliki root i śmieci
+ * 2. Zachowuje wszystkie moduły FE/BE
+ * 3. Zachowuje FE‑00__City i FE‑01/BE‑01
+ * 4. Zachowuje generatory, backend, tools, scripts
+ * 5. Odtwarza czystą strukturę miasta
+ * 6. NICZEGO nie usuwa z logiki 1–52
+ */
+
+const fs = require("fs");
+const path = require("path");
+
+const ROOT = process.cwd();
+const LEGACY = path.join(ROOT, "LEGACY");
+
+function ensureDir(p) {
+  if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
+}
+
+function moveToLegacy(filePath) {
+  if (!fs.existsSync(filePath)) return;
+
+  ensureDir(LEGACY);
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const name = path.basename(filePath);
+  const dest = path.join(LEGACY, `${name}_cityreset_${stamp}`);
+
+  fs.renameSync(filePath, dest);
+  console.log(`📦 Archiwizowano: ${name}`);
+}
+
+console.log("🏙️  CITY RESET v3 — START");
+
+// 1. Archiwizacja śmieci root
+const ROOT_TRASH = [
+  "index.html",
+  "index.js",
+  "main.js",
+  "loader.js",
+  "api.js",
+  "diagnostics.js",
+  "styles.css",
+  "style.css",
+  "app.js",
+  "old_modules",
+  "old_backend",
+  "old_city",
+  "dist",
+  "build"
+];
+
+ROOT_TRASH.forEach(item => {
+  const p = path.join(ROOT, item);
+  moveToLegacy(p);
+});
+
+// 2. Archiwizacja starych katalogów, które nie należą do architektury
+const ALLOWED = [
+  "apps",
+  "backend",
+  "modules",
+  "assets",
+  "tools",
+  "scripts",
+  "styles",
+  "LEGACY",
+  "README.md"
+];
+
+fs.readdirSync(ROOT).forEach(item => {
+  if (!ALLOWED.includes(item)) {
+    moveToLegacy(path.join(ROOT, item));
+  }
+});
+
+// 3. Odtworzenie struktury miasta
+console.log("\n🏗️  Odtwarzam strukturę miasta...");
+
+[
+  "apps",
+  "backend",
+  "modules",
+  "assets",
+  "tools",
+  "scripts",
+  "styles",
+  "LEGACY"
+].forEach(dir => ensureDir(path.join(ROOT, dir)));
+
+console.log("\n🎉 CITY RESET v3 — ZAKOŃCZONY");
+console.log("Miasto jest czyste, architektura odtworzona, logika zachowana.");
+
+===== END FILE: modules\gate_city_reset_v3.js =====
+
+===== FILE: modules\ModuleLoader.js =====
+
+import React, { useState } from "react";
+import { FE_01_Module } from "../../FE-01__Festival_Pavilion/index.js";
+import { FE_02_Module } from "../../FE-02__Marketplace/index.js";
+
+const modules = [
+  FE_01_Module,
+  FE_02_Module
+];
+
+export function ModuleLoader() {
+  const [route, setRoute] = useState(
+    modules[0]?.config?.baseRoute || "/"
+  );
+
+  const handleNav = (newRoute) => (e) => {
+    e.preventDefault();
+    setRoute(newRoute);
+  };
+
+  const activeModule =
+    modules.find((m) => route.startsWith(m.config.baseRoute)) || modules[0];
+
+  return (
+    <div>
+      <nav>
+        {modules.map((m) => (
+          <a
+            key={m.config.id}
+            href={m.config.baseRoute}
+            onClick={handleNav(m.config.baseRoute)}
+            style={{ marginRight: "12px" }}
+          >
+            {m.config.name}
+          </a>
+        ))}
+      </nav>
+      <hr />
+      {activeModule ? (
+        activeModule.router(route)
+      ) : (
+        <div>Brak aktywnego modułu dla ścieżki: {route}</div>
+      )}
+    </div>
+  );
+}
+
+===== END FILE: modules\ModuleLoader.js =====
+
+===== FILE: mood\cityMoodEngine.js =====
+
+export const cityMood = {
+  mood: "Calm",
+  lastEvent: null,
+  listeners: [],
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this.mood));
+  },
+
+  update(event) {
+    this.lastEvent = event;
+
+    const prefix = event.type.split(".")[0];
+
+    if (prefix === "creator") this.mood = "Creative";
+    else if (prefix === "marketplace") this.mood = "Energetic";
+    else if (prefix === "street") this.mood = "Chaotic";
+    else if (prefix === "festival") this.mood = "Celebratory";
+    else if (prefix === "community") this.mood = "Focused";
+    else this.mood = "Calm";
+
+    this.notify();
+
+    // decay back to Calm
+    setTimeout(() => {
+      this.mood = "Calm";
+      this.notify();
+    }, 5000);
+  }
+};
+
+===== END FILE: mood\cityMoodEngine.js =====
+
+===== FILE: mood\cityMoodListener.js =====
+
+import { cityMood } from "./cityMoodEngine";
+import { superEngineClient } from "../../FE-21__Marketplace/utils/SuperEngineClient";
+
+superEngineClient.subscribe(event => {
+  cityMood.update(event);
+});
+
+===== END FILE: mood\cityMoodListener.js =====
+
+===== FILE: narrative\cityNarrativeEngine.js =====
+
+import { cityMemory } from "../memory/cityMemoryEngine";
+import { cityPersonality } from "../personality/cityPersonalityEngine";
+import { cityAI } from "../ai/cityAIEngine";
+
+export const cityNarrative = {
+  stories: [],
+  listeners: [],
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this.stories));
+  },
+
+  generateStory(event) {
+    const personality = cityPersonality.personality;
+    const pred = cityAI.predictions;
+
+    const templates = {
+      Neutral: (e) => `W mieście wydarzyło się: ${e.type}.`,
+      Energetic: (e) => `⚡ Miasto pulsuje! Właśnie nastąpiło: ${e.type}.`,
+      Creative: (e) => `🎨 Na ulicach pojawiła się nowa inspiracja: ${e.type}.`,
+      Calm: (e) => `🌙 W ciszy miasta pojawił się subtelny ruch: ${e.type}.`,
+      Chaotic: (e) => `🌪️ Chaos przetacza się przez miasto! Event: ${e.type}.`,
+      Celebratory: (e) => `🎉 Miasto świętuje! Wydarzenie: ${e.type}.`
+    };
+
+    const base = templates[personality](event);
+
+    const extended = `${base} 
+Miasto przewiduje, że kolejna aktywna dzielnica to: ${pred.nextHotDistrict}.`;
+
+    this.stories.push({
+      text: extended,
+      timestamp: Date.now()
+    });
+
+    this.notify();
+  }
+};
+
+// Auto-generate narrative when memory records an event
+cityMemory.subscribe(mem => {
+  const last = mem.events[mem.events.length - 1];
+  if (last) cityNarrative.generateStory(last);
+});
+
+===== END FILE: narrative\cityNarrativeEngine.js =====
+
+===== FILE: PANELS\CityMapPanel.js =====
+
+import React from "react";
+import { getCityTiles } from "../MAP/CityMapEngine";
+
+export function CityMapPanel({ onNavigate }) {
+  const tiles = getCityTiles();
+
+  return (
+    <div>
+      <h2>Mapa Miasta</h2>
+      <div style={{ display: "flex", gap: "20px" }}>
+        {tiles.map((tile) => (
+          <div
+            key={tile.id}
+            onClick={() => onNavigate(tile.module)}
+            style={{
+              width: "140px",
+              height: "140px",
+              border: "2px solid #444",
+              borderRadius: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              background: "#fafafa"
+            }}
+          >
+            {tile.label}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+===== END FILE: PANELS\CityMapPanel.js =====
+
+===== FILE: PANELS\ReputationPanel.js =====
+
+import React, { useEffect, useState } from "react";
+
+export function ReputationPanel({ userId = "user-1" }) {
+  const [rep, setRep] = useState(null);
+
+  useEffect(() => {
+    fetch(`/api/reputation/score/${userId}`)
+      .then((res) => res.json())
+      .then((data) => setRep(data));
+  }, [userId]);
+
+  if (!rep) return <div>Ładowanie reputacji...</div>;
+
+  return (
+    <div>
+      <h2>Reputacja użytkownika</h2>
+      <p>Score: <strong>{rep.score}</strong></p>
+      <h3>Historia</h3>
+      <ul>
+        {rep.history.map((h, i) => (
+          <li key={i}>
+            {h.type} — {h.amount} — {h.reason}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: PANELS\ReputationPanel.js =====
+
+===== FILE: PANELS\WalletPanel.js =====
+
+import React, { useEffect, useState } from "react";
+
+export function WalletPanel({ userId = "user-1" }) {
+  const [wallet, setWallet] = useState(null);
+
+  useEffect(() => {
+    fetch(`/api/tokens/wallet/${userId}`)
+      .then((res) => res.json())
+      .then((data) => setWallet(data));
+  }, [userId]);
+
+  if (!wallet) return <div>Ładowanie portfela...</div>;
+
+  return (
+    <div>
+      <h2>Portfel użytkownika</h2>
+      <p>Saldo: <strong>{wallet.balance} GATE</strong></p>
+      <h3>Historia</h3>
+      <ul>
+        {wallet.history.map((h, i) => (
+          <li key={i}>
+            {h.type} — {h.amount} GATE — {h.reason}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: PANELS\WalletPanel.js =====
+
+===== FILE: personality\cityPersonalityBroadcastAdapter.js =====
+
+import { cityBroadcast } from "../broadcast/cityBroadcastEngine";
+import { cityPersonality } from "./cityPersonalityEngine";
+
+export function personalityBroadcast(message) {
+  const profile = cityPersonality.profiles[cityPersonality.personality];
+  const finalMessage = `${profile.emoji} ${profile.broadcastPrefix} ${message}`;
+  cityBroadcast.push(finalMessage);
+}
+
+===== END FILE: personality\cityPersonalityBroadcastAdapter.js =====
+
+===== FILE: personality\cityPersonalityEngine.js =====
+
+import { cityMood } from "../mood/cityMoodEngine";
+import { cityWeather } from "../weather/cityWeatherEngine";
+import { cityRhythm } from "../rhythm/cityRhythmEngine";
+import { cityPulse } from "../pulse/cityPulseEngine";
+
+export const cityPersonality = {
+  personality: "Neutral",
+  listeners: [],
+
+  profiles: {
+    Neutral: {
+      tone: "neutralny",
+      style: "informacyjny",
+      emoji: "🏙️",
+      broadcastPrefix: "Info:"
+    },
+    Energetic: {
+      tone: "dynamiczny",
+      style: "ekscytujący",
+      emoji: "⚡",
+      broadcastPrefix: "🔥 Boom!"
+    },
+    Creative: {
+      tone: "artystyczny",
+      style: "inspirujący",
+      emoji: "🎨",
+      broadcastPrefix: "✨ Inspiracja:"
+    },
+    Calm: {
+      tone: "spokojny",
+      style: "łagodny",
+      emoji: "🌙",
+      broadcastPrefix: "🌿 Spokój:"
+    },
+    Chaotic: {
+      tone: "dziki",
+      style: "nieprzewidywalny",
+      emoji: "🌪️",
+      broadcastPrefix: "💥 Chaos!"
+    },
+    Celebratory: {
+      tone: "świąteczny",
+      style: "radosny",
+      emoji: "🎉",
+      broadcastPrefix: "🎊 Świętujemy!"
+    }
+  },
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this.personality));
+  },
+
+  update() {
+    const mood = cityMood.mood;
+    const weather = cityWeather.weather;
+    const rhythm = cityRhythm.rhythm;
+    const bpm = cityPulse.bpm;
+
+    // Determine personality
+    if (mood === "Celebratory") this.personality = "Celebratory";
+    else if (mood === "Creative") this.personality = "Creative";
+    else if (bpm > 120) this.personality = "Energetic";
+    else if (weather === "Fog") this.personality = "Chaotic";
+    else if (rhythm === "NightCreators") this.personality = "Calm";
+    else this.personality = "Neutral";
+
+    this.notify();
+  }
+};
+
+// Auto-update personality when global systems change
+cityMood.subscribe(() => cityPersonality.update());
+cityWeather.subscribe(() => cityPersonality.update());
+cityRhythm.subscribe(() => cityPersonality.update());
+cityPulse.subscribe(() => cityPersonality.update());
+
+===== END FILE: personality\cityPersonalityEngine.js =====
+
+===== FILE: pulse\cityPulseEngine.js =====
+
+export const cityPulse = {
+  bpm: 30, // base pulse
+  lastEvent: null,
+  listeners: [],
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this.bpm));
+  },
+
+  trigger(event) {
+    this.lastEvent = event;
+
+    // Increase pulse on activity
+    this.bpm = Math.min(180, this.bpm + 10);
+
+    this.notify();
+
+    // Decay back to baseline
+    setTimeout(() => {
+      this.bpm = Math.max(30, this.bpm - 5);
+      this.notify();
+    }, 2000);
+  }
+};
+
+===== END FILE: pulse\cityPulseEngine.js =====
+
+===== FILE: pulse\cityPulseListener.js =====
+
+import { cityPulse } from "./cityPulseEngine";
+import { superEngineClient } from "../../FE-21__Marketplace/utils/SuperEngineClient";
+
+superEngineClient.subscribe(event => {
+  // Any event increases pulse
+  cityPulse.trigger(event);
+});
+
+===== END FILE: pulse\cityPulseListener.js =====
+
+===== FILE: reputation\cityReputationEngine.js =====
+
+import { cityMemory } from "../memory/cityMemoryEngine";
+import { cityBroadcast } from "../broadcast/cityBroadcastEngine";
+import { cityPersonality } from "../personality/cityPersonalityEngine";
+
+export const cityReputation = {
+  users: {},
+  levels: [
+    { id: "newcomer", label: "Newcomer", minScore: 0 },
+    { id: "citizen", label: "Citizen", minScore: 10 },
+    { id: "creator", label: "Creator", minScore: 30 },
+    { id: "trusted", label: "Trusted", minScore: 80 },
+    { id: "veteran", label: "Veteran", minScore: 150 },
+    { id: "legend", label: "Legend", minScore: 300 }
+  ],
+  listeners: [],
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this));
+  },
+
+  ensureUser(userId) {
+    if (!this.users[userId]) {
+      this.users[userId] = {
+        score: 0,
+        level: "newcomer",
+        history: []
+      };
+    }
+    return this.users[userId];
+  },
+
+  addReputation(userId, amount, reason, sourceEvent) {
+    const user = this.ensureUser(userId);
+    user.score = Math.max(0, user.score + amount);
+    user.history.push({
+      delta: amount,
+      reason,
+      eventType: sourceEvent?.type || null,
+      timestamp: Date.now()
+    });
+
+    const oldLevel = user.level;
+    user.level = this.resolveLevel(user.score);
+
+    if (oldLevel !== user.level) {
+      this.announceLevelUp(userId, user.level);
+    }
+
+    this.notify();
+  },
+
+  resolveLevel(score) {
+    let current = this.levels[0].id;
+    for (const lvl of this.levels) {
+      if (score >= lvl.minScore) current = lvl.id;
+    }
+    return current;
+  },
+
+  announceLevelUp(userId, levelId) {
+    const level = this.levels.find(l => l.id === levelId);
+    if (!level) return;
+
+    const personality = cityPersonality.personality;
+
+    const prefixMap = {
+      Neutral: "Reputacja:",
+      Energetic: "⚡ Awans reputacji!",
+      Creative: "🎨 Nowy poziom twórcy!",
+      Calm: "🌙 Spokojny awans:",
+      Chaotic: "🌪️ Reputacja eksploduje:",
+      Celebratory: "🎉 Wielki awans reputacji!"
+    };
+
+    const prefix = prefixMap[personality] || "Reputacja:";
+    const msg = `${prefix} Użytkownik ${userId} osiągnął poziom: ${level.label}.`;
+
+    cityBroadcast.push(msg);
+  }
+};
+
+// Integracja z CityMemory: eventy → reputacja
+cityMemory.subscribe(mem => {
+  const last = mem.events[mem.events.length - 1];
+  if (!last) return;
+
+  const prefix = last.type.split(".")[0];
+  const payload = last.payload || {};
+  const userId = payload.userId || payload.creatorId || payload.ownerId || "anon";
+
+  if (prefix === "creator") {
+    cityReputation.addReputation(userId, 3, "Aktywność twórcza", last);
+  }
+
+  if (prefix === "marketplace") {
+    cityReputation.addReputation(userId, 2, "Aktywność rynkowa", last);
+  }
+
+  if (prefix === "community") {
+    cityReputation.addReputation(userId, 1, "Aktywność społecznościowa", last);
+  }
+
+  if (prefix === "festival") {
+    cityReputation.addReputation(userId, 5, "Aktywność festiwalowa", last);
+  }
+
+  if (prefix === "street") {
+    cityReputation.addReputation(userId, 1, "Aktywność uliczna", last);
+  }
+});
+
+===== END FILE: reputation\cityReputationEngine.js =====
+
+===== FILE: rhythm\cityRhythmEngine.js =====
+
+import { cityPulse } from "../pulse/cityPulseEngine";
+import { cityMood } from "../mood/cityMoodEngine";
+import { cityHeatmap } from "../heatmap/cityHeatmapEngine";
+
+export const cityRhythm = {
+  rhythm: "MorningFlow",
+  listeners: [],
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this.rhythm));
+  },
+
+  update() {
+    const bpm = cityPulse.bpm;
+    const mood = cityMood.mood;
+
+    // Determine rhythm based on pulse + mood
+    if (mood === "Celebratory") {
+      this.rhythm = "FestivalMode";
+    } else if (bpm > 120) {
+      this.rhythm = "NightCreators";
+    } else if (bpm > 80) {
+      this.rhythm = "EveningMarket";
+    } else if (bpm > 50) {
+      this.rhythm = "MiddayActivity";
+    } else {
+      this.rhythm = "MorningFlow";
+    }
+
+    this.notify();
+  }
+};
+
+// Auto-update when pulse or mood changes
+cityPulse.subscribe(() => cityRhythm.update());
+cityMood.subscribe(() => cityRhythm.update());
+
+===== END FILE: rhythm\cityRhythmEngine.js =====
+
+===== FILE: router\cityRouter.js =====
+
+export const cityRoutes = [];
+cityRoutes.push({
+  path: "/marketplace",
+  component: require("../../FE-21__Marketplace/views/DashboardView.js").default
+});
+
+===== END FILE: router\cityRouter.js =====
+
+===== FILE: simulation\citySimulationEngine.js =====
+
+import { cityPulse } from "../pulse/cityPulseEngine";
+import { cityMood } from "../mood/cityMoodEngine";
+import { cityWeather } from "../weather/cityWeatherEngine";
+import { cityRhythm } from "../rhythm/cityRhythmEngine";
+import { cityMemory } from "../memory/cityMemoryEngine";
+import { cityAI } from "../ai/cityAIEngine";
+
+export const citySimulation = {
+  tick: 0,
+  listeners: [],
+  lastSimulatedEvent: null,
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this));
+  },
+
+  simulate() {
+    this.tick++;
+
+    const pulse = cityPulse.bpm;
+    const mood = cityMood.mood;
+    const weather = cityWeather.weather;
+    const rhythm = cityRhythm.rhythm;
+    const ai = cityAI.predictions;
+
+    // Wybór dzielnicy na podstawie AI
+    const district = ai.nextHotDistrict || "city";
+
+    // Intensywność aktywności
+    const intensity =
+      (pulse > 120 ? 3 : pulse > 80 ? 2 : 1) +
+      (mood === "Creative" ? 1 : 0) +
+      (weather === "NeonRain" ? 1 : 0);
+
+    // Typy aktywności symulowanych
+    const activityTypes = {
+      marketplace: ["marketplace.trade", "marketplace.offer", "marketplace.view"],
+      creator: ["creator.publish", "creator.like", "creator.share"],
+      street: ["street.signal", "street.discovery", "street.movement"],
+      festival: ["festival.entry", "festival.vote", "festival.reward"],
+      community: ["community.chat", "community.join", "community.react"]
+    };
+
+    const possible = activityTypes[district] || activityTypes["community"];
+    const eventType = possible[Math.floor(Math.random() * possible.length)];
+
+    const event = {
+      type: eventType,
+      payload: {
+        userId: "sim_user_" + Math.floor(Math.random() * 50),
+        intensity,
+        district
+      }
+    };
+
+    this.lastSimulatedEvent = event;
+
+    // Zapis do pamięci miasta
+    cityMemory.record(event);
+
+    this.notify();
+  }
+};
+
+// Auto-symulacja co 4 sekundy
+setInterval(() => citySimulation.simulate(), 4000);
+
+===== END FILE: simulation\citySimulationEngine.js =====
+
+===== FILE: sync\citySyncEngine.js =====
+
+export const citySync = {
+  listeners: [],
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  broadcast(event) {
+    this.listeners.forEach(cb => cb(event));
+  }
+};
+
+===== END FILE: sync\citySyncEngine.js =====
+
+===== FILE: sync\citySyncListener.js =====
+
+import { citySync } from "./citySyncEngine";
+import { superEngineClient } from "../../FE-21__Marketplace/utils/SuperEngineClient";
+
+// Every event from SuperEngine is broadcast to all districts
+superEngineClient.subscribe(event => {
+  citySync.broadcast(event);
+});
+
+===== END FILE: sync\citySyncListener.js =====
+
+===== FILE: sync\districtSyncAdapters.js =====
+
+import { citySync } from "./citySyncEngine";
+
+// Registry of district adapters
+export const districtSyncAdapters = {};
+
+// Register adapter
+export function registerDistrictAdapter(id, handler) {
+  districtSyncAdapters[id] = handler;
+}
+
+// Dispatch events to districts
+citySync.subscribe(event => {
+  Object.values(districtSyncAdapters).forEach(handler => handler(event));
+});
+
+===== END FILE: sync\districtSyncAdapters.js =====
+
+===== FILE: views\CityAIOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { cityAI } from "../ai/cityAIEngine";
+
+export default function CityAIOverlay() {
+  const [pred, setPred] = useState(cityAI.predictions);
+
+  useEffect(() => {
+    cityAI.subscribe(p => setPred({ ...p }));
+  }, []);
+
+  return (
+    <div
+      className="city-ai-overlay"
+      style={{
+        position: "absolute",
+        top: "20px",
+        right: "20px",
+        padding: "12px",
+        background: "rgba(0,0,0,0.6)",
+        color: "white",
+        borderRadius: "10px",
+        fontSize: "12px",
+        width: "220px"
+      }}
+    >
+      <strong>AI Przewidywania:</strong>
+      <div>Następna aktywna dzielnica: {pred.nextHotDistrict}</div>
+      <div>Nastrój miasta: {pred.nextMood}</div>
+      <div>Pogoda: {pred.nextWeather}</div>
+    </div>
+  );
+}
+
+===== END FILE: views\CityAIOverlay.js =====
+
+===== FILE: views\CityBroadcastOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { cityBroadcast } from "../broadcast/cityBroadcastEngine";
+
+export default function CityBroadcastOverlay() {
+  const [message, setMessage] = useState(null);
+
+  useEffect(() => {
+    cityBroadcast.subscribe(msg => setMessage(msg));
+  }, []);
+
+  if (!message) return null;
+
+  return (
+    <div
+      className="city-broadcast-overlay"
+      style={{
+        position: "absolute",
+        top: "20px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        padding: "12px 20px",
+        background: "rgba(0,0,0,0.7)",
+        color: "white",
+        borderRadius: "10px",
+        fontSize: "14px",
+        animation: "fadeInOut 4s ease"
+      }}
+    >
+      {message}
+    </div>
+  );
+}
+
+===== END FILE: views\CityBroadcastOverlay.js =====
+
+===== FILE: views\CityEconomyOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { cityEconomy } from "../economy/cityEconomyEngine";
+
+export default function CityEconomyOverlay() {
+  const [econ, setEcon] = useState(cityEconomy);
+
+  useEffect(() => {
+    cityEconomy.subscribe(e => setEcon({ ...e }));
+  }, []);
+
+  const tokens = econ.tokens || {};
+  const inflation = econ.inflation || {};
+
+  return (
+    <div
+      className="city-economy-overlay"
+      style={{
+        position: "absolute",
+        top: "80px",
+        right: "20px",
+        padding: "12px",
+        background: "rgba(0,0,0,0.6)",
+        color: "white",
+        borderRadius: "10px",
+        fontSize: "12px",
+        width: "260px"
+      }}
+    >
+      <strong>Ekonomia miasta:</strong>
+      <div>Cykl: {econ.cycle}</div>
+      <ul style={{ margin: "8px 0 0", paddingLeft: "16px" }}>
+        {Object.entries(tokens).map(([symbol, data]) => (
+          <li key={symbol}>
+            {symbol}: cena {data.price.toFixed(2)}, popyt {data.demand}, podaż {data.supply}, inflacja{" "}
+            {Math.round((inflation[symbol] || 0) * 100)}%
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: views\CityEconomyOverlay.js =====
+
+===== FILE: views\CityEmergenceOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { cityEmergence } from "../emergence/cityEmergenceEngine";
+
+export default function CityEmergenceOverlay() {
+  const [snapshot, setSnapshot] = useState({ tick: 0, patterns: [] });
+
+  useEffect(() => {
+    cityEmergence.subscribe(e => {
+      setSnapshot({
+        tick: e.tick,
+        patterns: [...e.patterns].slice(-3)
+      });
+    });
+  }, []);
+
+  return (
+    <div
+      className="city-emergence-overlay"
+      style={{
+        position: "absolute",
+        top: "360px",
+        right: "20px",
+        padding: "12px",
+        background: "rgba(0,0,0,0.6)",
+        color: "white",
+        borderRadius: "10px",
+        fontSize: "12px",
+        width: "260px"
+      }}
+    >
+      <strong>Emergentne wzorce miasta:</strong>
+      <div>Tick: {snapshot.tick}</div>
+      {snapshot.patterns.length === 0 ? (
+        <div>Brak wykrytych wzorców.</div>
+      ) : (
+        <ul style={{ margin: "8px 0 0", paddingLeft: "16px" }}>
+          {snapshot.patterns.map((p, i) => (
+            <li key={i}>
+              Cykl: {p.cycle}, hot: {p.predictedHotDistrict || "—"}, głosowań: {p.activeProposals}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+===== END FILE: views\CityEmergenceOverlay.js =====
+
+===== FILE: views\CityGovernanceOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { cityGovernance } from "../governance/cityGovernanceEngine";
+
+export default function CityGovernanceOverlay() {
+  const [snapshot, setSnapshot] = useState({ proposals: [], activeVotes: [] });
+
+  useEffect(() => {
+    cityGovernance.subscribe(g => {
+      setSnapshot({
+        proposals: [...g.proposals],
+        activeVotes: [...g.activeVotes]
+      });
+    });
+  }, []);
+
+  return (
+    <div
+      className="city-governance-overlay"
+      style={{
+        position: "absolute",
+        top: "220px",
+        right: "20px",
+        padding: "12px",
+        background: "rgba(0,0,0,0.6)",
+        color: "white",
+        borderRadius: "10px",
+        fontSize: "12px",
+        width: "260px"
+      }}
+    >
+      <strong>Głosowania społeczności:</strong>
+      {snapshot.activeVotes.length === 0 ? (
+        <div>Brak aktywnych głosowań.</div>
+      ) : (
+        <ul style={{ margin: "8px 0 0", paddingLeft: "16px" }}>
+          {snapshot.activeVotes.map(p => (
+            <li key={p.id}>
+              {p.type} — {Object.keys(p.votes).length} głosów
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+===== END FILE: views\CityGovernanceOverlay.js =====
+
+===== FILE: views\CityHeatmapOverlay.js =====
+
+import { cityHeatmap } from "../heatmap/cityHeatmapEngine";
+
+export default function CityHeatmapOverlay() {
+  return (
+    <div className="city-heatmap-overlay">
+      {Object.entries(cityHeatmap.districts).map(([id, data]) => (
+        <div
+          key={id}
+          className="heatmap-dot"
+          style={{
+            opacity: data.intensity,
+            boxShadow: `0 0 ${40 * data.intensity}px rgba(255, 80, 0, 0.8)`,
+            position: "absolute",
+            width: "40px",
+            height: "40px",
+            borderRadius: "50%",
+            left: id === "FE-21" ? "200px" :
+                  id === "FE-33" ? "350px" :
+                  id === "FE-03" ? "120px" :
+                  "50px",
+            top: id === "FE-21" ? "150px" :
+                 id === "FE-33" ? "220px" :
+                 id === "FE-03" ? "300px" :
+                 "80px"
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+===== END FILE: views\CityHeatmapOverlay.js =====
+
+===== FILE: views\CityHome.js =====
+
+export default function CityHome() { return "City Home"; }
+export function MarketplaceLink() {
+  return (
+    <a href="/marketplace" className="city-link">
+      🛒 Go to Marketplace
+    </a>
+  );
+}
+
+===== END FILE: views\CityHome.js =====
+
+===== FILE: views\CityMapView.js =====
+
+export default function CityMapView() { return "City Map"; }
+// FE‑21 glow integration
+import { cityMapGlow } from "../map/cityMapGlow";
+
+export function MarketplaceGlow() {
+  const glow = cityMapGlow["FE-21"];
+
+  if (!glow || !glow.active) return null;
+
+  return (
+    <div className="district-glow" style={{
+      boxShadow: `0 0 ${20 * glow.intensity}px #ffb347`,
+      borderRadius: "12px",
+      position: "absolute",
+      width: "120px",
+      height: "120px",
+      left: "200px",
+      top: "150px"
+    }}>
+    </div>
+  );
+}
+import CityHeatmapOverlay from "./CityHeatmapOverlay";
+
+export function CityMapWithHeatmap() {
+  return (
+    <div className="city-map-with-heatmap">
+      <CityHeatmapOverlay />
+    </div>
+  );
+}
+import CityPulseOverlay from "./CityPulseOverlay";
+
+export function CityMapWithPulse() {
+  return (
+    <div className="city-map-with-pulse">
+      <CityPulseOverlay />
+    </div>
+  );
+}
+import CityMoodOverlay from "./CityMoodOverlay";
+
+export function CityMapWithMood() {
+  return (
+    <div className="city-map-with-mood">
+      <CityMoodOverlay />
+    </div>
+  );
+}
+import CityWeatherOverlay from "./CityWeatherOverlay";
+
+export function CityMapWithWeather() {
+  return (
+    <div className="city-map-with-weather">
+      <CityWeatherOverlay />
+    </div>
+  );
+}
+import CityRhythmOverlay from "./CityRhythmOverlay";
+
+export function CityMapWithRhythm() {
+  return (
+    <div className="city-map-with-rhythm">
+      <CityRhythmOverlay />
+    </div>
+  );
+}
+import { useEffect, useState } from "react";
+import { citySync } from "../sync/citySyncEngine";
+
+export function CitySyncStatus() {
+  const [lastEvent, setLastEvent] = useState(null);
+
+  useEffect(() => {
+    citySync.subscribe(event => setLastEvent(event));
+  }, []);
+
+  if (!lastEvent) return null;
+
+  return (
+    <div className="city-sync-status" style={{
+      position: "absolute",
+      bottom: "20px",
+      right: "20px",
+      padding: "10px 14px",
+      background: "rgba(0,0,0,0.5)",
+      color: "white",
+      borderRadius: "8px",
+      fontSize: "12px"
+    }}>
+      Sync: {lastEvent.type}
+    </div>
+  );
+}
+import CityBroadcastOverlay from "./CityBroadcastOverlay";
+
+export function CityMapWithBroadcast() {
+  return (
+    <div className="city-map-with-broadcast">
+      <CityBroadcastOverlay />
+    </div>
+  );
+}
+import CityMemoryOverlay from "./CityMemoryOverlay";
+
+export function CityMapWithMemory() {
+  return (
+    <div className="city-map-with-memory">
+      <CityMemoryOverlay />
+    </div>
+  );
+}
+import CityAIOverlay from "./CityAIOverlay";
+
+export function CityMapWithAI() {
+  return (
+    <div className="city-map-with-ai">
+      <CityAIOverlay />
+    </div>
+  );
+}
+import CityPersonalityOverlay from "./CityPersonalityOverlay";
+
+export function CityMapWithPersonality() {
+  return (
+    <div className="city-map-with-personality">
+      <CityPersonalityOverlay />
+    </div>
+  );
+}
+import CityNarrativeOverlay from "./CityNarrativeOverlay";
+
+export function CityMapWithNarrative() {
+  return (
+    <div className="city-map-with-narrative">
+      <CityNarrativeOverlay />
+    </div>
+  );
+}
+import CityEconomyOverlay from "./CityEconomyOverlay";
+
+export function CityMapWithEconomy() {
+  return (
+    <div className="city-map-with-economy">
+      <CityEconomyOverlay />
+    </div>
+  );
+}
+import CityReputationOverlay from "./CityReputationOverlay";
+
+export function CityMapWithReputation() {
+  return (
+    <div className="city-map-with-reputation">
+      <CityReputationOverlay />
+    </div>
+  );
+}
+import CityGovernanceOverlay from "./CityGovernanceOverlay";
+
+export function CityMapWithGovernance() {
+  return (
+    <div className="city-map-with-governance">
+      <CityGovernanceOverlay />
+    </div>
+  );
+}
+import CitySimulationOverlay from "./CitySimulationOverlay";
+
+export function CityMapWithSimulation() {
+  return (
+    <div className="city-map-with-simulation">
+      <CitySimulationOverlay />
+    </div>
+  );
+}
+import CityEmergenceOverlay from "./CityEmergenceOverlay";
+
+export function CityMapWithEmergence() {
+  return (
+    <div className="city-map-with-emergence">
+      <CityEmergenceOverlay />
+    </div>
+  );
+}
+
+===== END FILE: views\CityMapView.js =====
+
+===== FILE: views\CityMemoryOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { cityMemory } from "../memory/cityMemoryEngine";
+
+export default function CityMemoryOverlay() {
+  const [history, setHistory] = useState([]);
+
+  useEffect(() => {
+    cityMemory.subscribe(mem => {
+      setHistory(mem.events.slice(-5)); // last 5 events
+    });
+  }, []);
+
+  return (
+    <div
+      className="city-memory-overlay"
+      style={{
+        position: "absolute",
+        bottom: "20px",
+        left: "20px",
+        padding: "10px",
+        background: "rgba(0,0,0,0.5)",
+        color: "white",
+        borderRadius: "8px",
+        fontSize: "12px",
+        maxWidth: "260px"
+      }}
+    >
+      <strong>Ostatnie zdarzenia:</strong>
+      <ul style={{ margin: 0, paddingLeft: "16px" }}>
+        {history.map((e, i) => (
+          <li key={i}>{e.type}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: views\CityMemoryOverlay.js =====
+
+===== FILE: views\CityMoodOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { cityMood } from "../mood/cityMoodEngine";
+
+export default function CityMoodOverlay() {
+  const [mood, setMood] = useState(cityMood.mood);
+
+  useEffect(() => {
+    cityMood.subscribe(newMood => setMood(newMood));
+  }, []);
+
+  const colors = {
+    Calm: "rgba(100, 150, 255, 0.2)",
+    Creative: "rgba(255, 100, 200, 0.3)",
+    Energetic: "rgba(255, 150, 0, 0.3)",
+    Chaotic: "rgba(255, 0, 0, 0.3)",
+    Focused: "rgba(0, 200, 255, 0.3)",
+    Celebratory: "rgba(255, 215, 0, 0.3)"
+  };
+
+  return (
+    <div
+      className="city-mood-overlay"
+      style={{
+        position: "absolute",
+        inset: 0,
+        background: colors[mood] || colors.Calm,
+        pointerEvents: "none",
+        transition: "background 0.8s ease"
+      }}
+    />
+  );
+}
+
+===== END FILE: views\CityMoodOverlay.js =====
+
+===== FILE: views\CityNarrativeOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { cityNarrative } from "../narrative/cityNarrativeEngine";
+
+export default function CityNarrativeOverlay() {
+  const [stories, setStories] = useState([]);
+
+  useEffect(() => {
+    cityNarrative.subscribe(s => setStories([...s].slice(-3)));
+  }, []);
+
+  return (
+    <div
+      className="city-narrative-overlay"
+      style={{
+        position: "absolute",
+        bottom: "20px",
+        right: "20px",
+        padding: "12px",
+        background: "rgba(0,0,0,0.6)",
+        color: "white",
+        borderRadius: "10px",
+        fontSize: "12px",
+        width: "260px"
+      }}
+    >
+      <strong>Ostatnie historie miasta:</strong>
+      <ul style={{ margin: 0, paddingLeft: "16px" }}>
+        {stories.map((s, i) => (
+          <li key={i}>{s.text}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: views\CityNarrativeOverlay.js =====
+
+===== FILE: views\CityPersonalityOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { cityPersonality } from "../personality/cityPersonalityEngine";
+
+export default function CityPersonalityOverlay() {
+  const [p, setP] = useState(cityPersonality.personality);
+
+  useEffect(() => {
+    cityPersonality.subscribe(newP => setP(newP));
+  }, []);
+
+  return (
+    <div
+      className="city-personality-overlay"
+      style={{
+        position: "absolute",
+        top: "20px",
+        left: "20px",
+        padding: "10px 14px",
+        background: "rgba(0,0,0,0.5)",
+        color: "white",
+        borderRadius: "8px",
+        fontSize: "12px"
+      }}
+    >
+      Charakter miasta: {p}
+    </div>
+  );
+}
+
+===== END FILE: views\CityPersonalityOverlay.js =====
+
+===== FILE: views\CityPulseOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { cityPulse } from "../pulse/cityPulseEngine";
+
+export default function CityPulseOverlay() {
+  const [bpm, setBpm] = useState(cityPulse.bpm);
+
+  useEffect(() => {
+    cityPulse.subscribe(newBpm => setBpm(newBpm));
+  }, []);
+
+  return (
+    <div className="city-pulse-overlay">
+      <div
+        className="pulse-circle"
+        style={{
+          width: "120px",
+          height: "120px",
+          borderRadius: "50%",
+          background: "rgba(255, 80, 0, 0.3)",
+          animation: `pulse ${60 / bpm}s infinite ease-in-out`
+        }}
+      />
+    </div>
+  );
+}
+
+===== END FILE: views\CityPulseOverlay.js =====
+
+===== FILE: views\CityReputationOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { cityReputation } from "../reputation/cityReputationEngine";
+
+export default function CityReputationOverlay() {
+  const [snapshot, setSnapshot] = useState({ users: {}, levels: [] });
+
+  useEffect(() => {
+    cityReputation.subscribe(rep => {
+      setSnapshot({
+        users: { ...rep.users },
+        levels: [...rep.levels]
+      });
+    });
+  }, []);
+
+  const users = Object.entries(snapshot.users)
+    .sort(([, a], [, b]) => b.score - a.score)
+    .slice(0, 5);
+
+  return (
+    <div
+      className="city-reputation-overlay"
+      style={{
+        position: "absolute",
+        top: "150px",
+        right: "20px",
+        padding: "12px",
+        background: "rgba(0,0,0,0.6)",
+        color: "white",
+        borderRadius: "10px",
+        fontSize: "12px",
+        width: "260px"
+      }}
+    >
+      <strong>Top reputacja miasta:</strong>
+      {users.length === 0 ? (
+        <div>Brak danych reputacji.</div>
+      ) : (
+        <ul style={{ margin: "8px 0 0", paddingLeft: "16px" }}>
+          {users.map(([id, data]) => (
+            <li key={id}>
+              {id}: {data.score} pkt, poziom {data.level}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+===== END FILE: views\CityReputationOverlay.js =====
+
+===== FILE: views\CityRhythmOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { cityRhythm } from "../rhythm/cityRhythmEngine";
+
+export default function CityRhythmOverlay() {
+  const [rhythm, setRhythm] = useState(cityRhythm.rhythm);
+
+  useEffect(() => {
+    cityRhythm.subscribe(newRhythm => setRhythm(newRhythm));
+  }, []);
+
+  const gradients = {
+    MorningFlow: "linear-gradient(180deg, rgba(255,255,255,0.4), rgba(200,220,255,0.4))",
+    MiddayActivity: "linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,230,150,0.4))",
+    EveningMarket: "linear-gradient(180deg, rgba(255,180,120,0.3), rgba(255,120,80,0.4))",
+    NightCreators: "linear-gradient(180deg, rgba(40,0,80,0.4), rgba(0,0,0,0.6))",
+    FestivalMode: "linear-gradient(180deg, rgba(255,200,0,0.4), rgba(255,0,150,0.4))"
+  };
+
+  return (
+    <div
+      className="city-rhythm-overlay"
+      style={{
+        position: "absolute",
+        inset: 0,
+        background: gradients[rhythm] || gradients.MorningFlow,
+        pointerEvents: "none",
+        transition: "background 1s ease"
+      }}
+    />
+  );
+}
+
+===== END FILE: views\CityRhythmOverlay.js =====
+
+===== FILE: views\CitySimulationOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { citySimulation } from "../simulation/citySimulationEngine";
+
+export default function CitySimulationOverlay() {
+  const [sim, setSim] = useState(citySimulation);
+
+  useEffect(() => {
+    citySimulation.subscribe(s => setSim({ ...s }));
+  }, []);
+
+  return (
+    <div
+      className="city-simulation-overlay"
+      style={{
+        position: "absolute",
+        top: "290px",
+        right: "20px",
+        padding: "12px",
+        background: "rgba(0,0,0,0.6)",
+        color: "white",
+        borderRadius: "10px",
+        fontSize: "12px",
+        width: "260px"
+      }}
+    >
+      <strong>Symulacja miasta:</strong>
+      <div>Tick: {sim.tick}</div>
+      {sim.lastSimulatedEvent ? (
+        <div style={{ marginTop: "6px" }}>
+          <div>Ostatni event:</div>
+          <div>{sim.lastSimulatedEvent.type}</div>
+          <div>Dzielnica: {sim.lastSimulatedEvent.payload.district}</div>
+          <div>Intensywność: {sim.lastSimulatedEvent.payload.intensity}</div>
+        </div>
+      ) : (
+        <div>Brak danych symulacji.</div>
+      )}
+    </div>
+  );
+}
+
+===== END FILE: views\CitySimulationOverlay.js =====
+
+===== FILE: views\CityWeatherOverlay.js =====
+
+import { useEffect, useState } from "react";
+import { cityWeather } from "../weather/cityWeatherEngine";
+
+export default function CityWeatherOverlay() {
+  const [weather, setWeather] = useState(cityWeather.weather);
+
+  useEffect(() => {
+    cityWeather.subscribe(newWeather => setWeather(newWeather));
+  }, []);
+
+  const effects = {
+    Clear: null,
+    Fog: <div className="weather-fog" />,
+    NeonRain: <div className="weather-neon-rain" />,
+    Sparks: <div className="weather-sparks" />,
+    Fireworks: <div className="weather-fireworks" />,
+    Aurora: <div className="weather-aurora" />
+  };
+
+  return (
+    <div className="city-weather-overlay">
+      {effects[weather]}
+    </div>
+  );
+}
+
+===== END FILE: views\CityWeatherOverlay.js =====
+
+===== FILE: weather\cityWeatherEngine.js =====
+
+import { cityPulse } from "../pulse/cityPulseEngine";
+import { cityMood } from "../mood/cityMoodEngine";
+import { cityHeatmap } from "../heatmap/cityHeatmapEngine";
+
+export const cityWeather = {
+  weather: "Clear",
+  listeners: [],
+
+  subscribe(cb) {
+    this.listeners.push(cb);
+  },
+
+  notify() {
+    this.listeners.forEach(cb => cb(this.weather));
+  },
+
+  update() {
+    const bpm = cityPulse.bpm;
+    const mood = cityMood.mood;
+
+    // Determine weather based on pulse + mood
+    if (bpm > 120) this.weather = "NeonRain";
+    else if (bpm > 80) this.weather = "Sparks";
+    else if (mood === "Creative") this.weather = "Aurora";
+    else if (mood === "Celebratory") this.weather = "Fireworks";
+    else if (mood === "Chaotic") this.weather = "Fog";
+    else this.weather = "Clear";
+
+    this.notify();
+  }
+};
+
+// Auto-update when pulse or mood changes
+cityPulse.subscribe(() => cityWeather.update());
+cityMood.subscribe(() => cityWeather.update());
+
+===== END FILE: weather\cityWeatherEngine.js =====
+

@@ -1,0 +1,8 @@
+{
+  "metrics": [
+    { "id": "activeUsers", "label": "Active Users", "type": "gauge" },
+    { "id": "eventsPerMinute", "label": "Events / Minute", "type": "rate" },
+    { "id": "aiDecisions", "label": "AI Decisions", "type": "counter" }
+  ]
+}
+

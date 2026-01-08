@@ -1,0 +1,1241 @@
+===== FILE: index.js =====
+
+// FE-21__Marketplace root module
+export default function MarketplaceRoot() {
+  return "Marketplace FE Loaded";
+}
+
+===== END FILE: index.js =====
+
+===== FILE: api\useMarketplaceApi.js =====
+
+// FE-21__Marketplace - api/useMarketplaceApi.js
+// Hooki API dla Marketplace (BE-21)
+// Obsługuje: workflow, narrację, RTRA, CreatorSync, StreetSync
+
+import { useState } from "react";
+
+async function callApi(endpoint, payload) {
+  const res = await fetch("/api/BE-21/" + endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  return await res.json();
+}
+
+// CENTRALNY HANDLER NARRACJI + RTRA
+function handleLifePacket(packet, setState) {
+  const {
+    rtra,
+    roles,
+    levels,
+    rewards,
+    badges
+  } = packet;
+
+  setState(prev => ({
+    ...prev,
+    reputationDelta: rtra?.reputationDelta || 0,
+    tokensDelta: rtra?.tokensDelta || 0,
+    rewards: rewards || [],
+    badges: badges || [],
+    roles: roles || [],
+    levels: levels || {}
+  }));
+}
+
+// HOOKI API
+
+export function useCreateOffer() {
+  const [state, setState] = useState({});
+  async function createOffer(data) {
+    const packet = await callApi("offers/create", data);
+    handleLifePacket(packet, setState);
+    return packet;
+  }
+  return { createOffer, state };
+}
+
+export function usePublishOffer() {
+  const [state, setState] = useState({});
+  async function publishOffer(data) {
+    const packet = await callApi("offers/publish", data);
+    handleLifePacket(packet, setState);
+    return packet;
+  }
+  return { publishOffer, state };
+}
+
+export function useSellOffer() {
+  const [state, setState] = useState({});
+  async function sellOffer(data) {
+    const packet = await callApi("offers/sell", data);
+    handleLifePacket(packet, setState);
+    return packet;
+  }
+  return { sellOffer, state };
+}
+
+export function useAddReview() {
+  const [state, setState] = useState({});
+  async function addReview(data) {
+    const packet = await callApi("reviews/add", data);
+    handleLifePacket(packet, setState);
+    return packet;
+  }
+  return { addReview, state };
+}
+
+export function useIssueLicense() {
+  const [state, setState] = useState({});
+  async function issueLicense(data) {
+    const packet = await callApi("licenses/issue", data);
+    handleLifePacket(packet, setState);
+    return packet;
+  }
+  return { issueLicense, state };
+}
+
+export function useCompleteService() {
+  const [state, setState] = useState({});
+  async function completeService(data) {
+    const packet = await callApi("services/complete", data);
+    handleLifePacket(packet, setState);
+    return packet;
+  }
+  return { completeService, state };
+}
+
+// CREATOR PATHWAY HOOKI
+
+export function useCreatorProgress() {
+  const [state, setState] = useState({});
+  async function updateProgress(data) {
+    const packet = await callApi("creator/progress", data);
+    handleLifePacket(packet, setState);
+    return packet;
+  }
+  return { updateProgress, state };
+}
+
+export function useCreatorPortfolio() {
+  const [state, setState] = useState({});
+  async function updatePortfolio(data) {
+    const packet = await callApi("creator/portfolio", data);
+    handleLifePacket(packet, setState);
+    return packet;
+  }
+  return { updatePortfolio, state };
+}
+
+export function useCreatorFestivalSync() {
+  const [state, setState] = useState({});
+  async function syncFestival(data) {
+    const packet = await callApi("creator/festival", data);
+    handleLifePacket(packet, setState);
+    return packet;
+  }
+  return { syncFestival, state };
+}
+
+===== END FILE: api\useMarketplaceApi.js =====
+
+===== FILE: api\useSuperEngine.js =====
+
+// FE-21__Marketplace - api/useSuperEngine.js
+
+import { useEffect, useState } from "react";
+import { subscribeLive, getLiveState } from "../state/liveEventBus";
+
+export function useSuperEngine() {
+  const [live, setLive] = useState(getLiveState());
+
+  useEffect(() => {
+    subscribeLive(newState => {
+      setLive({ ...newState });
+    });
+  }, []);
+
+  return live;
+}
+
+===== END FILE: api\useSuperEngine.js =====
+
+===== FILE: components\Badge.js =====
+
+// FE-21__Marketplace - components/Badge.js
+
+export default function Badge({ label }) {
+  return (
+    <span className="badge">
+      {label}
+    </span>
+  );
+}
+
+===== END FILE: components\Badge.js =====
+
+===== FILE: components\CreatorAchievements.js =====
+
+// FE-21__Marketplace - components/CreatorAchievements.js
+
+export default function CreatorAchievements({ achievements }) {
+  if (!achievements) return null;
+
+  return (
+    <div className="creator-achievements">
+      <h3>Achievements</h3>
+      <ul>
+        {achievements.map((a, i) => (
+          <li key={i}>{a}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: components\CreatorAchievements.js =====
+
+===== FILE: components\CreatorAchievementsGrid.js =====
+
+// FE-21__Marketplace - components/CreatorAchievementsGrid.js
+
+export default function CreatorAchievementsGrid({ achievements }) {
+  if (!achievements) return null;
+
+  return (
+    <div className="creator-achievements-grid">
+      <h3>Achievements</h3>
+      <div className="achievements-grid">
+        {achievements.map((a, i) => (
+          <div key={i} className="achievement-card">
+            <div className="achievement-icon">{a.icon}</div>
+            <div className="achievement-title">{a.title}</div>
+            <div className="achievement-desc">{a.description}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+===== END FILE: components\CreatorAchievementsGrid.js =====
+
+===== FILE: components\CreatorFestivalPanel.js =====
+
+// FE-21__Marketplace - components/CreatorFestivalPanel.js
+
+export default function CreatorFestivalPanel({ festival }) {
+  if (!festival) return null;
+
+  return (
+    <div className="creator-festival-panel">
+      <h3>Festival Hub</h3>
+      <ul>
+        {festival.map((f, i) => (
+          <li key={i}>
+            <strong>{f.project}</strong> — {f.status}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: components\CreatorFestivalPanel.js =====
+
+===== FILE: components\CreatorLevelLadder.js =====
+
+// FE-21__Marketplace - components/CreatorLevelLadder.js
+
+export default function CreatorLevelLadder({ ladder }) {
+  if (!ladder) return null;
+
+  return (
+    <div className="creator-level-ladder">
+      <h3>Level Ladder</h3>
+      <ul>
+        {ladder.map((step, i) => (
+          <li key={i} className={step.completed ? "completed" : ""}>
+            <strong>{step.level}</strong> — {step.requirement}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: components\CreatorLevelLadder.js =====
+
+===== FILE: components\CreatorLevels.js =====
+
+// FE-21__Marketplace - components/CreatorLevels.js
+
+export default function CreatorLevels({ progress }) {
+  if (!progress) return null;
+
+  return (
+    <div className="creator-levels">
+      <h3>Creator Level</h3>
+      <div>Current: {progress.level}</div>
+      {progress.badge && <div>Badge: {progress.badge}</div>}
+      {progress.nextLevel && <div>Next: {progress.nextLevel}</div>}
+    </div>
+  );
+}
+
+===== END FILE: components\CreatorLevels.js =====
+
+===== FILE: components\CreatorPortfolio.js =====
+
+// FE-21__Marketplace - components/CreatorPortfolio.js
+
+export default function CreatorPortfolio({ portfolio }) {
+  if (!portfolio) return null;
+
+  return (
+    <div className="creator-portfolio">
+      <h3>Portfolio</h3>
+      <div className="portfolio-grid">
+        {portfolio.map((item, i) => (
+          <div key={i} className="portfolio-item">
+            <strong>{item.title}</strong>
+            <div>{item.type}</div>
+            <div>{item.description}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+===== END FILE: components\CreatorPortfolio.js =====
+
+===== FILE: components\CreatorProfile.js =====
+
+// FE-21__Marketplace - components/CreatorProfile.js
+
+export default function CreatorProfile({ creator }) {
+  if (!creator) return null;
+
+  return (
+    <div className="creator-profile">
+      <h2>{creator.name}</h2>
+      <div className="creator-meta">
+        <div>Level: {creator.level}</div>
+        <div>Reputation: {creator.reputation}</div>
+        <div>Creations: {creator.creations}</div>
+      </div>
+    </div>
+  );
+}
+
+===== END FILE: components\CreatorProfile.js =====
+
+===== FILE: components\CreatorProgress.js =====
+
+// FE-21__Marketplace - components/CreatorProgress.js
+
+export default function CreatorProgress({ progress }) {
+  if (!progress) return null;
+
+  return (
+    <div className="creator-progress">
+      <h3>Creator Level: {progress.level}</h3>
+      {progress.badge && <div className="creator-badge">{progress.badge}</div>}
+      {progress.nextLevel && (
+        <div className="next-level">
+          Next: {progress.nextLevel}
+        </div>
+      )}
+    </div>
+  );
+}
+
+===== END FILE: components\CreatorProgress.js =====
+
+===== FILE: components\CreatorShowcase.js =====
+
+// FE-21__Marketplace - components/CreatorShowcase.js
+
+export default function CreatorShowcase({ showcase }) {
+  if (!showcase) return null;
+
+  return (
+    <div className="creator-showcase">
+      <h3>Showcase</h3>
+      <div className="showcase-grid">
+        {showcase.map((item, i) => (
+          <div key={i} className="showcase-item">
+            <img src={item.thumbnail} alt={item.title} className="showcase-thumb" />
+            <div className="showcase-title">{item.title}</div>
+            <div className="showcase-type">{item.type}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+===== END FILE: components\CreatorShowcase.js =====
+
+===== FILE: components\CreatorStatsPanel.js =====
+
+// FE-21__Marketplace - components/CreatorStatsPanel.js
+
+export default function CreatorStatsPanel({ stats }) {
+  if (!stats) return null;
+
+  return (
+    <div className="creator-stats-panel">
+      <h3>Creator Stats</h3>
+      <div className="stats-grid">
+        <div className="stat-box">
+          <strong>Creations</strong>
+          <div>{stats.creations}</div>
+        </div>
+        <div className="stat-box">
+          <strong>Sales</strong>
+          <div>{stats.sales}</div>
+        </div>
+        <div className="stat-box">
+          <strong>Reputation</strong>
+          <div>{stats.reputation}</div>
+        </div>
+        <div className="stat-box">
+          <strong>Festival Entries</strong>
+          <div>{stats.festivalEntries}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+===== END FILE: components\CreatorStatsPanel.js =====
+
+===== FILE: components\CreatorTimeline.js =====
+
+// FE-21__Marketplace - components/CreatorTimeline.js
+
+export default function CreatorTimeline({ timeline }) {
+  if (!timeline) return null;
+
+  return (
+    <div className="creator-timeline">
+      <h3>Creator Timeline</h3>
+      <ul>
+        {timeline.map((event, i) => (
+          <li key={i}>
+            <strong>{event.title}</strong> — {event.description}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: components\CreatorTimeline.js =====
+
+===== FILE: components\CreatorTimelineAdvanced.js =====
+
+// FE-21__Marketplace - components/CreatorTimelineAdvanced.js
+
+export default function CreatorTimelineAdvanced({ timeline }) {
+  if (!timeline) return null;
+
+  return (
+    <div className="creator-timeline-advanced">
+      <h3>Creator Timeline</h3>
+      <div className="timeline">
+        {timeline.map((event, i) => (
+          <div key={i} className="timeline-event">
+            <div className="timeline-icon">{event.icon}</div>
+            <div className="timeline-content">
+              <strong>{event.title}</strong>
+              <div>{event.description}</div>
+              <div className="timeline-date">{event.date}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+===== END FILE: components\CreatorTimelineAdvanced.js =====
+
+===== FILE: components\DashboardActivityChart.js =====
+
+// FE-21__Marketplace - components/DashboardActivityChart.js
+
+export default function DashboardActivityChart({ activity }) {
+  if (!activity) return null;
+
+  return (
+    <div className="dashboard-activity-chart">
+      <h3>Activity Chart</h3>
+      <div className="chart-placeholder">
+        {/* Placeholder for chart library */}
+        {activity.map((point, i) => (
+          <div key={i} className="chart-point">
+            {point.value}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+===== END FILE: components\DashboardActivityChart.js =====
+
+===== FILE: components\DashboardCreatorProgressHistory.js =====
+
+// FE-21__Marketplace - components/DashboardCreatorProgressHistory.js
+
+export default function DashboardCreatorProgressHistory({ progress }) {
+  if (!progress) return null;
+
+  return (
+    <div className="dashboard-creator-progress-history">
+      <h3>Creator Progress</h3>
+      <ul>
+        {progress.map((p, i) => (
+          <li key={i}>
+            <strong>{p.level}</strong> — {p.date}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: components\DashboardCreatorProgressHistory.js =====
+
+===== FILE: components\DashboardReviewHistory.js =====
+
+// FE-21__Marketplace - components/DashboardReviewHistory.js
+
+export default function DashboardReviewHistory({ reviews }) {
+  if (!reviews) return null;
+
+  return (
+    <div className="dashboard-review-history">
+      <h3>Review History</h3>
+      <ul>
+        {reviews.map((r, i) => (
+          <li key={i}>
+            <strong>{r.reviewer}</strong>: {r.rating}/5 — "{r.comment}"
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: components\DashboardReviewHistory.js =====
+
+===== FILE: components\DashboardStatsOverview.js =====
+
+// FE-21__Marketplace - components/DashboardStatsOverview.js
+
+export default function DashboardStatsOverview({ stats }) {
+  if (!stats) return null;
+
+  return (
+    <div className="dashboard-stats-overview">
+      <h2>Marketplace Overview</h2>
+      <div className="stats-grid">
+        <div className="stat-box">
+          <strong>Total Sales</strong>
+          <div>{stats.totalSales}</div>
+        </div>
+        <div className="stat-box">
+          <strong>Total Revenue</strong>
+          <div>{stats.totalRevenue}</div>
+        </div>
+        <div className="stat-box">
+          <strong>Reviews</strong>
+          <div>{stats.totalReviews}</div>
+        </div>
+        <div className="stat-box">
+          <strong>Reputation</strong>
+          <div>{stats.reputation}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+===== END FILE: components\DashboardStatsOverview.js =====
+
+===== FILE: components\DashboardStreetSignalHistory.js =====
+
+// FE-21__Marketplace - components/DashboardStreetSignalHistory.js
+
+export default function DashboardStreetSignalHistory({ signals }) {
+  if (!signals) return null;
+
+  return (
+    <div className="dashboard-street-signal-history">
+      <h3>Street Signals</h3>
+      <ul>
+        {signals.map((s, i) => (
+          <li key={i}>
+            <strong>{s.type}</strong> — {s.description} ({s.date})
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: components\DashboardStreetSignalHistory.js =====
+
+===== FILE: components\DashboardTransactionHistory.js =====
+
+// FE-21__Marketplace - components/DashboardTransactionHistory.js
+
+export default function DashboardTransactionHistory({ transactions }) {
+  if (!transactions) return null;
+
+  return (
+    <div className="dashboard-transaction-history">
+      <h3>Transaction History</h3>
+      <ul>
+        {transactions.map((t, i) => (
+          <li key={i}>
+            <strong>{t.title}</strong> — {t.amount} tokens ({t.date})
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: components\DashboardTransactionHistory.js =====
+
+===== FILE: components\GlobalEventOverlay.js =====
+
+// FE-21__Marketplace - components/GlobalEventOverlay.js
+
+import { useEffect, useState } from "react";
+import { subscribeLive } from "../state/liveEventBus";
+
+export default function GlobalEventOverlay() {
+  const [visible, setVisible] = useState(false);
+  const [event, setEvent] = useState(null);
+
+  useEffect(() => {
+    subscribeLive(live => {
+      if (live.lastEvent) {
+        setEvent(live.lastEvent);
+        setVisible(true);
+
+        setTimeout(() => setVisible(false), 3000);
+      }
+    });
+  }, []);
+
+  if (!visible || !event) return null;
+
+  return (
+    <div className="global-event-overlay">
+      <div className="overlay-box">
+        <strong>{event.type}</strong>
+        <div>{JSON.stringify(event.payload)}</div>
+      </div>
+    </div>
+  );
+}
+
+===== END FILE: components\GlobalEventOverlay.js =====
+
+===== FILE: components\LevelIndicator.js =====
+
+// FE-21__Marketplace - components/LevelIndicator.js
+
+export default function LevelIndicator({ level }) {
+  return (
+    <div className="level-indicator">
+      Level: {level}
+    </div>
+  );
+}
+
+===== END FILE: components\LevelIndicator.js =====
+
+===== FILE: components\LiveCreatorSignal.js =====
+
+// FE-21__Marketplace - components/LiveCreatorSignal.js
+
+export default function LiveCreatorSignal({ creator }) {
+  if (!creator) return null;
+
+  return (
+    <div className="live-creator-signal">
+      <h4>{creator.name} is active</h4>
+      <div>Level: {creator.level}</div>
+      <div>Creations: {creator.creations}</div>
+    </div>
+  );
+}
+
+===== END FILE: components\LiveCreatorSignal.js =====
+
+===== FILE: components\LiveEventBubble.js =====
+
+// FE-21__Marketplace - components/LiveEventBubble.js
+
+import { useEffect, useState } from "react";
+
+export default function LiveEventBubble({ event }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (event) {
+      setVisible(true);
+      const timer = setTimeout(() => setVisible(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [event]);
+
+  if (!visible) return null;
+
+  return (
+    <div className="live-event-bubble">
+      <strong>{event.type}</strong>
+      <div>{JSON.stringify(event.payload)}</div>
+    </div>
+  );
+}
+
+===== END FILE: components\LiveEventBubble.js =====
+
+===== FILE: components\LiveSignalPulse.js =====
+
+// FE-21__Marketplace - components/LiveSignalPulse.js
+
+import { useEffect, useState } from "react";
+
+export default function LiveSignalPulse({ active }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (active) {
+      setVisible(true);
+      const timer = setTimeout(() => setVisible(false), 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [active]);
+
+  if (!visible) return null;
+
+  return (
+    <div className="live-signal-pulse">
+      <div className="pulse-circle" />
+    </div>
+  );
+}
+
+===== END FILE: components\LiveSignalPulse.js =====
+
+===== FILE: components\LiveStorefrontActivity.js =====
+
+// FE-21__Marketplace - components/LiveStorefrontActivity.js
+
+export default function LiveStorefrontActivity({ activity }) {
+  if (!activity) return null;
+
+  return (
+    <div className="live-storefront-activity">
+      <h4>Storefront Activity</h4>
+      {activity.map((a, i) => (
+        <div key={i} className="activity-item">
+          <strong>{a.action}</strong>
+          <div>{a.details}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+===== END FILE: components\LiveStorefrontActivity.js =====
+
+===== FILE: components\NarrationPanel.js =====
+
+// FE-21__Marketplace - components/NarrationPanel.js
+
+import Badge from "./Badge";
+import RoleTag from "./RoleTag";
+import LevelIndicator from "./LevelIndicator";
+import CreatorProgress from "./CreatorProgress";
+import RTRAAnimation from "./RTRAAnimation";
+
+export default function NarrationPanel({ life }) {
+  if (!life) return null;
+
+  const { roles, levels, badges, rewards, rtra, creatorProgress } = life;
+
+  return (
+    <div className="narration-panel">
+      <h2>Your Marketplace Life</h2>
+
+      <div className="roles">
+        {roles?.map((r, i) => <RoleTag key={i} role={r} />)}
+      </div>
+
+      <div className="levels">
+        {Object.entries(levels || {}).map(([k, v]) => (
+          <LevelIndicator key={k} level={v} />
+        ))}
+      </div>
+
+      <div className="badges">
+        {badges?.map((b, i) => <Badge key={i} label={b} />)}
+      </div>
+
+      <div className="rewards">
+        {rewards?.map((r, i) => <Badge key={i} label={r} />)}
+      </div>
+
+      <CreatorProgress progress={creatorProgress} />
+
+      <RTRAAnimation
+        reputationDelta={rtra?.reputationDelta}
+        tokensDelta={rtra?.tokensDelta}
+      />
+    </div>
+  );
+}
+
+===== END FILE: components\NarrationPanel.js =====
+
+===== FILE: components\RoleTag.js =====
+
+// FE-21__Marketplace - components/RoleTag.js
+
+export default function RoleTag({ role }) {
+  return (
+    <span className="role-tag">
+      {role}
+    </span>
+  );
+}
+
+===== END FILE: components\RoleTag.js =====
+
+===== FILE: components\RTRAAnimation.js =====
+
+// FE-21__Marketplace - components/RTRAAnimation.js
+
+import { useEffect, useState } from "react";
+
+export default function RTRAAnimation({ reputationDelta, tokensDelta }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (reputationDelta !== 0 || tokensDelta !== 0) {
+      setVisible(true);
+      setTimeout(() => setVisible(false), 2000);
+    }
+  }, [reputationDelta, tokensDelta]);
+
+  if (!visible) return null;
+
+  return (
+    <div className="rtra-animation">
+      {reputationDelta !== 0 && (
+        <div className="rep-change">
+          Reputation: {reputationDelta > 0 ? "+" : ""}{reputationDelta}
+        </div>
+      )}
+      {tokensDelta !== 0 && (
+        <div className="token-change">
+          Tokens: {tokensDelta > 0 ? "+" : ""}{tokensDelta}
+        </div>
+      )}
+    </div>
+  );
+}
+
+===== END FILE: components\RTRAAnimation.js =====
+
+===== FILE: components\StreetFeed.js =====
+
+// FE-21__Marketplace - components/StreetFeed.js
+
+export default function StreetFeed({ events }) {
+  if (!events || events.length === 0) return null;
+
+  return (
+    <div className="street-feed">
+      <h2>Marketplace Street</h2>
+      {events.map((e, i) => (
+        <div key={i} className="street-event">
+          <strong>{e.type}</strong>
+          <div>{JSON.stringify(e.payload)}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+===== END FILE: components\StreetFeed.js =====
+
+===== FILE: components\StreetGallery.js =====
+
+// FE-21__Marketplace - components/StreetGallery.js
+
+export default function StreetGallery({ creator }) {
+  if (!creator) return null;
+
+  return (
+    <div className="street-gallery">
+      <h3>{creator.name}'s Gallery</h3>
+      <div className="gallery-items">
+        {creator.portfolio?.map((item, i) => (
+          <div key={i} className="gallery-item">
+            <strong>{item.title}</strong>
+            <div>{item.type}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+===== END FILE: components\StreetGallery.js =====
+
+===== FILE: components\StreetStorefront.js =====
+
+// FE-21__Marketplace - components/StreetStorefront.js
+
+export default function StreetStorefront({ seller }) {
+  if (!seller) return null;
+
+  return (
+    <div className="street-storefront">
+      <h3>{seller.name}'s Storefront</h3>
+      <div className="storefront-stats">
+        <div>Sales: {seller.sales}</div>
+        <div>Reputation: {seller.reputation}</div>
+      </div>
+      <div className="storefront-items">
+        {seller.items?.map((item, i) => (
+          <div key={i} className="storefront-item">
+            <strong>{item.title}</strong>
+            <div>{item.price} tokens</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+===== END FILE: components\StreetStorefront.js =====
+
+===== FILE: state\liveEventBus.js =====
+
+// FE-21__Marketplace - state/liveEventBus.js
+// Event Bus dla FE-21 (Marketplace, Creator, Street)
+
+import { superEngineClient } from "../utils/SuperEngineClient";
+
+let state = {
+  lastEvent: null,
+  street: {
+    events: [],
+    seller: null,
+    creator: null
+  },
+  creator: {
+    progress: null,
+    timeline: []
+  }
+};
+
+const listeners = [];
+
+export function subscribeLive(callback) {
+  listeners.push(callback);
+}
+
+function notify() {
+  listeners.forEach(cb => cb(state));
+}
+
+// Obsługa eventów z City SuperEngine
+superEngineClient.subscribe(event => {
+  state.lastEvent = event;
+
+  // Marketplace Street
+  if (event.type.startsWith("marketplace.")) {
+    state.street.events.push(event);
+  }
+
+  // Creator Pathway
+  if (event.type.startsWith("creator.")) {
+    state.creator.timeline.push({
+      title: event.type,
+      description: JSON.stringify(event.payload),
+      date: new Date().toISOString()
+    });
+
+    if (event.type === "creator.progress.updated") {
+      state.creator.progress = event.payload.progress;
+    }
+  }
+
+  notify();
+});
+
+export function getLiveState() {
+  return state;
+}
+
+===== END FILE: state\liveEventBus.js =====
+
+===== FILE: utils\SuperEngineClient.js =====
+
+// FE-21__Marketplace - utils/SuperEngineClient.js
+// Klient odbierający eventy z City SuperEngine
+
+class SuperEngineClient {
+  constructor() {
+    this.listeners = [];
+  }
+
+  subscribe(callback) {
+    this.listeners.push(callback);
+  }
+
+  emit(event) {
+    this.listeners.forEach(cb => cb(event));
+  }
+}
+
+export const superEngineClient = new SuperEngineClient();
+
+===== END FILE: utils\SuperEngineClient.js =====
+
+===== FILE: views\CreatorAdvancedView.js =====
+
+// FE-21__Marketplace - views/CreatorAdvancedView.js
+
+import CreatorShowcase from "../components/CreatorShowcase";
+import CreatorAchievementsGrid from "../components/CreatorAchievementsGrid";
+import CreatorLevelLadder from "../components/CreatorLevelLadder";
+import CreatorFestivalPanel from "../components/CreatorFestivalPanel";
+import CreatorTimelineAdvanced from "../components/CreatorTimelineAdvanced";
+import CreatorStatsPanel from "../components/CreatorStatsPanel";
+
+export default function CreatorAdvancedView({ creator }) {
+  if (!creator) return null;
+
+  return (
+    <div className="creator-advanced-view">
+      <CreatorStatsPanel stats={creator.stats} />
+      <CreatorShowcase showcase={creator.showcase} />
+      <CreatorAchievementsGrid achievements={creator.achievements} />
+      <CreatorLevelLadder ladder={creator.ladder} />
+      <CreatorFestivalPanel festival={creator.festival} />
+      <CreatorTimelineAdvanced timeline={creator.timeline} />
+    </div>
+  );
+}
+
+===== END FILE: views\CreatorAdvancedView.js =====
+
+===== FILE: views\CreatorLiveIntegratedView.js =====
+
+// FE-21__Marketplace - views/CreatorLiveIntegratedView.js
+
+import { useSuperEngine } from "../api/useSuperEngine";
+import CreatorAdvancedView from "./CreatorAdvancedView";
+
+export default function CreatorLiveIntegratedView() {
+  const live = useSuperEngine();
+  return <CreatorAdvancedView creator={live.creator} />;
+}
+
+===== END FILE: views\CreatorLiveIntegratedView.js =====
+
+===== FILE: views\CreatorView.js =====
+
+// FE-21__Marketplace - views/CreatorView.js
+
+import CreatorProfile from "../components/CreatorProfile";
+import CreatorPortfolio from "../components/CreatorPortfolio";
+import CreatorAchievements from "../components/CreatorAchievements";
+import CreatorLevels from "../components/CreatorLevels";
+import CreatorTimeline from "../components/CreatorTimeline";
+
+export default function CreatorView({ creator }) {
+  if (!creator) return null;
+
+  return (
+    <div className="creator-view">
+      <CreatorProfile creator={creator} />
+      <CreatorLevels progress={creator.progress} />
+      <CreatorPortfolio portfolio={creator.portfolio} />
+      <CreatorAchievements achievements={creator.achievements} />
+      <CreatorTimeline timeline={creator.timeline} />
+    </div>
+  );
+}
+
+===== END FILE: views\CreatorView.js =====
+
+===== FILE: views\DashboardLiveIntegratedView.js =====
+
+// FE-21__Marketplace - views/DashboardLiveIntegratedView.js
+
+import { useSuperEngine } from "../api/useSuperEngine";
+import DashboardView from "./DashboardView";
+
+export default function DashboardLiveIntegratedView() {
+  const live = useSuperEngine();
+
+  const dashboard = {
+    stats: {
+      totalSales: live.street.events.length,
+      totalRevenue: live.street.events.length * 10,
+      totalReviews: live.creator.timeline.length,
+      reputation: live.creator.progress?.reputation || 0
+    },
+    activity: live.street.events.map((e, i) => ({ value: i + 1 })),
+    transactions: live.street.events.map(e => ({
+      title: e.type,
+      amount: 10,
+      date: new Date().toISOString()
+    })),
+    reviews: [],
+    creatorProgress: live.creator.timeline,
+    streetSignals: live.street.events
+  };
+
+  return <DashboardView dashboard={dashboard} />;
+}
+
+===== END FILE: views\DashboardLiveIntegratedView.js =====
+
+===== FILE: views\DashboardView.js =====
+
+// FE-21__Marketplace - views/DashboardView.js
+
+import DashboardStatsOverview from "../components/DashboardStatsOverview";
+import DashboardActivityChart from "../components/DashboardActivityChart";
+import DashboardTransactionHistory from "../components/DashboardTransactionHistory";
+import DashboardReviewHistory from "../components/DashboardReviewHistory";
+import DashboardCreatorProgressHistory from "../components/DashboardCreatorProgressHistory";
+import DashboardStreetSignalHistory from "../components/DashboardStreetSignalHistory";
+
+export default function DashboardView({ dashboard }) {
+  if (!dashboard) return null;
+
+  return (
+    <div className="dashboard-view">
+      <DashboardStatsOverview stats={dashboard.stats} />
+      <DashboardActivityChart activity={dashboard.activity} />
+      <DashboardTransactionHistory transactions={dashboard.transactions} />
+      <DashboardReviewHistory reviews={dashboard.reviews} />
+      <DashboardCreatorProgressHistory progress={dashboard.creatorProgress} />
+      <DashboardStreetSignalHistory signals={dashboard.streetSignals} />
+    </div>
+  );
+}
+
+===== END FILE: views\DashboardView.js =====
+
+===== FILE: views\GlobalWrapper.js =====
+
+// FE-21__Marketplace - views/GlobalWrapper.js
+
+import GlobalEventOverlay from "../components/GlobalEventOverlay";
+
+export default function GlobalWrapper({ children }) {
+  return (
+    <div className="global-wrapper">
+      <GlobalEventOverlay />
+      {children}
+    </div>
+  );
+}
+
+===== END FILE: views\GlobalWrapper.js =====
+
+===== FILE: views\NarrationView.js =====
+
+// FE-21__Marketplace - views/NarrationView.js
+
+import NarrationPanel from "../components/NarrationPanel";
+
+export default function NarrationView({ life }) {
+  return (
+    <div className="narration-view">
+      <NarrationPanel life={life} />
+    </div>
+  );
+}
+
+===== END FILE: views\NarrationView.js =====
+
+===== FILE: views\StreetLiveIntegratedView.js =====
+
+// FE-21__Marketplace - views/StreetLiveIntegratedView.js
+
+import { useSuperEngine } from "../api/useSuperEngine";
+import StreetLiveView from "./StreetLiveView";
+
+export default function StreetLiveIntegratedView() {
+  const live = useSuperEngine();
+  return <StreetLiveView street={live.street} />;
+}
+
+===== END FILE: views\StreetLiveIntegratedView.js =====
+
+===== FILE: views\StreetLiveView.js =====
+
+// FE-21__Marketplace - views/StreetLiveView.js
+
+import LiveSignalPulse from "../components/LiveSignalPulse";
+import LiveEventBubble from "../components/LiveEventBubble";
+import LiveStorefrontActivity from "../components/LiveStorefrontActivity";
+import LiveCreatorSignal from "../components/LiveCreatorSignal";
+
+export default function StreetLiveView({ live }) {
+  if (!live) return null;
+
+  return (
+    <div className="street-live-view">
+      <LiveSignalPulse active={live.active} />
+      <LiveEventBubble event={live.event} />
+      <LiveStorefrontActivity activity={live.storefrontActivity} />
+      <LiveCreatorSignal creator={live.creator} />
+    </div>
+  );
+}
+
+===== END FILE: views\StreetLiveView.js =====
+
+===== FILE: views\StreetView.js =====
+
+// FE-21__Marketplace - views/StreetView.js
+
+import StreetFeed from "../components/StreetFeed";
+import StreetStorefront from "../components/StreetStorefront";
+import StreetGallery from "../components/StreetGallery";
+
+export default function StreetView({ street }) {
+  return (
+    <div className="street-view">
+      <StreetFeed events={street?.events} />
+      <StreetStorefront seller={street?.seller} />
+      <StreetGallery creator={street?.creator} />
+    </div>
+  );
+}
+
+===== END FILE: views\StreetView.js =====
+

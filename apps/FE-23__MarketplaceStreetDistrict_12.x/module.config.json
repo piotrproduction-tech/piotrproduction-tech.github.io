@@ -1,0 +1,15 @@
+{
+  "id": "FE-23",
+  "name": "MarketplaceStreetDistrict",
+  "route": "/district",
+  "type": "DISTRICT_TYPE",
+  "version": "12.x",
+  "description": "Migrated district MarketplaceStreetDistrict from F:\\Piotr\\Gate\\GitHub_Nowy_temp\\piotrproduction-tech.github.io\\apps\\MarketplaceStreetDistrict",
+  "tags": [
+    "engine",
+    "event-driven",
+    "ai",
+    "workflows",
+    "migrated"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "id": "heartbeat",
+  "steps": [
+    { "type": "event", "target": "engine:heartbeat", "action": "tick" },
+    { "type": "state", "target": "core", "action": "heartbeat" }
+  ]
+}
+

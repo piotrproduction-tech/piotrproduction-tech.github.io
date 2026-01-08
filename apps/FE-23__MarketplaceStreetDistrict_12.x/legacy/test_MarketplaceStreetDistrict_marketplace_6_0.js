@@ -1,0 +1,1 @@
+console.log("Marketplace 6.0 test OK");

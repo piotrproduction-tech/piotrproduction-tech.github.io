@@ -1,0 +1,38 @@
+{
+  "district": "MarketplaceDistrict",
+  "archetype": "Merchant-Strategist-Showman",
+  "moodProfile": {
+    "base": "Calm",
+    "onCreator": "Creative",
+    "onMarketplace": "Energetic",
+    "onStreet": "Chaotic",
+    "onFestival": "Celebratory"
+  },
+  "rhythmProfile": {
+    "lowPulse": "MorningFlow",
+    "midPulse": "MiddayActivity",
+    "highPulse": "EveningMarket",
+    "veryHighPulse": "NightCreators",
+    "festival": "FestivalMode"
+  },
+  "narrativeProfile": {
+    "Neutral": "W mieście wydarzyło się: {{event}}.",
+    "Energetic": "⚡ Miasto pulsuje! Właśnie nastąpiło: {{event}}.",
+    "Creative": "✨ Na ulicach pojawiła się nowa inspiracja: {{event}}.",
+    "Calm": "🕊 W ciszy miasta pojawił się subtelny ruch: {{event}}.",
+    "Chaotic": "💥 Chaos przetacza się przez miasto! Event: {{event}}.",
+    "Celebratory": "🥂 Miasto świętuje! Wydarzenie: {{event}}."
+  },
+  "taboo": [
+    "OUT_OF_STOCK",
+    "MISSING_PRICE",
+    "INVALID_EVENT"
+  ],
+  "preferences": {
+    "likesBoost": true,
+    "likesHighlight": true,
+    "likesGlow": true,
+    "prefersPremium": true,
+    "prefersCurated": true
+  }
+}

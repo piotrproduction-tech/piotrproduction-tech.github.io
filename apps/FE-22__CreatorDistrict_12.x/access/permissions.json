@@ -1,0 +1,8 @@
+{
+  "view:dashboard": ["citizen", "moderator", "admin"],
+  "view:live": ["citizen", "moderator", "admin"],
+  "view:admin": ["admin"],
+  "edit:workflows": ["moderator", "admin"],
+  "edit:config": ["admin"]
+}
+

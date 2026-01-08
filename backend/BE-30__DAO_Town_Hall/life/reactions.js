@@ -17,5 +17,5 @@ export function getReactions() {
 
 
 
-import rtraConfig from "../config/rtra.config.json" assert { type: "json" };
+import rtraConfig from "../config/rtra.config.json";
 // rtraConfig dostępny dla przyszłych, modułowych reakcji.

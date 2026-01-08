@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>City Dashboard V2 — Miasto 12.x</title>
+  <style>
+    body {
+      background: #0d0d0d;
+      color: #e0e0e0;
+      font-family: monospace;
+      padding: 20px;
+      display: flex;
+      gap: 20px;
+    }
+    .panel {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 15px;
+      width: 33%;
+      overflow-y: auto;
+      max-height: 95vh;
+    }
+    h2 { color: #4cffd7; }
+    pre {
+      background: #000;
+      padding: 10px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    button {
+      background: #4cffd7;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover { background: #33c9a8; }
+  </style>
+</head>
+<body>
+
+  <!-- PANEL 1: CITY STATE -->
+  <div class="panel">
+    <h2>City State</h2>
+    <pre id="city"></pre>
+  </div>
+
+  <!-- PANEL 2: KNOWLEDGE GRAPH -->
+  <div class="panel">
+    <h2>Knowledge Graph</h2>
+    <pre id="knowledge"></pre>
+  </div>
+
+  <!-- PANEL 3: SCENARIOS + AI -->
+  <div class="panel">
+    <h2>Scenarios</h2>
+
+    <label>District:</label>
+    <input id="sc-district" placeholder="np. HomeDistrict" />
+
+    <label>View:</label>
+    <input id="sc-view" placeholder="np. mainView" />
+
+    <label>Event:</label>
+    <input id="sc-event" placeholder="np. update" />
+
+    <label>Payload (JSON):</label>
+    <textarea id="sc-payload" rows="4">{}</textarea>
+
+    <button onclick="runScenario()">Uruchom scenariusz</button>
+
+    <h3>Wynik:</h3>
+    <pre id="scenario-output"></pre>
+
+    <h2>AI Console</h2>
+    <label>District:</label>
+    <input id="ai-district" placeholder="np. HomeDistrict" />
+
+    <label>AI Payload (JSON):</label>
+    <textarea id="ai-payload" rows="4">{}</textarea>
+
+    <button onclick="runAI()">Uruchom AI</button>
+
+    <h3>AI Output:</h3>
+    <pre id="ai-output"></pre>
+  </div>
+
+  <script>
+    async function refreshCity() {
+      const res = await fetch("http://localhost:3000/city");
+      const json = await res.json();
+      document.getElementById("city").textContent = JSON.stringify(json, null, 2);
+    }
+
+    async function refreshKnowledge() {
+      const res = await fetch("http://localhost:3001/knowledge");
+      const json = await res.json();
+      document.getElementById("knowledge").textContent = JSON.stringify(json, null, 2);
+    }
+
+    function runScenario() {
+      const district = document.getElementById("sc-district").value;
+      const view = document.getElementById("sc-view").value;
+      const event = document.getElementById("sc-event").value;
+      const payload = JSON.parse(document.getElementById("sc-payload").value || "{}");
+
+      const actions = [];
+      if (district) actions.push({ type: "gotoDistrict", district });
+      if (view) actions.push({ type: "gotoView", view });
+      if (event) actions.push({ type: "emit", district, event, payload });
+
+      const result = window.scenarioEngine.simulate(actions);
+      document.getElementById("scenario-output").textContent =
+        JSON.stringify(result, null, 2);
+    }
+
+    function runAI() {
+      const district = document.getElementById("ai-district").value;
+      const payload = JSON.parse(document.getElementById("ai-payload").value || "{}");
+
+      const d = window.app.runtime.router.districts.find(x => x.id === district);
+      if (!d || !d.ai || !d.ai.process) {
+        document.getElementById("ai-output").textContent = "District nie ma AI.";
+        return;
+      }
+
+      const result = d.ai.process(payload);
+      document.getElementById("ai-output").textContent =
+        JSON.stringify(result, null, 2);
+    }
+
+    setInterval(refreshCity, 1000);
+    setInterval(refreshKnowledge, 2000);
+  </script>
+
+</body>
+</html>

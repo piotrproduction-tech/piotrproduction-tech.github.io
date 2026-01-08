@@ -1,0 +1,63 @@
+{
+  "sourceRoot": "apps/FE-00__City",
+  "targetRoot": "apps/CityCore_12.x/core",
+
+  "moduleMap": {
+    "MAP": "MAP",
+    "MEMORY": "MEMORY",
+    "PULSE": "PULSE",
+    "AI": "AI",
+    "HEATMAP": "HEATMAP",
+    "NARRATIVE": "NARRATIVE",
+    "RHYTHM": "RHYTHM",
+    "PERSONALITY": "PERSONALITY",
+    "GOVERNANCE": "GOVERNANCE",
+    "ECONOMY": "ECONOMY",
+    "SIMULATION": "SIMULATION",
+    "BROADCAST": "BROADCAST",
+    "SYNC": "SYNC",
+    "menu": "MENU",
+    "PANELS": "PANELS",
+    "views": "VIEWS"
+  },
+
+  "fileRules": {
+    "copyExtensions": [".js", ".json"],
+    "ignoreExtensions": [".html", ".gs"],
+    "ignoreFiles": [
+      "index.html",
+      "app.html",
+      "template.html"
+    ]
+  },
+
+  "transformRules": {
+    "removePatterns": [
+      "google.script.run",
+      "<\\?= include",
+      "HtmlService",
+      "SpreadsheetApp",
+      "DriveApp",
+      "ScriptApp"
+    ],
+    "injectInitWrapper": true,
+    "injectEngineParam": true
+  },
+
+  "integration": {
+    "engineImportPath": "../../DistrictEngine_12.x/engine.js",
+    "cityInitFile": "apps/CityCore_12.x/index.js",
+    "cityInitTemplate": {
+      "importPrefix": "import { init as init__MODULE__ } from \"./core/__MODULE__/__module__.js\";",
+      "callPrefix": "init__MODULE__(engine);"
+    }
+  },
+
+  "safety": {
+    "neverDeleteSource": true,
+    "neverModifySource": true,
+    "neverTouchOtherDistricts": true,
+    "overwriteTarget": true,
+    "cleanTargetBeforeWrite": true
+  }
+}

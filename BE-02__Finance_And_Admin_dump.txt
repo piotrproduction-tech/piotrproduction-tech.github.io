@@ -1,0 +1,267 @@
+===== FILE: index.js =====
+
+import express from "express";
+import { BE_02Api } from "./api/BE-02Api.js";
+
+export const BE_02Module = express.Router();
+BE_02Module.use("/be-02", BE_02Api);
+
+===== END FILE: index.js =====
+
+===== FILE: api\BE-02Api.js =====
+
+import express from "express";
+import { getStatus } from "../diagnostics/status.js";
+
+export const BE_02Api = express.Router();
+
+BE_02Api.get("/status", (req, res) => {
+  res.json(getStatus());
+});
+
+
+
+BE_02Api.get("/events", (req, res) => {
+  res.json({ events: [] });
+});
+
+BE_02Api.post("/actions", (req, res) => {
+  res.json({ ok: true, action: req.body });
+});
+
+===== END FILE: api\BE-02Api.js =====
+
+===== FILE: config\metadata.json =====
+
+{
+  "id": "BE-02",
+  "name": "Finance_And_Admin",
+  "title": "Finance And Admin",
+  "role": "district",
+  "districtType": "finance",
+  "createdFrom": "LEGACY_2025-12-30",
+  "version": 1
+}
+
+===== END FILE: config\metadata.json =====
+
+===== FILE: config\rtra.config.json =====
+
+{
+  "moduleId": "BE-02",
+  "moduleName": "Finance_And_Admin",
+  "reputation": {
+    "enabled": true,
+    "weights": {
+      "positive": 5,
+      "negative": -5,
+      "neutral": 0
+    },
+    "eventMapping": {
+      "created": 5,
+      "joined": 10,
+      "volunteer": 15,
+      "event": 8
+    }
+  },
+  "tokens": {
+    "enabled": true,
+    "baseReward": 0,
+    "eventMapping": {
+      "created": 3,
+      "joined": 5,
+      "volunteer": 10
+    }
+  },
+  "rewards": {
+    "enabled": true,
+    "tiers": [
+      {
+        "id": "helper",
+        "name": "Community Helper",
+        "minReputation": 20,
+        "minTokens": 30
+      },
+      {
+        "id": "leader",
+        "name": "Community Leader",
+        "minReputation": 60,
+        "minTokens": 80
+      }
+    ]
+  },
+  "antiAbuse": {
+    "enabled": true,
+    "suspiciousKeywords": [
+      "spam",
+      "troll",
+      "harassment"
+    ],
+    "rateLimits": {
+      "perMinute": 30,
+      "perHour": 300
+    },
+    "cooldowns": {
+      "onFlag": 60000
+    }
+  }
+}
+
+===== END FILE: config\rtra.config.json =====
+
+===== FILE: core\index.js =====
+
+// Core logic for Finance And Admin (BE-02)
+// Tu wchodzi logika dzielnicy.
+
+===== END FILE: core\index.js =====
+
+===== FILE: diagnostics\status.js =====
+
+export function getStatus() {
+  return {
+    ok: true,
+    module: "BE-02__Finance_And_Admin",
+    ts: Date.now()
+  };
+}
+
+
+
+export function getStatus() {
+  return {
+    ok: true,
+    module: "BE-02",
+    name: "Finance_And_Admin",
+    ts: Date.now(),
+    eventsHandled: 0
+  };
+}
+
+
+
+import { CitySuperEngine } from "../../BE-00__City/SUPER_ENGINE/CitySuperEngine.js";
+
+export function getStatus() {
+  const sampleEvent = {
+    module: "BE-02",
+    type: "be-02.diagnostic.ping",
+    payload: {}
+  };
+  const processed = CitySuperEngine.process(sampleEvent);
+
+  return {
+    ok: true,
+    module: "BE-02",
+    name: "Finance_And_Admin",
+    ts: Date.now(),
+    sample: {
+      reputationDelta: processed.reputationDelta,
+      tokensDelta: processed.tokensDelta,
+      rewards: processed.rewards,
+      abuse: processed.abuse
+    }
+  };
+}
+
+===== END FILE: diagnostics\status.js =====
+
+===== FILE: events\emitters.js =====
+
+// Emittery zdarzeń dla Finance And Admin (BE-02)
+// Przykład: emitEvent("event.type", payload);
+
+
+
+export function emitDistrictEvent(type, payload = {}) {
+  return {
+    module: "BE-02",
+    type,
+    payload,
+    ts: Date.now()
+  };
+}
+
+===== END FILE: events\emitters.js =====
+
+===== FILE: events\listeners.js =====
+
+// Listener'y zdarzeń dla Finance And Admin (BE-02)
+// Tu podpinamy się pod EventBus / Life Engine.
+
+
+
+export function registerListeners(eventBus) {
+  eventBus.on("BE-02", (event) => {
+    console.log("📡 Event in BE-02:", event);
+  });
+}
+
+===== END FILE: events\listeners.js =====
+
+===== FILE: life\mapSignals.js =====
+
+import { CitySuperEngine } from "../../BE-00__City/SUPER_ENGINE/CitySuperEngine.js";
+// Mapowanie zdarzeń na glow kafli dla Finance And Admin (BE-02)
+export function mapEventToTileSignal(event) {
+  return null;
+}
+
+
+
+export function mapEventToTileSignal(event) {
+  if (event.module !== "BE-02") return null;
+  const processed = CitySuperEngine.process(event);
+  return {
+    tileId: processed.life.glow.tileId || "BE-02",
+    type: event.type,
+    payload: event.payload
+  };
+}
+
+===== END FILE: life\mapSignals.js =====
+
+===== FILE: life\notifications.js =====
+
+import { CitySuperEngine } from "../../BE-00__City/SUPER_ENGINE/CitySuperEngine.js";
+// Powiadomienia dzielnicy Finance And Admin (BE-02)
+export function mapEventToNotification(event) {
+  return null;
+}
+
+
+
+export function mapEventToNotification(event) {
+  if (event.module !== "BE-02") return null;
+  const processed = CitySuperEngine.process(event);
+  return processed.life.notification;
+}
+
+===== END FILE: life\notifications.js =====
+
+===== FILE: life\reactions.js =====
+
+import { CitySuperEngine } from "../../BE-00__City/SUPER_ENGINE/CitySuperEngine.js";
+// Reakcje Life Engine na zdarzenia z Finance And Admin (BE-02)
+export function getReactions() {
+  return [];
+}
+
+
+
+export function getReactions() {
+  return [
+    {
+      match: (event) => event.module === "BE-02",
+      action: (event) => CitySuperEngine.process(event)
+    }
+  ];
+}
+
+
+
+import rtraConfig from "../config/rtra.config.json";
+// rtraConfig dostępny dla przyszłych, modułowych reakcji.
+
+===== END FILE: life\reactions.js =====
+

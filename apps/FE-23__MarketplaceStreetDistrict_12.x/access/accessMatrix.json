@@ -1,0 +1,10 @@
+{
+  "roles": ["guest", "citizen", "moderator", "admin"],
+  "resources": {
+    "dashboard": ["citizen", "moderator", "admin"],
+    "adminPanel": ["admin"],
+    "liveView": ["citizen", "moderator", "admin"],
+    "workflows": ["moderator", "admin"]
+  }
+}
+

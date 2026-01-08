@@ -1,0 +1,219 @@
+===== FILE: api.js =====
+
+// Kontrakt API modułu Marketplace
+// Uzupełnij konkretną logiką BE dla tego modułu.
+
+export async function getItems() {
+  // TODO: implementacja
+  return [];
+}
+
+export async function getItemById(id) {
+  // TODO: implementacja
+  return null;
+}
+
+export async function createItem(payload) {
+  // TODO: implementacja
+  return { success: true, id: String(Date.now()) };
+}
+
+===== END FILE: api.js =====
+
+===== FILE: index.js =====
+
+import React from "react";
+
+// Importy paneli – do uzupełnienia per moduł
+// import MainPanel from "./PANELS/MainPanel.jsx";
+// import DetailsPanel from "./PANELS/DetailsPanel.jsx";
+// import FormPanel from "./FORMS/FormPanel.jsx";
+// import AdminPanel from "./ADMIN/AdminPanel.jsx";
+// import AIPanel from "./AI/AIPanel.jsx";
+// import JuryPanel from "./JURY/JuryPanel.jsx";
+
+import { MarketplaceListPanel } from "./PANELS/MarketplaceListPanel";
+
+export const FE_02_Module = {
+
+  config: {
+    id: "FE-02",
+    name: "Marketplace",
+    baseRoute: "/marketplace"
+  },
+
+  router: (route) => {
+    // Przykładowy szkic routingu – dostosuj per moduł
+    if (route === "/marketplace") {
+      return <div>Marketplace – główny panel (do uzupełnienia)</div>;
+    }
+
+    if (route === "/marketplace/new") {
+      return <div>Marketplace – formularz (do uzupełnienia)</div>;
+    }
+
+    if (route.startsWith("/marketplace/item/")) {
+      const id = route.split("/").pop();
+      return (
+        <div>
+          Marketplace – szczegóły elementu {id} (do uzupełnienia)
+        </div>
+      );
+    }
+
+    if (route === "/marketplace/admin") {
+      return <div>Marketplace – panel admina (do uzupełnienia)</div>;
+    }
+
+    if (route === "/marketplace/ai") {
+      return <div>Marketplace – panel AI (do uzupełnienia)</div>;
+    }
+
+    if (route === "/marketplace/jury") {
+      return <div>Marketplace – panel jury (do uzupełnienia)</div>;
+    }
+
+    return (
+      <div>
+        <h2>Marketplace</h2>
+        <p>Nie znaleziono strony modułu dla ścieżki: {route}</p>
+      </div>
+    );
+  }
+};
+
+===== END FILE: index.js =====
+
+===== FILE: module.config.json =====
+
+{
+  "id": "FE-02",
+  "name": "Marketplace",
+  "baseRoute": "/marketplace",
+  "description": "Moduł Marketplace w CITYOF-GATE"
+}
+
+===== END FILE: module.config.json =====
+
+===== FILE: DATA\README_DATA.md =====
+
+# DATA – warstwa danych modułu Marketplace
+
+Tu możesz trzymać mocki danych, pliki JSON, konfiguracje,
+z których korzystają panele i workflow tego modułu.
+
+===== END FILE: DATA\README_DATA.md =====
+
+===== FILE: DATA\useMarketplaceApi.js =====
+
+// Hook API dla Marketplace (FE-02)
+// Zakłada, że backend wystawia /api/marketplace/...
+
+import { useEffect, useState } from "react";
+
+const BASE_URL = "/api/marketplace";
+
+export function useMarketplaceItems() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${BASE_URL}/items`)
+      .then((res) => res.json())
+      .then((data) => {
+        setItems(data || []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setItems([]);
+        setLoading(false);
+      });
+  }, []);
+
+  return { items, loading };
+}
+
+===== END FILE: DATA\useMarketplaceApi.js =====
+
+===== FILE: PANELS\CreatorPathwayPanel.js =====
+
+import React from "react";
+
+const STAGES = [
+  {
+    id: "marketplace",
+    label: "Marketplace",
+    description: "Pierwszy krok — wystawiasz swoje rzeczy w Marketplace."
+  },
+  {
+    id: "marketplace_street",
+    label: "Marketplace Street",
+    description: "Twoje rzeczy zaczynają być widoczne jako stała obecność."
+  },
+  {
+    id: "creator",
+    label: "Creator",
+    description: "Masz już rozpoznawalny styl i aktywność."
+  },
+  {
+    id: "certified_creator",
+    label: "Certified Creator",
+    description: "Oficjalnie certyfikowany twórca w CITYOF-GATE."
+  }
+];
+
+export function CreatorPathwayPanel() {
+  // TODO: podpiąć realne dane użytkownika (obecny etap, spełnione wymagania)
+  const currentStageId = "marketplace";
+
+  return (
+    <div>
+      <h2>Creator Pathway</h2>
+      <ol>
+        {STAGES.map((stage) => {
+          const isCurrent = stage.id === currentStageId;
+          return (
+            <li key={stage.id} style={{ marginBottom: "8px" }}>
+              <strong>{stage.label}</strong>
+              {isCurrent && " (tu jesteś teraz)"}
+              <div>{stage.description}</div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
+===== END FILE: PANELS\CreatorPathwayPanel.js =====
+
+===== FILE: PANELS\MarketplaceListPanel.js =====
+
+// Panel listy ofert Marketplace (FE-02)
+
+import React from "react";
+import { useMarketplaceItems } from "../DATA/useMarketplaceApi";
+
+export function MarketplaceListPanel() {
+  const { items, loading } = useMarketplaceItems();
+
+  if (loading) return <div>Ładowanie ofert...</div>;
+
+  if (!items.length) return <div>Brak ofert w Marketplace.</div>;
+
+  return (
+    <div>
+      <h2>Marketplace — oferty</h2>
+      <ul>
+        {items.map((item) => (
+          <li key={item.id} style={{ marginBottom: "8px" }}>
+            <strong>{item.title}</strong> — {item.description} — {item.price} GATE
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+===== END FILE: PANELS\MarketplaceListPanel.js =====
+

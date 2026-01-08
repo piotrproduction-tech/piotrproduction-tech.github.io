@@ -1,0 +1,2998 @@
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\api.js =====
+
+export async function getSubmissions() {
+  return [
+    { id: "1", title: "Film 1", status: "submitted", director: "Autor 1" },
+    { id: "2", title: "Film 2", status: "selected", director: "Autor 2" }
+  ];
+}
+
+export async function getSubmissionById(id) {
+  return {
+    id,
+    title: "Mock Film " + id,
+    director: "Mock Autor",
+    status: "submitted",
+    synopsis: "To jest przykładowy opis filmu.",
+    duration: 90
+  };
+}
+
+export async function createSubmission(payload) {
+  console.log("createSubmission (mock)", payload);
+  return { success: true, id: String(Date.now()) };
+}
+
+
+
+// API_SUBMISSIONS
+export async function getFestivalSubmissions() {
+  const res = await fetch("/api/festival/submissions");
+  return res.json();
+}
+
+export async function createFestivalSubmission(payload) {
+  const res = await fetch("/api/festival/submissions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
+
+export async function getSubmissionDetails(id) {
+  const res = await fetch("/api/festival/submissions/" + id);
+  return res.json();
+}
+
+
+
+// API_JURY
+export async function getJuryMembers() {
+  const res = await fetch("/api/festival/jury");
+  return res.json();
+}
+
+export async function assignSubmissionToJury(submissionId, juryId) {
+  const res = await fetch("/api/festival/jury/assign", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ submissionId, juryId })
+  });
+  return res.json();
+}
+
+export async function getJuryAssignments() {
+  const res = await fetch("/api/festival/jury/assignments");
+  return res.json();
+}
+
+export async function getJuryAssignmentsForCurrent() {
+  const res = await fetch("/api/festival/jury/my-assignments");
+  return res.json();
+}
+
+export async function submitJuryVote(submissionId, score, comment) {
+  const res = await fetch("/api/festival/jury/vote", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ submissionId, score, comment })
+  });
+  return res.json();
+}
+
+
+
+// API_AWARDS
+export async function getAwardCategories() {
+  const res = await fetch("/api/festival/awards/categories");
+  return res.json();
+}
+
+export async function createAwardCategory(name, description) {
+  const res = await fetch("/api/festival/awards/categories", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, description })
+  });
+  return res.json();
+}
+
+export async function grantAward(categoryId, submissionId) {
+  const res = await fetch("/api/festival/awards/grant", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ categoryId, submissionId })
+  });
+  return res.json();
+}
+
+
+
+// API_EVENTS
+export async function getFestivalEvents() {
+  const res = await fetch("/api/festival/events");
+  return res.json();
+}
+
+export async function createFestivalEvent(name, startsAt, endsAt) {
+  const res = await fetch("/api/festival/events", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, startsAt, endsAt })
+  });
+  return res.json();
+}
+
+export async function updateFestivalEvent(id, patch) {
+  const res = await fetch("/api/festival/events/" + id, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(patch)
+  });
+  return res.json();
+}
+
+
+
+// API_SCHEDULE
+export async function getFestivalSchedule() {
+  const res = await fetch("/api/festival/schedule");
+  return res.json();
+}
+
+export async function addToFestivalSchedule(eventId, slot) {
+  const res = await fetch("/api/festival/schedule", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ eventId, slot })
+  });
+  return res.json();
+}
+
+
+
+// API_STATS
+export async function getFestivalStats() {
+  const res = await fetch("/api/festival/stats");
+  return res.json();
+}
+
+export async function getFestivalStatsTimeline() {
+  const res = await fetch("/api/festival/stats/timeline");
+  return res.json();
+}
+
+
+
+// API_HEATMAP
+export async function getFestivalHeatmap() {
+  const res = await fetch("/api/festival/heatmap");
+  return res.json();
+}
+
+
+
+// API_NARRATIVE
+export async function getFestivalNarrative() {
+  const res = await fetch("/api/festival/narrative");
+  return res.json();
+}
+
+
+
+// API_AI
+export async function getFestivalAIPredictions() {
+  const res = await fetch("/api/festival/ai/predictions");
+  return res.json();
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\economy.bootstrap.js =====
+
+
+
+
+// FE_FESTIVAL_ECONOMY_BOOTSTRAP
+// Attach Festival Pavilion to CityEconomyEngine on FE side
+
+import { registerCityEconomyBus } from "./core/economyBus";
+
+export function bootstrapFestivalEconomy(cityEconomyBus) {
+  registerCityEconomyBus(cityEconomyBus);
+  console.log("[FESTIVAL] Economy connected to CityEconomyEngine");
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\governance.bootstrap.js =====
+
+
+
+
+// FE_FESTIVAL_GOVERNANCE_BOOTSTRAP
+// Attach Festival Pavilion to CityGovernanceEngine on FE side
+
+import { registerCityGovernanceBus } from "./core/governanceBus";
+
+export function bootstrapFestivalGovernance(cityGovernanceBus) {
+  registerCityGovernanceBus(cityGovernanceBus);
+  console.log("[FESTIVAL] Governance connected to CityGovernanceEngine");
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\identity.bootstrap.js =====
+
+
+
+
+// FE_FESTIVAL_IDENTITY_BOOTSTRAP
+// Attach Festival Pavilion to CityIdentityEngine on FE side
+
+import { registerCityIdentityBus } from "./core/identityBus";
+
+export function bootstrapFestivalIdentity(cityIdentityBus) {
+  registerCityIdentityBus(cityIdentityBus);
+  console.log("[FESTIVAL] Identity connected to CityIdentityEngine");
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\narrative.bootstrap.js =====
+
+
+
+
+// FE_FESTIVAL_NARRATIVE_BOOTSTRAP
+// Attach Festival Pavilion to CityNarrativeEngine on FE side
+
+import { registerCityNarrativeBus } from "./core/narrativeBus";
+
+export function bootstrapFestivalNarrative(cityNarrativeBus) {
+  registerCityNarrativeBus(cityNarrativeBus);
+  console.log("[FESTIVAL] Narrative feed connected to CityNarrativeEngine");
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\pulsemood.bootstrap.js =====
+
+
+
+
+// FE_FESTIVAL_PULSE_MOOD_BOOTSTRAP
+// Attach Festival Pavilion to CityPulseEngine & CityMoodEngine on FE side
+
+import { registerCityPulseBus, registerCityMoodBus } from "./core/pulseMoodBus";
+
+export function bootstrapFestivalPulseMood(cityPulseBus, cityMoodBus) {
+  registerCityPulseBus(cityPulseBus);
+  registerCityMoodBus(cityMoodBus);
+  console.log("[FESTIVAL] Pulse & Mood connected to CityPulseEngine + CityMoodEngine");
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\reputation.bootstrap.js =====
+
+
+
+
+// FE_FESTIVAL_REPUTATION_BOOTSTRAP
+// Attach Festival Pavilion to CityReputationEngine on FE side
+
+import { registerCityReputationBus } from "./core/reputationBus";
+
+export function bootstrapFestivalReputation(cityReputationBus) {
+  registerCityReputationBus(cityReputationBus);
+  console.log("[FESTIVAL] Reputation connected to CityReputationEngine");
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\security.bootstrap.js =====
+
+
+
+
+// FE_FESTIVAL_SECURITY_BOOTSTRAP
+// Attach Festival Pavilion to CitySecurityEngine on FE side
+
+import { registerCitySecurityBus } from "./core/securityBus";
+
+export function bootstrapFestivalSecurity(citySecurityBus) {
+  registerCitySecurityBus(citySecurityBus);
+  console.log("[FESTIVAL] Security connected to CitySecurityEngine");
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\simulation.bootstrap.js =====
+
+
+
+
+// FE_FESTIVAL_SIMULATION_BOOTSTRAP
+// Attach Festival Pavilion to CitySimulationEngine & CityEmergenceEngine on FE side
+
+import { registerCitySimulationBus, registerCityEmergenceBus } from "./core/simulationBus";
+
+export function bootstrapFestivalSimulation(citySimulationBus, cityEmergenceBus) {
+  registerCitySimulationBus(citySimulationBus);
+  registerCityEmergenceBus(cityEmergenceBus);
+  console.log("[FESTIVAL] Simulation & Emergence connected to CitySimulationEngine + CityEmergenceEngine");
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\AI\useFestivalAI.js =====
+
+import { useState, useEffect } from "react";
+
+export function useFestivalAI() {
+  const [predictions, setPredictions] = useState({ hotCategories: [], potentialWinners: [] });
+
+  useEffect(() => {
+    // TODO: integrate with City AI Engine
+    setPredictions({
+      hotCategories: [],
+      potentialWinners: []
+    });
+  }, []);
+
+  return predictions;
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalAccess.js =====
+
+
+
+
+// FE_FESTIVAL_ACCESS_HOOK
+// React hook for evaluating access in real time
+
+import { useState, useEffect } from "react";
+import { evaluateFestivalAccess } from "../access/accessEvaluator";
+
+export function useFestivalAccess(identity, governance, security) {
+  const [access, setAccess] = useState({});
+
+  useEffect(() => {
+    const a = evaluateFestivalAccess(identity, governance, security);
+    setAccess(a);
+  }, [identity, governance, security]);
+
+  return access;
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalDebugConsole.js =====
+
+
+
+
+// FE_FESTIVAL_DEBUG_CONSOLE_HOOK
+// Collects live logs from all engines for FestivalDebugConsole
+
+import { useState } from "react";
+import { useFestivalPulseMoodLive } from "./useFestivalPulseMoodLive";
+import { useFestivalSimulationLive } from "./useFestivalSimulationLive";
+import { useFestivalReputationLive } from "./useFestivalReputationLive";
+import { useFestivalGovernanceLive } from "./useFestivalGovernanceLive";
+import { useFestivalSecurityLive } from "./useFestivalSecurityLive";
+import { useFestivalIdentityLive } from "./useFestivalIdentityLive";
+import { useFestivalEconomyLive } from "./useFestivalEconomyLive";
+
+function now() {
+  return new Date().toISOString().split("T")[1].slice(0, 8);
+}
+
+export function useFestivalDebugConsole() {
+  const [logs, setLogs] = useState([]);
+  const [collapsed, setCollapsed] = useState(true);
+
+  function push(source, message, payload) {
+    setLogs((prev) => [
+      {
+        time: now(),
+        source,
+        message,
+        payload
+      },
+      ...prev
+    ].slice(0, 200));
+  }
+
+  // Pulse + Mood
+  useFestivalPulseMoodLive(
+    (bpm) => push("pulse", "Pulse update: " + bpm, { bpm }),
+    (mood) => push("mood", "Mood update: " + mood, { mood })
+  );
+
+  // Simulation + Emergence
+  useFestivalSimulationLive(
+    (wave) => push("simulation", "Wave: " + (wave?.label || "?"), wave),
+    (pattern) => push("simulation", "Pattern: " + (pattern?.type || "?"), pattern)
+  );
+
+  // Reputation
+  useFestivalReputationLive((rep) =>
+    push("reputation", "Reputation update for " + rep.userId, rep)
+  );
+
+  // Governance
+  useFestivalGovernanceLive((gov) =>
+    push("governance", "Governance update for " + gov.userId, gov)
+  );
+
+  // Security
+  useFestivalSecurityLive((sec) =>
+    push("security", "Security update for " + sec.userId, sec)
+  );
+
+  // Identity
+  useFestivalIdentityLive((id) =>
+    push("identity", "Identity update for " + id.userId, id)
+  );
+
+  // Economy
+  useFestivalEconomyLive((eco) =>
+    push("economy", "Economy update for " + eco.userId, eco)
+  );
+
+  function toggle() {
+    setCollapsed((c) => !c);
+  }
+
+  return {
+    logs,
+    collapsed,
+    toggle
+  };
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalEconomyLive.js =====
+
+
+
+
+// FE_FESTIVAL_ECONOMY_HOOK
+// React hook for live economy updates
+
+import { useEffect } from "react";
+import { attachFestivalEconomyLiveSync } from "../live/festivalEconomyLiveSync";
+
+export function useFestivalEconomyLive(onEconomy) {
+  useEffect(() => {
+    attachFestivalEconomyLiveSync((eco) => {
+      onEconomy(eco);
+    });
+  }, []);
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalGovernanceLive.js =====
+
+
+
+
+// FE_FESTIVAL_GOVERNANCE_HOOK
+// React hook for live governance updates
+
+import { useEffect } from "react";
+import { attachFestivalGovernanceLiveSync } from "../live/festivalGovernanceLiveSync";
+
+export function useFestivalGovernanceLive(onGov) {
+  useEffect(() => {
+    attachFestivalGovernanceLiveSync((gov) => {
+      onGov(gov);
+    });
+  }, []);
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalHUD.js =====
+
+
+
+
+// FE_FESTIVAL_HUD_HOOK
+// Combines pulse + mood + wave + reputation + identity + access into HUD data
+
+import { useFestivalPulseMoodLive } from "./useFestivalPulseMoodLive";
+import { useFestivalSimulationLive } from "./useFestivalSimulationLive";
+import { useFestivalReputationLive } from "./useFestivalReputationLive";
+import { useFestivalIdentityLive } from "./useFestivalIdentityLive";
+import { useFestivalAccess } from "./useFestivalAccess";
+
+import { useState } from "react";
+
+export function useFestivalHUD(identity, governance, security) {
+  const [pulse, setPulse] = useState(0);
+  const [mood, setMood] = useState("Calm");
+  const [wave, setWave] = useState(null);
+  const [pattern, setPattern] = useState(null);
+  const [reputation, setReputation] = useState({});
+  const [identityLive, setIdentityLive] = useState(identity);
+
+  // Pulse + Mood
+  useFestivalPulseMoodLive(
+    (bpm) => setPulse(bpm),
+    (m) => setMood(m)
+  );
+
+  // Simulation waves
+  useFestivalSimulationLive(
+    (w) => setWave(w),
+    (p) => setPattern(p)
+  );
+
+  // Reputation
+  useFestivalReputationLive((rep) => setReputation(rep));
+
+  // Identity
+  useFestivalIdentityLive((id) => setIdentityLive(id));
+
+  // Access
+  const access = useFestivalAccess(identityLive, governance, security);
+
+  return {
+    pulse,
+    mood,
+    wave,
+    reputation,
+    identity: identityLive,
+    access
+  };
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalIdentityLive.js =====
+
+
+
+
+// FE_FESTIVAL_IDENTITY_HOOK
+// React hook for live identity updates
+
+import { useEffect } from "react";
+import { attachFestivalIdentityLiveSync } from "../live/festivalIdentityLiveSync";
+
+export function useFestivalIdentityLive(onIdentity) {
+  useEffect(() => {
+    attachFestivalIdentityLiveSync((id) => {
+      onIdentity(id);
+    });
+  }, []);
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalLive.js =====
+
+
+
+
+// FE_FESTIVAL_LIVE_HOOK
+// React hook for live updates in Festival Pavilion
+
+import { useEffect } from "react";
+import { attachFestivalLiveSync } from "../live/festivalLiveSync";
+
+export function useFestivalLive(onEvent) {
+  useEffect(() => {
+    attachFestivalLiveSync((ev) => {
+      onEvent(ev);
+    });
+  }, []);
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalNarrativeLive.js =====
+
+
+
+
+// FE_FESTIVAL_NARRATIVE_HOOK
+// React hook for live narrative updates in Festival Pavilion
+
+import { useEffect } from "react";
+import { attachFestivalNarrativeLiveSync } from "../live/festivalNarrativeLiveSync";
+
+export function useFestivalNarrativeLive(onStory) {
+  useEffect(() => {
+    attachFestivalNarrativeLiveSync((story) => {
+      onStory(story);
+    });
+  }, []);
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalNotifications.js =====
+
+
+
+
+// FE_FESTIVAL_NOTIFICATIONS_HOOK
+import { useState } from "react";
+import { useFestivalPulseMoodLive } from "./useFestivalPulseMoodLive";
+import { useFestivalSimulationLive } from "./useFestivalSimulationLive";
+import { useFestivalReputationLive } from "./useFestivalReputationLive";
+import { useFestivalGovernanceLive } from "./useFestivalGovernanceLive";
+import { useFestivalSecurityLive } from "./useFestivalSecurityLive";
+import { useFestivalIdentityLive } from "./useFestivalIdentityLive";
+import { useFestivalEconomyLive } from "./useFestivalEconomyLive";
+
+export function useFestivalNotifications() {
+  const [notifications, setNotifications] = useState([]);
+
+  function push(type, title, message) {
+    setNotifications((prev) => [
+      { type, title, message },
+      ...prev.slice(0, 20)
+    ]);
+  }
+
+  useFestivalPulseMoodLive(
+    (bpm) => push("pulse", "Pulse Update", "City BPM: " + bpm),
+    (mood) => push("pulse", "Mood Shift", "City mood is now: " + mood)
+  );
+
+  useFestivalSimulationLive(
+    (wave) => push("simulation", "Activity Wave", wave.label || "Unknown wave"),
+    (pattern) => push("simulation", "Emergent Pattern", pattern.type)
+  );
+
+  useFestivalReputationLive((rep) =>
+    push("reputation", "Reputation Update", "User " + rep.userId + " changed reputation")
+  );
+
+  useFestivalGovernanceLive((gov) =>
+    push("governance", "Governance Update", "Roles updated for " + gov.userId)
+  );
+
+  useFestivalSecurityLive((sec) =>
+    push("security", "Security Alert", "Trust level: " + sec.trustLevel)
+  );
+
+  useFestivalIdentityLive((id) =>
+    push("identity", "Identity Update", "Profile updated for " + id.userId)
+  );
+
+  useFestivalEconomyLive((eco) =>
+    push("economy", "Transaction", eco.delta + " tokens (" + eco.reason + ")")
+  );
+
+  return notifications;
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalOverlay.js =====
+
+
+
+
+// FE_FESTIVAL_OVERLAY_HOOK
+import { useFestivalHUD } from "./useFestivalHUD";
+import { useFestivalDebugConsole } from "./useFestivalDebugConsole";
+import { useFestivalNotifications } from "./useFestivalNotifications";
+
+export function useFestivalOverlay(identity, governance, security) {
+  const hud = useFestivalHUD(identity, governance, security);
+  const debug = useFestivalDebugConsole();
+  const notifications = useFestivalNotifications();
+
+  return {
+    hud,
+    debug,
+    notifications,
+    mode: "semi"
+  };
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalOverlayController.js =====
+
+
+
+
+// FE_FESTIVAL_OVERLAY_CONTROLLER_HOOK
+import { useState } from "react";
+
+export function useFestivalOverlayController() {
+  const [mode, setMode] = useState("semi");
+
+  const [toggles, setToggles] = useState({
+    hud: true,
+    notifications: true,
+    debug: true
+  });
+
+  return {
+    mode,
+    setMode,
+    toggles,
+    setToggles
+  };
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalOverlayMacroRecorder.js =====
+
+
+
+
+// FE_FESTIVAL_OVERLAY_MACRORECORDER_HOOK
+// Records and plays back overlay commands
+
+import { useState, useRef } from "react";
+
+export function useFestivalOverlayMacroRecorder(presetManager, controller) {
+  const [recording, setRecording] = useState(false);
+  const [macros, setMacros] = useState({});
+  const [currentMacroName, setCurrentMacroName] = useState(null);
+
+  const buffer = useRef([]);
+
+  function startRecording(name) {
+    setRecording(true);
+    setCurrentMacroName(name);
+    buffer.current = [];
+  }
+
+  function stopRecording() {
+    setRecording(false);
+    if (!currentMacroName) return;
+
+    setMacros((prev) => ({
+      ...prev,
+      [currentMacroName]: [...buffer.current]
+    }));
+
+    buffer.current = [];
+    setCurrentMacroName(null);
+  }
+
+  function recordCommand(cmd, payload) {
+    if (!recording) return;
+
+    buffer.current.push({
+      time: Date.now(),
+      cmd,
+      payload
+    });
+  }
+
+  async function playMacro(name) {
+    const macro = macros[name];
+    if (!macro) return;
+
+    let lastTime = macro[0]?.time || 0;
+
+    for (const step of macro) {
+      const delay = step.time - lastTime;
+      lastTime = step.time;
+
+      await new Promise((res) => setTimeout(res, delay));
+
+      execute(step.cmd, step.payload);
+    }
+  }
+
+  function execute(cmd, payload) {
+    switch (cmd) {
+      case "setPreset":
+        presetManager.applyPreset(payload);
+        break;
+
+      case "setMode":
+        controller.setMode(payload);
+        break;
+
+      case "toggle":
+        controller.setToggles({
+          ...controller.toggles,
+          [payload]: !controller.toggles[payload]
+        });
+        break;
+
+      case "setToggles":
+        controller.setToggles(payload);
+        break;
+
+      default:
+        console.warn("MacroRecorder: unknown command", cmd);
+    }
+  }
+
+  return {
+    recording,
+    macros,
+    startRecording,
+    stopRecording,
+    recordCommand,
+    playMacro
+  };
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalOverlayPresetManager.js =====
+
+
+
+
+// FE_FESTIVAL_OVERLAY_PRESET_MANAGER_HOOK
+import { useState } from "react";
+import { FestivalOverlayPresets } from "./overlayPresets";
+
+export function useFestivalOverlayPresetManager(controller) {
+  const [customPresets, setCustomPresets] = useState({});
+
+  function applyPreset(name) {
+    const preset =
+      FestivalOverlayPresets[name] || customPresets[name];
+
+    if (!preset) return;
+
+    controller.setMode(preset.mode);
+    controller.setToggles(preset.toggles);
+  }
+
+  function savePreset(name) {
+    const newPreset = {
+      mode: controller.mode,
+      toggles: controller.toggles
+    };
+
+    setCustomPresets((prev) => ({
+      ...prev,
+      [name]: newPreset
+    }));
+  }
+
+  return {
+    applyPreset,
+    savePreset,
+    customPresets
+  };
+}
+
+
+
+// FE_FESTIVAL_OVERLAY_PRESET_MANAGER_EXTENDED
+
+// Add refs for sync
+import { useRef } from "react";
+
+customPresetsRef.current = customPresets;
+
+// Track last applied preset
+const [lastPreset, setLastPreset] = useState(null);
+
+    FestivalOverlayPresets[name] || customPresets[name];
+
+  if (!preset) return;
+
+  controller.setMode(preset.mode);
+  controller.setToggles(preset.toggles);
+  setLastPreset(name);
+}
+
+function mergeRemotePresets(remote) {
+  setCustomPresets((prev) => ({
+    ...prev,
+    ...remote
+  }));
+}
+
+return {
+  applyPreset,
+  savePreset,
+  customPresets,
+  customPresetsRef,
+  lastPreset,
+  mergeRemotePresets
+};
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalOverlayPresetSync.js =====
+
+
+
+
+// FE_FESTIVAL_OVERLAY_PRESET_SYNC_HOOK
+// Syncs overlay presets with LocalStorage and optionally user profile
+
+import { useEffect } from "react";
+
+const LS_KEY = "FE01_FESTIVAL_OVERLAY_PRESETS";
+const LS_LAST_KEY = "FE01_FESTIVAL_OVERLAY_LAST_PRESET";
+
+export function useFestivalOverlayPresetSync(presetManager, controller, identity) {
+  // Load presets from LocalStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(LS_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        presetManager.customPresetsRef.current = parsed;
+      }
+
+      const last = localStorage.getItem(LS_LAST_KEY);
+      if (last) {
+        presetManager.applyPreset(last);
+      }
+    } catch (e) {
+      console.warn("OverlayPresetSync load error:", e);
+    }
+  }, []);
+
+  // Save presets to LocalStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        LS_KEY,
+        JSON.stringify(presetManager.customPresetsRef.current)
+      );
+    } catch (e) {
+      console.warn("OverlayPresetSync save error:", e);
+    }
+  }, [presetManager.customPresets]);
+
+  // Save last used preset
+  useEffect(() => {
+    try {
+      localStorage.setItem(LS_LAST_KEY, presetManager.lastPreset);
+    } catch (e) {
+      console.warn("OverlayPresetSync last preset error:", e);
+    }
+  }, [presetManager.lastPreset]);
+
+  // OPTIONAL: Sync with user profile (CityIdentityEngine)
+  // If identity.profile.settings.overlayPresets exists → load/merge
+  useEffect(() => {
+    if (!identity?.profile?.settings?.overlayPresets) return;
+
+    const remote = identity.profile.settings.overlayPresets;
+    presetManager.mergeRemotePresets(remote);
+  }, [identity]);
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalOverlayQuickSwitch.js =====
+
+
+
+
+// FE_FESTIVAL_OVERLAY_QUICKSWITCH_HOOK
+// Keyboard shortcuts for overlay presets: F10, F11, F12
+
+import { useEffect } from "react";
+
+export function useFestivalOverlayQuickSwitch(presetManager) {
+  useEffect(() => {
+    function handler(e) {
+      if (e.key === "F10") {
+        presetManager.applyPreset("Debug");
+      }
+      if (e.key === "F11") {
+        presetManager.applyPreset("Showcase");
+      }
+      if (e.key === "F12") {
+        presetManager.applyPreset("Minimal");
+      }
+    }
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [presetManager]);
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalOverlayRemoteControl.js =====
+
+
+
+
+// FE_FESTIVAL_OVERLAY_REMOTECONTROL_HOOK
+// Remote control for overlay via WebSocket / CityAdminEngine
+
+import { useEffect } from "react";
+
+export function useFestivalOverlayRemoteControl(presetManager, controller, wsUrl = "ws://localhost:8080") {
+  useEffect(() => {
+    let ws;
+
+    try {
+      ws = new WebSocket(wsUrl);
+    } catch (e) {
+      console.warn("OverlayRemoteControl: WebSocket init failed:", e);
+      return;
+    }
+
+    ws.onopen = () => {
+      console.log("[OverlayRemoteControl] Connected to", wsUrl);
+    };
+
+    ws.onmessage = (msg) => {
+      try {
+        const data = JSON.parse(msg.data);
+
+        if (data.type === "CITY_ADMIN_OVERLAY_COMMAND") {
+          handleCommand(data.command, data.payload);
+        }
+      } catch (e) {
+        console.warn("OverlayRemoteControl: invalid message:", msg.data);
+      }
+    };
+
+    function handleCommand(cmd, payload) {
+      switch (cmd) {
+        case "setPreset":
+          presetManager.applyPreset(payload);
+          break;
+
+        case "setMode":
+          controller.setMode(payload);
+          break;
+
+        case "toggle":
+          controller.setToggles({
+            ...controller.toggles,
+            [payload]: !controller.toggles[payload]
+          });
+          break;
+
+        case "setToggles":
+          controller.setToggles(payload);
+          break;
+
+        case "setHUD":
+          controller.setToggles({ ...controller.toggles, hud: payload });
+          break;
+
+        case "setNotifications":
+          controller.setToggles({ ...controller.toggles, notifications: payload });
+          break;
+
+        case "setDebug":
+          controller.setToggles({ ...controller.toggles, debug: payload });
+          break;
+
+        default:
+          console.warn("OverlayRemoteControl: unknown command:", cmd);
+      }
+    }
+
+    return () => {
+      if (ws) ws.close();
+    };
+  }, [presetManager, controller, wsUrl]);
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalOverlayScenarioAIAutoTuner.js =====
+
+
+
+
+// FE_FESTIVAL_OVERLAY_SCENARIO_AI_AUTOTUNER
+// Learns from history and auto-adjusts AI profile parameters
+
+import { useEffect, useState, useRef } from "react";
+import { FestivalOverlayScenarioAIProfiles } from "./festivalOverlayScenarioAIProfiles";
+
+export function useFestivalOverlayScenarioAIAutoTuner(orchestrator, getCurrentState) {
+  const [enabled, setEnabled] = useState(true);
+  const history = useRef([]);
+
+  // Track last 50 states
+  function pushHistory(state) {
+    history.current.push(state);
+    if (history.current.length > 50) history.current.shift();
+  }
+
+  // Compute metrics
+  function computeMetrics() {
+    const h = history.current;
+    if (h.length < 5) return null;
+
+    const avgPulse = h.reduce((a, s) => a + s.pulse, 0) / h.length;
+    const avgWave = h.reduce((a, s) => a + s.wave.intensity, 0) / h.length;
+    const moodCounts = h.reduce((acc, s) => {
+      acc[s.mood] = (acc[s.mood] || 0) + 1;
+      return acc;
+    }, {});
+
+    const dominantMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0][0];
+
+    return { avgPulse, avgWave, dominantMood };
+  }
+
+  // Auto-tuning logic
+  function tuneProfiles(metrics) {
+    const { avgPulse, avgWave, dominantMood } = metrics;
+
+    Object.values(FestivalOverlayScenarioAIProfiles).forEach((profile) => {
+      // Adjust speed based on pulse
+      if (avgPulse > 120) profile.speed = Math.max(0.5, profile.speed * 0.9);
+      else if (avgPulse < 80) profile.speed = Math.min(1.5, profile.speed * 1.1);
+
+      // Adjust intensity based on wave
+      if (avgWave > 0.7) profile.intensity = Math.min(1.2, profile.intensity + 0.05);
+      else if (avgWave < 0.3) profile.intensity = Math.max(0.2, profile.intensity - 0.05);
+
+      // Mood-based preset bias
+      if (dominantMood === "Calm") {
+        if (profile.name === "CalmDirector") profile.intensity *= 0.95;
+      }
+      if (dominantMood === "Energetic") {
+        if (profile.name === "AggressiveDirector") profile.intensity *= 1.05;
+      }
+      if (dominantMood === "Creative") {
+        if (profile.name === "ExperimentalDirector") profile.intensity *= 1.1;
+      }
+    });
+  }
+
+  // Main loop
+  useEffect(() => {
+    if (!enabled) return;
+
+    const interval = setInterval(() => {
+      const state = getCurrentState();
+      pushHistory(state);
+
+      const metrics = computeMetrics();
+      if (metrics) tuneProfiles(metrics);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [enabled]);
+
+  return {
+    enabled,
+    setEnabled,
+    history
+  };
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalOverlayScenarioAIHyperOrchestrator.js =====
+
+
+
+
+// FE_FESTIVAL_OVERLAY_SCENARIO_AI_HYPERORCHESTRATOR
+// The unified super-orchestrator combining Orchestrator + AutoTuner + Profiles + Ultra AI
+
+import { useEffect, useState, useRef } from "react";
+import { FestivalOverlayScenarioAIProfiles } from "./festivalOverlayScenarioAIProfiles";
+import { generateOverlayScenarioAIWithProfile } from "./festivalOverlayScenarioAI";
+import { FestivalOverlayScenarioLibraryUltra } from "./festivalOverlayScenarioLibraryUltra";
+
+export function useFestivalOverlayScenarioAIHyperOrchestrator(runScenarioSteps, getCurrentState) {
+  const [enabled, setEnabled] = useState(true);
+  const [activeProfile, setActiveProfile] = useState("CalmDirector");
+  const [lastRun, setLastRun] = useState(0);
+
+  const history = useRef([]);
+
+  // Push state history (max 100)
+  function pushHistory(state) {
+    history.current.push(state);
+    if (history.current.length > 100) history.current.shift();
+  }
+
+  // Compute metrics
+  function computeMetrics() {
+    const h = history.current;
+    if (h.length < 10) return null;
+
+    const avgPulse = h.reduce((a, s) => a + s.pulse, 0) / h.length;
+    const avgWave = h.reduce((a, s) => a + s.wave.intensity, 0) / h.length;
+
+    const moodCounts = h.reduce((acc, s) => {
+      acc[s.mood] = (acc[s.mood] || 0) + 1;
+      return acc;
+    }, {});
+    const dominantMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0][0];
+
+    return { avgPulse, avgWave, dominantMood };
+  }
+
+  // AutoTuner logic
+  function autoTuneProfiles(metrics) {
+    const { avgPulse, avgWave, dominantMood } = metrics;
+
+    Object.values(FestivalOverlayScenarioAIProfiles).forEach((profile) => {
+      if (avgPulse > 120) profile.speed = Math.max(0.5, profile.speed * 0.9);
+      else if (avgPulse < 80) profile.speed = Math.min(1.5, profile.speed * 1.1);
+
+      if (avgWave > 0.7) profile.intensity = Math.min(1.2, profile.intensity + 0.05);
+      else if (avgWave < 0.3) profile.intensity = Math.max(0.2, profile.intensity - 0.05);
+
+      if (dominantMood === "Calm" && profile.name === "CalmDirector") profile.intensity *= 0.95;
+      if (dominantMood === "Energetic" && profile.name === "AggressiveDirector") profile.intensity *= 1.05;
+      if (dominantMood === "Creative" && profile.name === "ExperimentalDirector") profile.intensity *= 1.1;
+    });
+  }
+
+  // Profile selection logic
+  function chooseProfile(state) {
+    const { pulse, mood, wave, reputation, security, narrative } = state;
+
+    if (narrative?.phase === "opening") return "FestivalDirector";
+    if (narrative?.phase === "awards") return "CinematicDirector";
+    if (narrative?.phase === "jury") return "AnalyticalDirector";
+    if (pulse > 120 || wave?.intensity > 0.7) return "AggressiveDirector";
+    if (mood === "Creative") return "ExperimentalDirector";
+    if (security?.trustLevel === "low") return "AnalyticalDirector";
+
+    return "CalmDirector";
+  }
+
+  // Ultra scenario fallback
+  function maybeRunUltra(state) {
+    if (state.wave.intensity > 0.85 || state.pulse > 140) {
+      const ultra = FestivalOverlayScenarioLibraryUltra.DynamicPeak(state);
+      runScenarioSteps(ultra);
+      return true;
+    }
+    return false;
+  }
+
+  // Main loop
+  useEffect(() => {
+    if (!enabled) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      if (now - lastRun < 4000) return;
+
+      const state = getCurrentState();
+      pushHistory(state);
+
+      const metrics = computeMetrics();
+      if (metrics) autoTuneProfiles(metrics);
+
+      if (maybeRunUltra(state)) {
+        setLastRun(now);
+        return;
+      }
+
+      const profile = chooseProfile(state);
+      setActiveProfile(profile);
+
+      const steps = generateOverlayScenarioAIWithProfile(state, profile);
+      runScenarioSteps(steps);
+
+      setLastRun(now);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [enabled, lastRun]);
+
+  return {
+    enabled,
+    setEnabled,
+    activeProfile,
+    history
+  };
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalOverlayScenarioAIOrchestrator.js =====
+
+
+
+
+// FE_FESTIVAL_OVERLAY_SCENARIO_AI_ORCHESTRATOR
+// Autonomous AI director that selects profiles and triggers AI scenarios dynamically
+
+import { useEffect, useState } from "react";
+import { FestivalOverlayScenarioAIProfiles } from "./festivalOverlayScenarioAIProfiles";
+import { generateOverlayScenarioAIWithProfile } from "./festivalOverlayScenarioAI";
+
+export function useFestivalOverlayScenarioAIOrchestrator(runScenarioSteps, getCurrentState) {
+  const [activeProfile, setActiveProfile] = useState("CalmDirector");
+  const [autoMode, setAutoMode] = useState(true);
+  const [lastRun, setLastRun] = useState(0);
+
+  // Profile selection logic
+  function chooseProfile(state) {
+    const { pulse, mood, wave, reputation, security, narrative } = state;
+
+    if (narrative?.phase === "opening") return "FestivalDirector";
+    if (narrative?.phase === "awards") return "CinematicDirector";
+    if (narrative?.phase === "jury") return "AnalyticalDirector";
+    if (pulse > 120 || wave?.intensity > 0.7) return "AggressiveDirector";
+    if (mood === "Creative") return "ExperimentalDirector";
+    if (security?.trustLevel === "low") return "AnalyticalDirector";
+
+    return "CalmDirector";
+  }
+
+  // Main orchestrator loop
+  useEffect(() => {
+    if (!autoMode) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      if (now - lastRun < 5000) return; // throttle
+
+      const state = getCurrentState();
+      const profile = chooseProfile(state);
+
+      setActiveProfile(profile);
+
+      const steps = generateOverlayScenarioAIWithProfile(state, profile);
+      runScenarioSteps(steps);
+
+      setLastRun(now);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [autoMode, lastRun]);
+
+  return {
+    activeProfile,
+    autoMode,
+    setAutoMode,
+    setActiveProfile,
+    runOnce: () => {
+      runScenarioSteps(steps);
+    }
+  };
+}
+
+
+
+// FE_FESTIVAL_OVERLAY_SCENARIO_AI_AUTOTUNER_INTEGRATION
+import { useFestivalOverlayScenarioAIAutoTuner } from "./useFestivalOverlayScenarioAIAutoTuner";
+
+// Example usage inside orchestrator:
+// const autoTuner = useFestivalOverlayScenarioAIAutoTuner(orchestrator, getCurrentState);
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalOverlayScenarioComposer.js =====
+
+
+
+
+// FE_FESTIVAL_OVERLAY_SCENARIOCOMPOSER_HOOK
+// GUI editor for building overlay scenarios
+
+import { useState } from "react";
+
+export function useFestivalOverlayScenarioComposer() {
+  const [scenarios, setScenarios] = useState({});
+  const [currentName, setCurrentName] = useState("");
+  const [steps, setSteps] = useState([]);
+
+  function addStep(cmd, payload, delay) {
+    setSteps((prev) => [...prev, { cmd, payload, delay }]);
+  }
+
+  function removeStep(index) {
+    setSteps((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function saveScenario(name) {
+    setScenarios((prev) => ({
+      ...prev,
+      [name]: steps
+    }));
+  }
+
+  function loadScenario(name) {
+    setCurrentName(name);
+    setSteps(scenarios[name] || []);
+  }
+
+  function clear() {
+    setSteps([]);
+    setCurrentName("");
+  }
+
+  return {
+    scenarios,
+    currentName,
+    steps,
+    addStep,
+    removeStep,
+    saveScenario,
+    loadScenario,
+    clear
+  };
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalOverlayScenarioEngine.js =====
+
+
+
+
+// FE_FESTIVAL_OVERLAY_SCENARIOENGINE_HOOK
+// Executes high-level overlay scenarios
+
+import { useState } from "react";
+import { FestivalOverlayScenarios } from "./festivalOverlayScenarios";
+
+export function useFestivalOverlayScenarioEngine(presetManager, controller) {
+  const [running, setRunning] = useState(false);
+  const [currentScenario, setCurrentScenario] = useState(null);
+
+  async function runScenario(name) {
+    const scenario = FestivalOverlayScenarios[name];
+    if (!scenario) return;
+
+    setRunning(true);
+    setCurrentScenario(name);
+
+    for (const step of scenario) {
+      await new Promise((res) => setTimeout(res, step.delay));
+      execute(step.cmd, step.payload);
+    }
+
+    setRunning(false);
+    setCurrentScenario(null);
+  }
+
+  function execute(cmd, payload) {
+    switch (cmd) {
+      case "setPreset":
+        presetManager.applyPreset(payload);
+        break;
+
+      case "setMode":
+        controller.setMode(payload);
+        break;
+
+      case "toggle":
+        controller.setToggles({
+          ...controller.toggles,
+          [payload]: !controller.toggles[payload]
+        });
+        break;
+
+      case "setToggles":
+        controller.setToggles(payload);
+        break;
+
+      default:
+        console.warn("ScenarioEngine: unknown command", cmd);
+    }
+  }
+
+  return {
+    running,
+    currentScenario,
+    runScenario
+  };
+}
+
+
+
+// FE_FESTIVAL_OVERLAY_SCENARIOLIBRARY_INTEGRATION
+import { FestivalOverlayScenarioLibrary } from "./festivalOverlayScenarioLibrary";
+
+// Allow ScenarioEngine to run library scenarios
+function runLibraryScenario(name) {
+  if (!scenario) return;
+  runScenarioSteps(scenario);
+}
+
+async function runScenarioSteps(steps) {
+  setRunning(true);
+  setCurrentScenario("Library:" + currentScenario);
+
+  for (const step of steps) {
+    await new Promise((res) => setTimeout(res, step.delay));
+    execute(step.cmd, step.payload);
+  }
+
+  setRunning(false);
+  setCurrentScenario(null);
+}
+
+
+
+// FE_FESTIVAL_OVERLAY_SCENARIOENGINE_AI_EXTENSION
+// Minimal AI scenario runner injected automatically
+
+import { buildAIScenarioFromState } from "./festivalOverlayScenarioAI";
+
+async function runAIScenario(currentState) {
+  const steps = buildAIScenarioFromState(currentState);
+  if (!steps || !steps.length) return;
+
+  setRunning(true);
+  setCurrentScenario("AI");
+
+  for (const step of steps) {
+    await new Promise((res) => setTimeout(res, step.delay));
+    execute(step.cmd, step.payload);
+  }
+
+  setRunning(false);
+  setCurrentScenario(null);
+}
+
+// Example usage inside component:
+// runAIScenario({
+//   pulse,
+//   mood,
+//   wave,
+//   reputation,
+//   identity,
+//   security,
+//   narrative
+// });
+
+
+
+// FE_FESTIVAL_OVERLAY_SCENARIO_AI_ORCHESTRATOR_INTEGRATION
+import { useFestivalOverlayScenarioAIOrchestrator } from "./useFestivalOverlayScenarioAIOrchestrator";
+
+// Example usage inside ScenarioEngine:
+// const orchestrator = useFestivalOverlayScenarioAIOrchestrator(runScenarioSteps, () => ({
+//   pulse,
+//   mood,
+//   wave,
+//   reputation,
+//   identity,
+//   security,
+//   narrative
+// }));
+
+
+
+// FE_FESTIVAL_OVERLAY_SCENARIO_AI_HYPERORCHESTRATOR_INTEGRATION
+import { useFestivalOverlayScenarioAIHyperOrchestrator } from "./useFestivalOverlayScenarioAIHyperOrchestrator";
+
+// Example usage inside ScenarioEngine:
+// const hyper = useFestivalOverlayScenarioAIHyperOrchestrator(runScenarioSteps, () => ({
+//   pulse,
+//   mood,
+//   wave,
+//   reputation,
+//   identity,
+//   security,
+//   narrative
+// }));
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalPulseMoodLive.js =====
+
+
+
+
+// FE_FESTIVAL_PULSE_MOOD_HOOK
+// React hook for live BPM + Mood updates
+
+import { useEffect } from "react";
+import { attachFestivalPulseMoodLiveSync } from "../live/festivalPulseMoodLiveSync";
+
+export function useFestivalPulseMoodLive(onPulse, onMood) {
+  useEffect(() => {
+    attachFestivalPulseMoodLiveSync(onPulse, onMood);
+  }, []);
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalReputationLive.js =====
+
+
+
+
+// FE_FESTIVAL_REPUTATION_HOOK
+// React hook for live reputation updates
+
+import { useEffect } from "react";
+import { attachFestivalReputationLiveSync } from "../live/festivalReputationLiveSync";
+
+export function useFestivalReputationLive(onReputation) {
+  useEffect(() => {
+    attachFestivalReputationLiveSync((rep) => {
+      onReputation(rep);
+    });
+  }, []);
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalSecurityLive.js =====
+
+
+
+
+// FE_FESTIVAL_SECURITY_HOOK
+// React hook for live security updates
+
+import { useEffect } from "react";
+import { attachFestivalSecurityLiveSync } from "../live/festivalSecurityLiveSync";
+
+export function useFestivalSecurityLive(onSecurity) {
+  useEffect(() => {
+    attachFestivalSecurityLiveSync((sec) => {
+      onSecurity(sec);
+    });
+  }, []);
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useFestivalSimulationLive.js =====
+
+
+
+
+// FE_FESTIVAL_SIMULATION_HOOK
+// React hook for live simulation/emergence updates
+
+import { useEffect } from "react";
+import { attachFestivalSimulationLiveSync } from "../live/festivalSimulationLiveSync";
+
+export function useFestivalSimulationLive(onWave, onPattern) {
+  useEffect(() => {
+    attachFestivalSimulationLiveSync(onWave, onPattern);
+  }, []);
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\DATA\useFestivalWorkflowApi.js =====
+
+// Hook API do pracy z workflow FESTIWALU (zgłoszenia, jury, wydarzenia)
+
+import { useEffect, useState } from "react";
+
+const BASE_URL = "/api/festival";
+
+function useWorkflowList(endpoint) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${BASE_URL}/${endpoint}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setItems(data || []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setItems([]);
+        setLoading(false);
+      });
+  }, [endpoint]);
+
+  return { items, loading };
+}
+
+export function useFilmSubmissions() {
+  return useWorkflowList("filmSubmissions");
+}
+
+export function useJuryEvaluations() {
+  return useWorkflowList("juryEvaluations");
+}
+
+export function useFestivalEvents() {
+  return useWorkflowList("events");
+}
+
+export async function changeState(entityType, id, newState) {
+  const res = await fetch(`${BASE_URL}/${entityType}/${id}/state`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ state: newState })
+  });
+  return res.json();
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useUserCardData.js =====
+
+
+
+
+// FE_FESTIVAL_USERCARD_DATA_HOOK
+// Combines identity + governance + security + access into one object
+
+import { useFestivalAccess } from "./useFestivalAccess";
+
+export function useUserCardData(identity, governance, security) {
+  const access = useFestivalAccess(identity, governance, security);
+
+  return {
+    identity,
+    governance,
+    security,
+    access
+  };
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\core\useAdminAccessPanel.js =====
+
+
+
+
+// FE_FESTIVAL_ADMIN_ACCESS_HOOK
+// Hook for AdminAccessPanel integration
+
+import { useUserCardData } from "./useUserCardData";
+
+export function useAdminAccessPanel(identity, governance, security) {
+  const usercard = useUserCardData(identity, governance, security);
+  return usercard;
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\access\accessMatrix.js =====
+
+
+
+
+// FE_FESTIVAL_ACCESS_MATRIX
+// Central access matrix for Festival Pavilion
+
+export const FestivalAccessMatrix = {
+  roles: {
+    viewer: {
+      canViewDashboard: true,
+      canViewAwards: true,
+      canViewSchedule: true,
+      canVote: false,
+      canAssignJury: false,
+      canCreateAwards: false,
+      canManageEvents: false
+    },
+    participant: {
+      canViewDashboard: true,
+      canViewAwards: true,
+      canViewSchedule: true,
+      canVote: false,
+      canAssignJury: false,
+      canCreateAwards: false,
+      canManageEvents: false
+    },
+    creator: {
+      canViewDashboard: true,
+      canViewAwards: true,
+      canViewSchedule: true,
+      canVote: false,
+      canAssignJury: false,
+      canCreateAwards: false,
+      canManageEvents: false
+    },
+    certifiedCreator: {
+      canViewDashboard: true,
+      canViewAwards: true,
+      canViewSchedule: true,
+      canVote: false,
+      canAssignJury: false,
+      canCreateAwards: false,
+      canManageEvents: false
+    },
+    jury: {
+      canViewDashboard: true,
+      canViewAwards: true,
+      canViewSchedule: true,
+      canVote: true,
+      canAssignJury: false,
+      canCreateAwards: false,
+      canManageEvents: false
+    },
+    admin: {
+      canViewDashboard: true,
+      canViewAwards: true,
+      canViewSchedule: true,
+      canVote: true,
+      canAssignJury: true,
+      canCreateAwards: true,
+      canManageEvents: true
+    }
+  },
+
+  // trust-level modifiers
+  trust: {
+    low: {
+      canVote: false,
+      canAssignJury: false,
+      canCreateAwards: false,
+      canManageEvents: false
+    },
+    medium: {},
+    high: {}
+  },
+
+  // certification modifiers
+  certifications: {
+    "festival_badge": {
+      canVote: true
+    },
+    "jury_certified": {
+      canVote: true,
+      canAssignJury: true
+    },
+    "creator_certified": {
+      canCreateAwards: true
+    }
+  }
+};
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\access\accessEvaluator.js =====
+
+
+
+
+// FE_FESTIVAL_ACCESS_EVALUATOR
+// Evaluates final permissions for a user
+
+import { FestivalAccessMatrix } from "./accessMatrix";
+
+export function evaluateFestivalAccess(identity, governance, security) {
+  const role = governance?.roles?.[0] || "viewer";
+  const trust = security?.trustLevel || "medium";
+  const certs = governance?.certifications || [];
+
+  let base = { ...FestivalAccessMatrix.roles[role] };
+  let trustMod = FestivalAccessMatrix.trust[trust] || {};
+  let certMod = {};
+
+  certs.forEach(c => {
+    if (FestivalAccessMatrix.certifications[c]) {
+      certMod = { ...certMod, ...FestivalAccessMatrix.certifications[c] };
+    }
+  });
+
+  return {
+    ...base,
+    ...trustMod,
+    ...certMod
+  };
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\ADMIN\AdminAwardsPanel.js =====
+
+export default function AdminAwardsPanel() {
+  return <div>Admin Awards Panel</div>;
+}
+
+
+// FE_FESTIVAL_LIVE_INTEGRATION
+import { useFestivalLive } from "../core/useFestivalLive";
+
+useFestivalLive(() => {
+  if (typeof load === "function") load();
+});
+
+
+
+// FE_FESTIVAL_NARRATIVE_INTEGRATION
+import { useFestivalNarrativeLive } from "../core/useFestivalNarrativeLive";
+
+useFestivalNarrativeLive((story) => {
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_REPUTATION_INTEGRATION
+import { useFestivalReputationLive } from "../core/useFestivalReputationLive";
+
+useFestivalReputationLive((rep) => {
+  if (typeof setReputation === "function") setReputation(rep);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_GOVERNANCE_INTEGRATION
+import { useFestivalGovernanceLive } from "../core/useFestivalGovernanceLive";
+
+useFestivalGovernanceLive((gov) => {
+  if (typeof setGovernance === "function") setGovernance(gov);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_ECONOMY_INTEGRATION
+import { useFestivalEconomyLive } from "../core/useFestivalEconomyLive";
+
+useFestivalEconomyLive((eco) => {
+  if (typeof setEconomy === "function") setEconomy(eco);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_SECURITY_INTEGRATION
+import { useFestivalSecurityLive } from "../core/useFestivalSecurityLive";
+
+useFestivalSecurityLive((sec) => {
+  if (typeof setSecurity === "function") setSecurity(sec);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_IDENTITY_INTEGRATION
+import { useFestivalIdentityLive } from "../core/useFestivalIdentityLive";
+
+useFestivalIdentityLive((id) => {
+  if (typeof setIdentity === "function") setIdentity(id);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_ACCESS_INTEGRATION
+import { useFestivalAccess } from "../core/useFestivalAccess";
+
+const access = useFestivalAccess(identity, governance, security);
+
+// Example UI guards:
+if (!access.canViewDashboard && typeof hidePanel === "function") hidePanel();
+if (!access.canVote && typeof disableVoting === "function") disableVoting();
+if (!access.canAssignJury && typeof disableAssign === "function") disableAssign();
+if (!access.canCreateAwards && typeof disableAwardCreation === "function") disableAwardCreation();
+if (!access.canManageEvents && typeof disableEventManagement === "function") disableEventManagement();
+
+
+
+// FE_FESTIVAL_USERCARD_INTEGRATION
+import { UserCard } from "../components/UserCard";
+import { useUserCardData } from "../core/useUserCardData";
+
+const usercard = useUserCardData(identity, governance, security);
+
+// Example usage inside panel render:
+// <UserCard {...usercard} />
+
+
+
+// FE_FESTIVAL_HUD_INTEGRATION
+import { FestivalHUD } from "../components/FestivalHUD";
+import { useFestivalHUD } from "../core/useFestivalHUD";
+
+const hud = useFestivalHUD(identity, governance, security);
+
+// Example usage inside render:
+// <FestivalHUD {...hud} />
+
+
+
+// IMMERSIVE_AWARDS_UPGRADE
+// Real award workflow, API integration, UI logic
+
+import { getAwardCategories, createAwardCategory, grantAward, getFestivalSubmissions } from "../api";
+
+export function useImmersiveAwards(setCategories, setSubmissions) {
+  async function load() {
+    try {
+      const [cats, subs] = await Promise.all([
+        getAwardCategories(),
+        getFestivalSubmissions()
+      ]);
+      setCategories(cats || []);
+      setSubmissions(subs || []);
+    } catch (e) {
+      console.warn("ImmersiveAwards load error", e);
+    }
+  }
+  return load;
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\ADMIN\AdminDashboard.js =====
+
+export default function AdminDashboard() {
+  return <div>Festival Admin Dashboard</div>;
+}
+
+
+// FE_FESTIVAL_LIVE_INTEGRATION
+import { useFestivalLive } from "../core/useFestivalLive";
+
+useFestivalLive(() => {
+  if (typeof load === "function") load();
+});
+
+
+
+// FE_FESTIVAL_NARRATIVE_INTEGRATION
+import { useFestivalNarrativeLive } from "../core/useFestivalNarrativeLive";
+
+useFestivalNarrativeLive((story) => {
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_PULSE_MOOD_INTEGRATION
+import { useFestivalPulseMoodLive } from "../core/useFestivalPulseMoodLive";
+
+useFestivalPulseMoodLive(
+  (bpm) => {
+    if (typeof setPulse === "function") setPulse(bpm);
+  },
+  (mood) => {
+    if (typeof setMood === "function") setMood(mood);
+  }
+);
+
+
+
+// FE_FESTIVAL_REPUTATION_INTEGRATION
+import { useFestivalReputationLive } from "../core/useFestivalReputationLive";
+
+useFestivalReputationLive((rep) => {
+  if (typeof setReputation === "function") setReputation(rep);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_SIMULATION_INTEGRATION
+import { useFestivalSimulationLive } from "../core/useFestivalSimulationLive";
+
+useFestivalSimulationLive(
+  (wave) => {
+    if (typeof setWave === "function") setWave(wave);
+    if (typeof load === "function") load(); // refresh panel
+  },
+  (pattern) => {
+    if (typeof setPattern === "function") setPattern(pattern);
+    if (typeof load === "function") load();
+  }
+);
+
+
+
+// FE_FESTIVAL_GOVERNANCE_INTEGRATION
+import { useFestivalGovernanceLive } from "../core/useFestivalGovernanceLive";
+
+useFestivalGovernanceLive((gov) => {
+  if (typeof setGovernance === "function") setGovernance(gov);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_ECONOMY_INTEGRATION
+import { useFestivalEconomyLive } from "../core/useFestivalEconomyLive";
+
+useFestivalEconomyLive((eco) => {
+  if (typeof setEconomy === "function") setEconomy(eco);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_SECURITY_INTEGRATION
+import { useFestivalSecurityLive } from "../core/useFestivalSecurityLive";
+
+useFestivalSecurityLive((sec) => {
+  if (typeof setSecurity === "function") setSecurity(sec);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_IDENTITY_INTEGRATION
+import { useFestivalIdentityLive } from "../core/useFestivalIdentityLive";
+
+useFestivalIdentityLive((id) => {
+  if (typeof setIdentity === "function") setIdentity(id);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_ACCESS_INTEGRATION
+import { useFestivalAccess } from "../core/useFestivalAccess";
+
+const access = useFestivalAccess(identity, governance, security);
+
+// Example UI guards:
+if (!access.canViewDashboard && typeof hidePanel === "function") hidePanel();
+if (!access.canVote && typeof disableVoting === "function") disableVoting();
+if (!access.canAssignJury && typeof disableAssign === "function") disableAssign();
+if (!access.canCreateAwards && typeof disableAwardCreation === "function") disableAwardCreation();
+if (!access.canManageEvents && typeof disableEventManagement === "function") disableEventManagement();
+
+
+
+// FE_FESTIVAL_USERCARD_INTEGRATION
+import { UserCard } from "../components/UserCard";
+import { useUserCardData } from "../core/useUserCardData";
+
+const usercard = useUserCardData(identity, governance, security);
+
+// Example usage inside panel render:
+// <UserCard {...usercard} />
+
+
+
+// FE_FESTIVAL_ADMIN_ACCESS_PANEL_INTEGRATION
+import { AdminAccessPanel } from "../components/AdminAccessPanel";
+import { useAdminAccessPanel } from "../core/useAdminAccessPanel";
+
+const accessPanel = useAdminAccessPanel(identity, governance, security);
+
+// Example usage inside render:
+// <AdminAccessPanel {...accessPanel} onOverride={(a) => console.log("Override:", a)} />
+
+
+
+// FE_FESTIVAL_HUD_INTEGRATION
+import { FestivalHUD } from "../components/FestivalHUD";
+import { useFestivalHUD } from "../core/useFestivalHUD";
+
+const hud = useFestivalHUD(identity, governance, security);
+
+// Example usage inside render:
+// <FestivalHUD {...hud} />
+
+
+
+// FE_FESTIVAL_DEBUG_CONSOLE_INTEGRATION
+import { FestivalDebugConsole } from "../components/FestivalDebugConsole";
+import { useFestivalDebugConsole } from "../core/useFestivalDebugConsole";
+
+const debugConsole = useFestivalDebugConsole();
+
+// Example usage inside render:
+// <FestivalDebugConsole
+//   logs={debugConsole.logs}
+//   collapsed={debugConsole.collapsed}
+//   onToggle={debugConsole.toggle}
+// />
+
+
+
+// FE_FESTIVAL_NOTIFICATIONS_INTEGRATION
+import { FestivalNotifications } from "../components/FestivalNotifications";
+import { useFestivalNotifications } from "../core/useFestivalNotifications";
+
+const notifications = useFestivalNotifications();
+
+// Example usage inside render:
+// <FestivalNotifications notifications={notifications} />
+
+
+
+// FE_FESTIVAL_OVERLAY_INTEGRATION
+import { FestivalOverlay } from "../components/FestivalOverlay";
+import { useFestivalOverlay } from "../core/useFestivalOverlay";
+
+const overlay = useFestivalOverlay(identity, governance, security);
+
+// Example usage inside render:
+// <FestivalOverlay {...overlay} />
+
+
+
+// FE_FESTIVAL_OVERLAY_CONTROLLER_DASHBOARD
+import { FestivalOverlayController } from "../components/FestivalOverlayController";
+import { useFestivalOverlayController } from "../core/useFestivalOverlayController";
+
+const overlayController = useFestivalOverlayController();
+
+// Example usage inside render:
+// <FestivalOverlayController {...overlayController} />
+
+
+
+// IMMERSIVE_DASHBOARD_UPGRADE
+// LivePulse, MoodBadge, AI Predictions, LiveEventFeed, NarrativeHighlights, Charts, Heatmap
+
+import FestivalCharts from "../ANALYTICS/FestivalCharts";
+import FestivalHeatmap from "../ANALYTICS/FestivalHeatmap";
+import FestivalAIPredictions from "../AI/FestivalAIPredictions";
+import { getFestivalStats, getFestivalEvents, getFestivalNarrative, getFestivalAIPredictions } from "../api";
+
+export function useImmersiveDashboard(setStats, setEvents, setStories, setAI, setPulse, setMood) {
+  async function load() {
+    try {
+      const [s, ev, st, aiData] = await Promise.all([
+        getFestivalStats(),
+        getFestivalEvents(),
+        getFestivalNarrative(),
+        getFestivalAIPredictions()
+      ]);
+      setStats(s || {});
+      setEvents(ev || []);
+      setStories(st || []);
+      setAI(aiData || { hotCategories: [], potentialWinners: [] });
+      if (s?.pulseBpm) setPulse(s.pulseBpm);
+      if (s?.mood) setMood(s.mood);
+    } catch (e) {
+      console.warn("ImmersiveDashboard load error", e);
+    }
+  }
+  return load;
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\ADMIN\AdminJuryPanel.js =====
+
+export default function AdminJuryPanel() {
+  return <div>Admin Jury Panel</div>;
+}
+
+
+// FE_FESTIVAL_LIVE_INTEGRATION
+import { useFestivalLive } from "../core/useFestivalLive";
+
+useFestivalLive(() => {
+  if (typeof load === "function") load();
+});
+
+
+
+// FE_FESTIVAL_NARRATIVE_INTEGRATION
+import { useFestivalNarrativeLive } from "../core/useFestivalNarrativeLive";
+
+useFestivalNarrativeLive((story) => {
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_GOVERNANCE_INTEGRATION
+import { useFestivalGovernanceLive } from "../core/useFestivalGovernanceLive";
+
+useFestivalGovernanceLive((gov) => {
+  if (typeof setGovernance === "function") setGovernance(gov);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_SECURITY_INTEGRATION
+import { useFestivalSecurityLive } from "../core/useFestivalSecurityLive";
+
+useFestivalSecurityLive((sec) => {
+  if (typeof setSecurity === "function") setSecurity(sec);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_IDENTITY_INTEGRATION
+import { useFestivalIdentityLive } from "../core/useFestivalIdentityLive";
+
+useFestivalIdentityLive((id) => {
+  if (typeof setIdentity === "function") setIdentity(id);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_ACCESS_INTEGRATION
+import { useFestivalAccess } from "../core/useFestivalAccess";
+
+const access = useFestivalAccess(identity, governance, security);
+
+// Example UI guards:
+if (!access.canViewDashboard && typeof hidePanel === "function") hidePanel();
+if (!access.canVote && typeof disableVoting === "function") disableVoting();
+if (!access.canAssignJury && typeof disableAssign === "function") disableAssign();
+if (!access.canCreateAwards && typeof disableAwardCreation === "function") disableAwardCreation();
+if (!access.canManageEvents && typeof disableEventManagement === "function") disableEventManagement();
+
+
+
+// FE_FESTIVAL_USERCARD_INTEGRATION
+import { UserCard } from "../components/UserCard";
+import { useUserCardData } from "../core/useUserCardData";
+
+const usercard = useUserCardData(identity, governance, security);
+
+// Example usage inside panel render:
+// <UserCard {...usercard} />
+
+
+
+// IMMERSIVE_JURY_UPGRADE
+// Jury assignment logic, API integration, live updates
+
+import { getJuryMembers, getFestivalSubmissions, assignSubmissionToJury, getJuryAssignments } from "../api";
+
+export function useImmersiveJury(setJury, setSubmissions, setAssignments) {
+  async function load() {
+    try {
+      const [j, s, a] = await Promise.all([
+        getJuryMembers(),
+        getFestivalSubmissions(),
+        getJuryAssignments()
+      ]);
+      setJury(j || []);
+      setSubmissions(s || []);
+      setAssignments(a || []);
+    } catch (e) {
+      console.warn("ImmersiveJury load error", e);
+    }
+  }
+  return load;
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\ADMIN\AdminSchedulePanel.js =====
+
+export default function AdminSchedulePanel() {
+  return <div>Admin Schedule Panel</div>;
+}
+
+
+// FE_FESTIVAL_LIVE_INTEGRATION
+import { useFestivalLive } from "../core/useFestivalLive";
+
+useFestivalLive(() => {
+  if (typeof load === "function") load();
+});
+
+
+
+// FE_FESTIVAL_NARRATIVE_INTEGRATION
+import { useFestivalNarrativeLive } from "../core/useFestivalNarrativeLive";
+
+useFestivalNarrativeLive((story) => {
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_SIMULATION_INTEGRATION
+import { useFestivalSimulationLive } from "../core/useFestivalSimulationLive";
+
+useFestivalSimulationLive(
+  (wave) => {
+    if (typeof setWave === "function") setWave(wave);
+    if (typeof load === "function") load(); // refresh panel
+  },
+  (pattern) => {
+    if (typeof setPattern === "function") setPattern(pattern);
+    if (typeof load === "function") load();
+  }
+);
+
+
+
+// FE_FESTIVAL_GOVERNANCE_INTEGRATION
+import { useFestivalGovernanceLive } from "../core/useFestivalGovernanceLive";
+
+useFestivalGovernanceLive((gov) => {
+  if (typeof setGovernance === "function") setGovernance(gov);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_IDENTITY_INTEGRATION
+import { useFestivalIdentityLive } from "../core/useFestivalIdentityLive";
+
+useFestivalIdentityLive((id) => {
+  if (typeof setIdentity === "function") setIdentity(id);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_ACCESS_INTEGRATION
+import { useFestivalAccess } from "../core/useFestivalAccess";
+
+const access = useFestivalAccess(identity, governance, security);
+
+// Example UI guards:
+if (!access.canViewDashboard && typeof hidePanel === "function") hidePanel();
+if (!access.canVote && typeof disableVoting === "function") disableVoting();
+if (!access.canAssignJury && typeof disableAssign === "function") disableAssign();
+if (!access.canCreateAwards && typeof disableAwardCreation === "function") disableAwardCreation();
+if (!access.canManageEvents && typeof disableEventManagement === "function") disableEventManagement();
+
+
+
+// FE_FESTIVAL_USERCARD_INTEGRATION
+import { UserCard } from "../components/UserCard";
+import { useUserCardData } from "../core/useUserCardData";
+
+const usercard = useUserCardData(identity, governance, security);
+
+// Example usage inside panel render:
+// <UserCard {...usercard} />
+
+
+
+// FE_FESTIVAL_HUD_INTEGRATION
+import { FestivalHUD } from "../components/FestivalHUD";
+import { useFestivalHUD } from "../core/useFestivalHUD";
+
+const hud = useFestivalHUD(identity, governance, security);
+
+// Example usage inside render:
+// <FestivalHUD {...hud} />
+
+
+
+// IMMERSIVE_SCHEDULE_UPGRADE
+// Event creation, schedule management, API integration
+
+import { getFestivalEvents, createFestivalEvent, updateFestivalEvent, getFestivalSchedule, addToFestivalSchedule } from "../api";
+
+export function useImmersiveSchedule(setEvents, setSchedule) {
+  async function load() {
+    try {
+      const [ev, sch] = await Promise.all([
+        getFestivalEvents(),
+        getFestivalSchedule()
+      ]);
+      setEvents(ev || []);
+      setSchedule(sch || []);
+    } catch (e) {
+      console.warn("ImmersiveSchedule load error", e);
+    }
+  }
+  return load;
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\components\AdminAccessPanel.js =====
+
+
+
+
+// FE_FESTIVAL_ADMIN_ACCESS_PANEL
+// Visualizes Access Matrix + allows admin override
+
+import React, { useState } from "react";
+import { FestivalAccessMatrix } from "../access/accessMatrix";
+import { evaluateFestivalAccess } from "../access/accessEvaluator";
+
+export function AdminAccessPanel({ identity, governance, security, onOverride }) {
+  const [override, setOverride] = useState(null);
+
+  const current = evaluateFestivalAccess(identity, governance, security);
+
+  function applyOverride(key, value) {
+    const updated = { ...current, [key]: value };
+    setOverride(updated);
+    if (typeof onOverride === "function") onOverride(updated);
+  }
+
+  const finalAccess = override || current;
+
+  return (
+    <div className="admin-access-panel">
+      <h2>Access Matrix — Festival Pavilion</h2>
+
+      <div className="access-section">
+        <h3>Current Access</h3>
+        <pre>{JSON.stringify(current, null, 2)}</pre>
+      </div>
+
+      <div className="access-section">
+        <h3>Override (Admin Only)</h3>
+        <div className="override-grid">
+          {Object.keys(current).map((key) => (
+            <div key={key} className="override-row">
+              <span className="override-key">{key}</span>
+              <button onClick={() => applyOverride(key, true)}>Allow</button>
+              <button onClick={() => applyOverride(key, false)}>Deny</button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="access-section">
+        <h3>Final Access</h3>
+        <pre>{JSON.stringify(finalAccess, null, 2)}</pre>
+      </div>
+    </div>
+  );
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\AI\FestivalAIPredictions.js =====
+
+import { useFestivalAI } from "./useFestivalAI";
+
+export default function FestivalAIPredictions() {
+  const predictions = useFestivalAI();
+
+  return (
+    <div>
+      <h3>Festival AI Predictions</h3>
+      <div>Hot categories: {predictions.hotCategories.join(", ") || "brak"}</div>
+      <div>Potential winners: {predictions.potentialWinners.join(", ") || "brak"}</div>
+    </div>
+  );
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\AI\useFestivalAI.js =====
+
+import { useState, useEffect } from "react";
+
+export function useFestivalAI() {
+  const [predictions, setPredictions] = useState({ hotCategories: [], potentialWinners: [] });
+
+  useEffect(() => {
+    // TODO: integrate with City AI Engine
+    setPredictions({
+      hotCategories: [],
+      potentialWinners: []
+    });
+  }, []);
+
+  return predictions;
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\components\FestivalHUD.js =====
+
+
+
+
+// FE_FESTIVAL_HUD_COMPONENT
+// Live HUD for Festival Pavilion — pulse, mood, wave, reputation, identity, access
+
+import React from "react";
+import "./FestivalHUD.css";
+
+export function FestivalHUD({ pulse, mood, wave, reputation, identity, access }) {
+  const avatar = identity?.avatar || "/default-avatar.png";
+  const name = identity?.profile?.name || "Unknown";
+  const badges = identity?.badges || [];
+  const level = reputation?.level || 0;
+  const trust = reputation?.trustLevel || "medium";
+
+  return (
+    <div className={"festival-hud mood-" + mood}>
+      <div className="hud-left">
+        <img className="hud-avatar" src={avatar} alt="avatar" />
+        <div className="hud-user">
+          <div className="hud-name">{name}</div>
+          <div className="hud-badges">
+            {badges.map((b) => (
+              <span key={b} className="hud-badge">{b}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="hud-center">
+        <div className="hud-item">Pulse: {pulse} BPM</div>
+        <div className="hud-item">Mood: {mood}</div>
+        <div className="hud-item">Wave: {wave?.label || "—"}</div>
+        <div className="hud-item">Reputation: {reputation?.points || 0}</div>
+        <div className="hud-item">Level: {level}</div>
+      </div>
+
+      <div className="hud-right">
+        <div className="hud-access">
+          <pre>{JSON.stringify(access, null, 2)}</pre>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\components\FestivalOverlay.js =====
+
+
+
+
+// FE_FESTIVAL_OVERLAY_COMPONENT
+import React from "react";
+import "./FestivalOverlay.css";
+
+import { FestivalHUD } from "./FestivalHUD";
+import { FestivalDebugConsole } from "./FestivalDebugConsole";
+import { FestivalNotifications } from "./FestivalNotifications";
+
+export function FestivalOverlay({ hud, debug, notifications, mode }) {
+  return (
+    <div className={"festival-overlay mode-" + mode}>
+      <FestivalHUD {...hud} />
+      <FestivalNotifications notifications={notifications} />
+      <FestivalDebugConsole
+        logs={debug.logs}
+        collapsed={debug.collapsed}
+        onToggle={debug.toggle}
+      />
+    </div>
+  );
+}
+
+
+
+// FE_FESTIVAL_OVERLAY_CONTROLLER_INTEGRATION
+import { FestivalOverlayController } from "./FestivalOverlayController";
+import { useFestivalOverlayController } from "../core/useFestivalOverlayController";
+
+const controller = useFestivalOverlayController();
+
+// Example usage inside render:
+// <FestivalOverlayController {...controller} />
+//
+// And pass controller.mode + controller.toggles to FestivalOverlay
+
+
+
+// FE_FESTIVAL_OVERLAY_QUICKSWITCH_OVERLAY
+// (Optional) QuickSwitch can also be initialized here if needed
+
+
+
+// FE_FESTIVAL_OVERLAY_REMOTECONTROL_OVERLAY
+// (Optional) RemoteControl can also be initialized here if needed
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\components\FestivalDebugConsole.js =====
+
+
+
+
+// FE_FESTIVAL_DEBUG_CONSOLE_COMPONENT
+// Live debug console for all Festival Pavilion engines
+
+import React from "react";
+import "./FestivalDebugConsole.css";
+
+export function FestivalDebugConsole({ logs, collapsed, onToggle }) {
+  return (
+    <div className={"festival-debug-console" + (collapsed ? " collapsed" : "")}>
+      <div className="debug-header" onClick={onToggle}>
+        <span>Festival Debug Console</span>
+        <span>{collapsed ? "▲" : "▼"}</span>
+      </div>
+
+      {!collapsed && (
+        <div className="debug-body">
+          {logs.map((log, idx) => (
+            <div key={idx} className={"debug-line debug-" + log.source}>
+              <span className="debug-time">{log.time}</span>
+              <span className="debug-source">[{log.source}]</span>
+              <span className="debug-message">{log.message}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\components\FestivalNotifications.js =====
+
+
+
+
+// FE_FESTIVAL_NOTIFICATIONS_COMPONENT
+import React from "react";
+import "./FestivalNotifications.css";
+
+export function FestivalNotifications({ notifications }) {
+  return (
+    <div className="festival-notifications">
+      {notifications.map((n, i) => (
+        <div key={i} className={"notif notif-" + n.type}>
+          <div className="notif-title">{n.title}</div>
+          <div className="notif-body">{n.message}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\ANALYTICS\FestivalCharts.js =====
+
+export default function FestivalCharts() {
+  return <div>Festival Charts (TODO: wykresy aktywności)</div>;
+}
+
+
+// FE_FESTIVAL_LIVE_INTEGRATION
+import { useFestivalLive } from "../core/useFestivalLive";
+
+useFestivalLive(() => {
+  if (typeof load === "function") load();
+});
+
+
+
+// FE_FESTIVAL_PULSE_MOOD_INTEGRATION
+import { useFestivalPulseMoodLive } from "../core/useFestivalPulseMoodLive";
+
+useFestivalPulseMoodLive(
+  (bpm) => {
+    if (typeof setPulse === "function") setPulse(bpm);
+  },
+  (mood) => {
+    if (typeof setMood === "function") setMood(mood);
+  }
+);
+
+
+
+// FE_FESTIVAL_REPUTATION_INTEGRATION
+import { useFestivalReputationLive } from "../core/useFestivalReputationLive";
+
+useFestivalReputationLive((rep) => {
+  if (typeof setReputation === "function") setReputation(rep);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_SIMULATION_INTEGRATION
+import { useFestivalSimulationLive } from "../core/useFestivalSimulationLive";
+
+useFestivalSimulationLive(
+  (wave) => {
+    if (typeof setWave === "function") setWave(wave);
+    if (typeof load === "function") load(); // refresh panel
+  },
+  (pattern) => {
+    if (typeof setPattern === "function") setPattern(pattern);
+    if (typeof load === "function") load();
+  }
+);
+
+
+
+// FE_FESTIVAL_GOVERNANCE_INTEGRATION
+import { useFestivalGovernanceLive } from "../core/useFestivalGovernanceLive";
+
+useFestivalGovernanceLive((gov) => {
+  if (typeof setGovernance === "function") setGovernance(gov);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_ECONOMY_INTEGRATION
+import { useFestivalEconomyLive } from "../core/useFestivalEconomyLive";
+
+useFestivalEconomyLive((eco) => {
+  if (typeof setEconomy === "function") setEconomy(eco);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_SECURITY_INTEGRATION
+import { useFestivalSecurityLive } from "../core/useFestivalSecurityLive";
+
+useFestivalSecurityLive((sec) => {
+  if (typeof setSecurity === "function") setSecurity(sec);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_IDENTITY_INTEGRATION
+import { useFestivalIdentityLive } from "../core/useFestivalIdentityLive";
+
+useFestivalIdentityLive((id) => {
+  if (typeof setIdentity === "function") setIdentity(id);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// FE_FESTIVAL_HUD_INTEGRATION
+import { FestivalHUD } from "../components/FestivalHUD";
+import { useFestivalHUD } from "../core/useFestivalHUD";
+
+const hud = useFestivalHUD(identity, governance, security);
+
+// Example usage inside render:
+// <FestivalHUD {...hud} />
+
+
+
+// FE_FESTIVAL_DEBUG_CONSOLE_INTEGRATION
+import { FestivalDebugConsole } from "../components/FestivalDebugConsole";
+import { useFestivalDebugConsole } from "../core/useFestivalDebugConsole";
+
+const debugConsole = useFestivalDebugConsole();
+
+// Example usage inside render:
+// <FestivalDebugConsole
+//   logs={debugConsole.logs}
+//   collapsed={debugConsole.collapsed}
+//   onToggle={debugConsole.toggle}
+// />
+
+
+
+// FE_FESTIVAL_NOTIFICATIONS_INTEGRATION
+import { FestivalNotifications } from "../components/FestivalNotifications";
+import { useFestivalNotifications } from "../core/useFestivalNotifications";
+
+const notifications = useFestivalNotifications();
+
+// Example usage inside render:
+// <FestivalNotifications notifications={notifications} />
+
+
+
+// IMMERSIVE_CHARTS_UPGRADE
+// Timeline charts, animated bars, API integration
+
+import { getFestivalStatsTimeline } from "../api";
+
+export function useImmersiveCharts(setTimeline) {
+  async function load() {
+    try {
+      const t = await getFestivalStatsTimeline();
+      setTimeline(t || []);
+    } catch (e) {
+      console.warn("ImmersiveCharts error", e);
+    }
+  }
+  return load;
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\ANALYTICS\FestivalHeatmap.js =====
+
+export default function FestivalHeatmap() {
+  return <div>Festival Heatmap (TODO: integracja z City Heatmap)</div>;
+}
+
+
+// FE_FESTIVAL_LIVE_INTEGRATION
+import { useFestivalLive } from "../core/useFestivalLive";
+
+useFestivalLive(() => {
+  if (typeof load === "function") load();
+});
+
+
+
+// FE_FESTIVAL_PULSE_MOOD_INTEGRATION
+import { useFestivalPulseMoodLive } from "../core/useFestivalPulseMoodLive";
+
+useFestivalPulseMoodLive(
+  (bpm) => {
+    if (typeof setPulse === "function") setPulse(bpm);
+  },
+  (mood) => {
+    if (typeof setMood === "function") setMood(mood);
+  }
+);
+
+
+
+// FE_FESTIVAL_SIMULATION_INTEGRATION
+import { useFestivalSimulationLive } from "../core/useFestivalSimulationLive";
+
+useFestivalSimulationLive(
+  (wave) => {
+    if (typeof setWave === "function") setWave(wave);
+    if (typeof load === "function") load(); // refresh panel
+  },
+  (pattern) => {
+    if (typeof setPattern === "function") setPattern(pattern);
+    if (typeof load === "function") load();
+  }
+);
+
+
+
+// FE_FESTIVAL_ECONOMY_INTEGRATION
+import { useFestivalEconomyLive } from "../core/useFestivalEconomyLive";
+
+useFestivalEconomyLive((eco) => {
+  if (typeof setEconomy === "function") setEconomy(eco);
+  if (typeof load === "function") load(); // refresh panel
+});
+
+
+
+// IMMERSIVE_HEATMAP_UPGRADE
+// Heatmap integration with backend, animated cells
+
+import { getFestivalHeatmap } from "../api";
+
+export function useImmersiveHeatmap(setHeat) {
+  async function load() {
+    try {
+      const h = await getFestivalHeatmap();
+      setHeat(h || { submissions: [], jury: [], awards: [] });
+    } catch (e) {
+      console.warn("ImmersiveHeatmap error", e);
+    }
+  }
+  return load;
+}
+
+===== END FILE =====
+
+===== FILE: F:\Piotr\Gate\GitHub Nowy temp\piotrproduction-tech.github.io\apps\FE-01__Festival_Pavilion\index.js =====
+
+import { FilmSubmissionsWorkflowPanel } from "./PANELS/FilmSubmissionsWorkflowPanel";
+import { JuryWorkflowPanel } from "./PANELS/JuryWorkflowPanel";
+import { EventWorkflowPanel } from "./PANELS/EventWorkflowPanel";
+import React from "react";
+import SubmissionsList from "./panels/SubmissionsList.jsx";
+import SubmissionDetails from "./panels/SubmissionDetails.jsx";
+import SubmissionsForm from "./FORMS/SubmissionsForm.jsx";
+
+export const FestivalPavilionModule = {
+  config: {
+    id: "FE-01",
+    name: "Festival Pavilion",
+    baseRoute: "/festival"
+  },
+
+  router: (route) => {
+    if (route === "/festival") return <SubmissionsList />;
+    if (route === "/festival/submit") return <SubmissionsForm />;
+
+    if (route.startsWith("/festival/submission/")) {
+      const id = route.split("/").pop();
+      return <SubmissionDetails submissionId={id} />;
+    }
+
+    return <div>Nie znaleziono strony FESTIWALU: {route}</div>;
+  }
+};
+
+===== END FILE =====
+

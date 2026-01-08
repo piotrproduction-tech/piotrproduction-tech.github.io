@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>City Dashboard V3 — 3D Map</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      font-family: monospace;
+    }
+    #overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.6);
+      padding: 10px;
+      border-radius: 6px;
+      max-width: 350px;
+    }
+    pre { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+
+<div id="overlay">
+  <h2>City Dashboard V3</h2>
+  <pre id="city"></pre>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+  // --- SCENA 3D ---
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  camera.position.z = 20;
+
+  const districtObjects = {};
+
+  function createDistrict(id, index) {
+    const geometry = new THREE.BoxGeometry(3, 3, 3);
+    const material = new THREE.MeshBasicMaterial({ color: 0x4cffd7 });
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.x = index * 5;
+    scene.add(cube);
+    districtObjects[id] = cube;
+  }
+
+  function animateEventFlow(fromObj, toObj) {
+    const geometry = new THREE.SphereGeometry(0.2, 16, 16);
+    const material = new THREE.MeshBasicMaterial({ color: 0xff4444 });
+    const sphere = new THREE.Mesh(geometry, material);
+
+    sphere.position.copy(fromObj.position);
+    scene.add(sphere);
+
+    let t = 0;
+    function animate() {
+      t += 0.02;
+      sphere.position.lerpVectors(fromObj.position, toObj.position, t);
+      if (t < 1) requestAnimationFrame(animate);
+      else scene.remove(sphere);
+    }
+    animate();
+  }
+
+  async function refreshCity() {
+    const res = await fetch("http://localhost:3000/city");
+    const json = await res.json();
+    document.getElementById("city").textContent = JSON.stringify(json, null, 2);
+
+    const districtId = json.district?.id;
+
+    if (districtId && districtObjects[districtId]) {
+      districtObjects[districtId].material.color.set(0xffcc00);
+    }
+
+    if (json.lastEventFlow) {
+      const { from, to } = json.lastEventFlow;
+      if (districtObjects[from] && districtObjects[to]) {
+        animateEventFlow(districtObjects[from], districtObjects[to]);
+      }
+    }
+  }
+
+  async function init() {
+    const res = await fetch("http://localhost:3001/knowledge");
+    const graph = await res.json();
+
+    const districtIds = Object.keys(graph.districts);
+    districtIds.forEach((id, i) => createDistrict(id, i));
+
+    setInterval(refreshCity, 1000);
+  }
+
+  init();
+
+  function render() {
+    requestAnimationFrame(render);
+    renderer.render(scene, camera);
+  }
+  render();
+</script>
+
+</body>
+</html>

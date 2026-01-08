@@ -1,0 +1,11 @@
+{
+  "sampleForm": {
+    "id": "sampleForm",
+    "title": "Sample District Form",
+    "fields": [
+      { "id": "name", "label": "Name", "type": "text", "required": true },
+      { "id": "role", "label": "Role", "type": "select", "options": ["guest", "citizen", "moderator", "admin"] }
+    ]
+  }
+}
+

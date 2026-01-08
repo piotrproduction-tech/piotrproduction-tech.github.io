@@ -1,0 +1,68 @@
+﻿// CityCore_12.x/fate/CityFateEngine.js
+
+export function createCityFateEngine({ app, recorder, predictiveAI, spiritEngine }) {
+  const fate = {
+    threads: [],       // linie przeznaczenia
+    prophecies: [],    // przepowiednie
+    probabilities: {}  // prawdopodobiestwa przyszych zdarze
+  };
+
+  function computeProbabilities() {
+    const timeline = recorder.getTimeline();
+    if (timeline.length < 3) return;
+
+    const last = timeline[timeline.length - 1];
+    const next = predictiveAI.predict();
+
+    fate.probabilities = {
+      stayInDistrict: last.district === next.nextDistrict ? 0.7 : 0.3,
+      viewShift: next.nextView ? 0.5 : 0.2,
+      aiActivation: next.nextLoad.ai > 10 ? 0.8 : 0.3,
+      workflowCascade: next.nextLoad.workflow > 8 ? 0.6 : 0.2
+    };
+  }
+
+  function generateThread() {
+    const p = fate.probabilities;
+
+    const thread = {
+      at: Date.now(),
+      destiny:
+        p.aiActivation > 0.7
+          ? "AI intensifies"
+          : p.workflowCascade > 0.5
+          ? "Workflow storm"
+          : p.stayInDistrict > 0.6
+          ? "Stability prevails"
+          : "Path diverges",
+      moodInfluence: (spiritEngine.getSpirit().emotion || 'neutral')
+
+    };
+
+    fate.threads.push(thread);
+    return thread;
+  }
+
+  function generateProphecy() {
+    const thread = fate.threads[fate.threads.length - 1];
+    if (!thread) return;
+
+    const prophecy = `Miasto przeczuwa: ${thread.destiny}, a duch jest ${thread.moodInfluence}.`;
+    fate.prophecies.push(prophecy);
+  }
+
+  function tick() {
+    computeProbabilities();
+    generateThread();
+    generateProphecy();
+  }
+
+  setInterval(tick, 4000);
+
+  return {
+    getFate: () => fate,
+    getProphecies: () => fate.prophecies,
+    getThreads: () => fate.threads
+  };
+}
+

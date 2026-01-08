@@ -1,0 +1,7 @@
+module.exports = {
+    START: "SYNC_POINT_START",
+    SCENE: "SYNC_POINT_SCENE",
+    ROLE: "SYNC_POINT_ROLE",
+    STATE: "SYNC_POINT_STATE",
+    END: "SYNC_POINT_END"
+};

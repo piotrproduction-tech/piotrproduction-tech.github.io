@@ -1,0 +1,19 @@
+{
+  "guest": {
+    "label": "Guest",
+    "description": "Unregistered visitor"
+  },
+  "citizen": {
+    "label": "Citizen",
+    "description": "Registered participant of the district"
+  },
+  "moderator": {
+    "label": "Moderator",
+    "description": "Helps maintain order and flow"
+  },
+  "admin": {
+    "label": "Admin",
+    "description": "Full control over the district"
+  }
+}
+

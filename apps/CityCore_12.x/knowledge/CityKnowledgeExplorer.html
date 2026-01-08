@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>City Knowledge Explorer 12.x</title>
+  <style>
+    body {
+      background: #0d0d0d;
+      color: #e0e0e0;
+      font-family: monospace;
+      padding: 20px;
+    }
+    h1 { color: #4cffd7; }
+    .section {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      background: #111;
+    }
+    .node {
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background: #000;
+      cursor: pointer;
+    }
+    .node:hover {
+      background: #222;
+    }
+    pre {
+      background: #000;
+      padding: 10px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>City Knowledge Explorer 12.x</h1>
+
+  <div id="graph"></div>
+
+  <script>
+    function renderNode(type, key, related) {
+      return `
+        <div class="node" onclick="alert('Powiązania: ${related.join(', ')}')">
+          <strong>${type}</strong>: ${key}
+          <br/>
+          <small>→ ${related.join(', ')}</small>
+        </div>
+      `;
+    }
+
+    function renderGraph(graph) {
+      return Object.keys(graph).map(type => `
+        <div class="section">
+          <h2>${type.toUpperCase()}</h2>
+          ${Object.keys(graph[type]).map(key =>
+            renderNode(type, key, Array.from(graph[type][key]))
+          ).join("")}
+        </div>
+      `).join("");
+    }
+
+    // Oczekuje, że knowledgeGraph zostanie podany przez runtime
+    document.getElementById("graph").innerHTML = renderGraph(window.knowledgeGraph.graph);
+  </script>
+
+</body>
+</html>

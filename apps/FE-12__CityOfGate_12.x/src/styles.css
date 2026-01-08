@@ -1,0 +1,257 @@
+/* -------------------------------------------------------
+   GLOBAL THEME + PERSONALITY-BASED COLOR VARIABLES
+------------------------------------------------------- */
+
+:root {
+  --accent: #4ade80; /* default: Neutral */
+  --accent-glow: rgba(74, 222, 128, 0.6);
+  --accent-bg: rgba(74, 222, 128, 0.1);
+  --pulse-speed: 1.5s;
+}
+
+/* Personality Themes */
+.personality-Energetic {
+  --accent: #fbbf24;
+  --accent-glow: rgba(251, 191, 36, 0.6);
+  --accent-bg: rgba(251, 191, 36, 0.1);
+}
+
+.personality-Creative {
+  --accent: #c084fc;
+  --accent-glow: rgba(192, 132, 252, 0.6);
+  --accent-bg: rgba(192, 132, 252, 0.1);
+}
+
+.personality-Calm {
+  --accent: #60a5fa;
+  --accent-glow: rgba(96, 165, 250, 0.6);
+  --accent-bg: rgba(96, 165, 250, 0.1);
+}
+
+.personality-Chaotic {
+  --accent: #ef4444;
+  --accent-glow: rgba(239, 68, 68, 0.6);
+  --accent-bg: rgba(239, 68, 68, 0.1);
+}
+
+.personality-Celebratory {
+  --accent: #facc15;
+  --accent-glow: rgba(250, 204, 21, 0.8);
+  --accent-bg: rgba(250, 204, 21, 0.15);
+}
+
+/* -------------------------------------------------------
+   GLOBAL BASE STYLES
+------------------------------------------------------- */
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, #1a1a3a 0, #050509 55%, #000 100%);
+  color: #f5f5f5;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+.city-root {
+  min-height: 100vh;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+/* -------------------------------------------------------
+   ANIMATIONS
+------------------------------------------------------- */
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0px var(--accent-glow); }
+  50% { box-shadow: 0 0 12px var(--accent-glow); }
+  100% { box-shadow: 0 0 0px var(--accent-glow); }
+}
+
+.pulse-active {
+  animation: pulseGlow var(--pulse-speed) infinite ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* -------------------------------------------------------
+   LAYOUT GRID
+------------------------------------------------------- */
+
+.city-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr 320px;
+  gap: 16px;
+  margin-top: 32px;
+  min-height: 60vh;
+}
+
+/* -------------------------------------------------------
+   MENU
+------------------------------------------------------- */
+
+.city-menu {
+  background: rgba(10, 10, 20, 0.9);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.city-menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+}
+
+.city-menu-item {
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  background: #111;
+  color: #f5f5f5;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.city-menu-item:hover {
+  background: var(--accent-bg);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.city-menu-item-active {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+/* -------------------------------------------------------
+   VIEWS
+------------------------------------------------------- */
+
+.city-view {
+  background: rgba(5, 5, 15, 0.85);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 12px var(--accent-glow);
+  animation: fadeIn 0.4s ease;
+}
+
+.city-view-card {
+  background: rgba(15, 15, 30, 0.95);
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+  animation: fadeIn 0.4s ease;
+}
+
+.city-view-empty {
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/* -------------------------------------------------------
+   PANELS
+------------------------------------------------------- */
+
+.city-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: rgba(10, 10, 20, 0.9);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.city-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.city-panel-close {
+  background: transparent;
+  border: none;
+  color: #f5f5f5;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.city-panel-body {
+  flex: 1;
+  background: rgba(5, 5, 15, 0.95);
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.city-panel-empty {
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/* -------------------------------------------------------
+   HEARTBEAT DEBUG PANEL
+------------------------------------------------------- */
+
+.city-debug {
+  grid-column: 1 / span 3;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 10px;
+  border-top: 2px solid var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+  margin-top: 20px;
+}
+
+.debug-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.debug-box {
+  background: rgba(15, 15, 30, 0.95);
+  padding: 10px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  overflow: auto;
+  max-height: 200px;
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+.personality-Celebratory {
+  --accent: #facc15;
+  --accent-glow: rgba(250, 204, 21, 0.9);
+  --accent-bg: rgba(250, 204, 21, 0.18);
+}
+
+@keyframes confetti {
+  0% { background-position: 0 0; opacity: 0.6; }
+  50% { background-position: 50px 50px; opacity: 1; }
+  100% { background-position: 0 100px; opacity: 0.6; }
+}
+
+.personality-Celebratory .city-root {
+  background-image:
+    radial-gradient(circle at top, #3b1a3a 0, #050509 55%, #000 100%),
+    repeating-linear-gradient(
+      45deg,
+      rgba(250, 204, 21, 0.15),
+      rgba(250, 204, 21, 0.15) 2px,
+      transparent 2px,
+      transparent 6px
+    );
+  background-blend-mode: screen;
+  animation: confetti 6s linear infinite;
+}

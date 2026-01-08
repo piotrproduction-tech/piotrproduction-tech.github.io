@@ -1,0 +1,263 @@
+===== FILE: engine\directorEngine.js =====
+
+export class DirectorEngine {
+  constructor({ profiles }) {
+    this.profiles = profiles;
+  }
+
+  evaluate(profileId, insightPacket) {
+    const profile = this.profiles.find(p => p.id === profileId);
+    if (!profile) throw new Error("Director profile not found");
+
+    const actions = [];
+
+    for (const rule of profile.decisionMatrix) {
+      try {
+        if (rule.condition(insightPacket, profile)) {
+          const action = rule.action(insightPacket, profile);
+
+          action.priority =
+            (action.priority || 3) *
+            (profile.priorityWeights[action.weightKey] || 1);
+
+          actions.push(action);
+        }
+      } catch (err) {
+        console.error("Director rule error:", err);
+      }
+    }
+
+    return actions.sort((a, b) => b.priority - a.priority);
+  }
+}
+
+===== END FILE: engine\directorEngine.js =====
+
+===== FILE: models\directorProfile.js =====
+
+export class DirectorProfile {
+  constructor({
+    id,
+    name,
+    style,
+    priorityWeights,
+    triggerSensitivity,
+    preferredActions,
+    decisionMatrix
+  }) {
+    this.id = id;
+    this.name = name;
+    this.style = style;
+    this.priorityWeights = priorityWeights;
+    this.triggerSensitivity = triggerSensitivity;
+    this.preferredActions = preferredActions;
+    this.decisionMatrix = decisionMatrix;
+  }
+}
+
+===== END FILE: models\directorProfile.js =====
+
+===== FILE: profiles\analyticsDriven.js =====
+
+import { DirectorProfile } from "../models/directorProfile.js";
+
+export const AnalyticsDrivenProfile = new DirectorProfile({
+  id: "analytics",
+  name: "Analytics-Driven Director",
+  style: "data",
+  priorityWeights: { analytics: 5, trending: 4 },
+  triggerSensitivity: { views: 50 },
+  preferredActions: ["RECOMMENDATION_TUNE", "PROMOTE_FILM"],
+  decisionMatrix: [
+    {
+      condition: (insights, profile) => {
+        const film = insights.trendingFilms?.[0];
+        return film && film.views >= profile.triggerSensitivity.views;
+      },
+      action: (insights) => ({
+        type: "RECOMMENDATION_TUNE",
+        priority: 3,
+        weightKey: "analytics",
+        payload: { focus: "high_rating" }
+      })
+    }
+  ]
+});
+
+===== END FILE: profiles\analyticsDriven.js =====
+
+===== FILE: profiles\curator.js =====
+
+import { DirectorProfile } from "../models/directorProfile.js";
+
+export const CuratorProfile = new DirectorProfile({
+  id: "curator",
+  name: "Curator Director",
+  style: "artistic",
+  priorityWeights: { quality: 5, social: 1 },
+  triggerSensitivity: { rating: 4.0 },
+  preferredActions: ["PROMOTE_FILM", "SPOTLIGHT_DIRECTOR", "CURATOR_BEAT"],
+  decisionMatrix: [
+    {
+      condition: (insights, profile) => {
+        const film = insights.trendingFilms?.[0];
+        return film && film.avgRating >= profile.triggerSensitivity.rating;
+      },
+      action: (insights) => ({
+        type: "PROMOTE_FILM",
+        priority: 2,
+        weightKey: "quality",
+        payload: {
+          filmId: insights.trendingFilms[0].filmId,
+          reason: "high_rating"
+        }
+      })
+    }
+  ]
+});
+
+===== END FILE: profiles\curator.js =====
+
+===== FILE: profiles\explorer.js =====
+
+import { DirectorProfile } from "../models/directorProfile.js";
+
+export const ExplorerProfile = new DirectorProfile({
+  id: "explorer",
+  name: "Explorer Director",
+  style: "global",
+  priorityWeights: { languages: 5, diversity: 4 },
+  triggerSensitivity: { languageDominance: 40 },
+  preferredActions: ["LANGUAGE_PUSH", "CURATOR_BEAT"],
+  decisionMatrix: [
+    {
+      condition: (insights, profile) => {
+        const prefs = insights.languagePreferences || {};
+        return Object.values(prefs).some(count => count >= profile.triggerSensitivity.languageDominance);
+      },
+      action: (insights) => {
+        const dominant = Object.entries(insights.languagePreferences).sort((a, b) => b[1] - a[1])[0];
+        return {
+          type: "LANGUAGE_PUSH",
+          priority: 3,
+          weightKey: "languages",
+          payload: { languageCode: dominant[0], reason: "majority_preference" }
+        };
+      }
+    }
+  ]
+});
+
+===== END FILE: profiles\explorer.js =====
+
+===== FILE: profiles\guardian.js =====
+
+import { DirectorProfile } from "../models/directorProfile.js";
+
+export const GuardianProfile = new DirectorProfile({
+  id: "guardian",
+  name: "Guardian Director",
+  style: "stabilizer",
+  priorityWeights: { dropOff: 5, engagement: 4 },
+  triggerSensitivity: { dropOff: 70 },
+  preferredActions: ["DROP_OFF_ALERT", "RESCUE_EVENT", "ENGAGEMENT_RECOVERY"],
+  decisionMatrix: [
+    {
+      condition: (insights, profile) => {
+        const alerts = insights.dropOffAlerts || [];
+        return alerts.some(a => a.dropOffAtPercent < profile.triggerSensitivity.dropOff);
+      },
+      action: (insights) => ({
+        type: "DROP_OFF_ALERT",
+        priority: 1,
+        weightKey: "dropOff",
+        payload: insights.dropOffAlerts[0]
+      })
+    }
+  ]
+});
+
+===== END FILE: profiles\guardian.js =====
+
+===== FILE: profiles\hype.js =====
+
+import { DirectorProfile } from "../models/directorProfile.js";
+
+export const HypeProfile = new DirectorProfile({
+  id: "hype",
+  name: "Hype Director",
+  style: "energetic",
+  priorityWeights: { social: 5, trending: 4 },
+  triggerSensitivity: { socialPulse: 50 },
+  preferredActions: ["HYPE_BEAT", "SOCIAL_BEAT", "PROMOTE_EVENT"],
+  decisionMatrix: [
+    {
+      condition: (insights, profile) =>
+        insights.socialPulse?.recentEvents >= profile.triggerSensitivity.socialPulse,
+      action: () => ({
+        type: "HYPE_BEAT",
+        priority: 3,
+        weightKey: "social",
+        payload: { trigger: "social_peak" }
+      })
+    }
+  ]
+});
+
+===== END FILE: profiles\hype.js =====
+
+===== FILE: profiles\socialMaestro.js =====
+
+import { DirectorProfile } from "../models/directorProfile.js";
+
+export const SocialMaestroProfile = new DirectorProfile({
+  id: "social_maestro",
+  name: "Social Maestro",
+  style: "community",
+  priorityWeights: { social: 5, achievements: 4 },
+  triggerSensitivity: { achievements: 1 },
+  preferredActions: ["SOCIAL_BEAT", "ACHIEVEMENT_SPOTLIGHT"],
+  decisionMatrix: [
+    {
+      condition: (insights, profile) =>
+        insights.achievementMomentum?.newAchievements >= profile.triggerSensitivity.achievements,
+      action: (insights) => ({
+        type: "ACHIEVEMENT_SPOTLIGHT",
+        priority: 4,
+        weightKey: "achievements",
+        payload: {
+          userId: insights.achievementMomentum.userId,
+          achievementType: "new_achievement"
+        }
+      })
+    }
+  ]
+});
+
+===== END FILE: profiles\socialMaestro.js =====
+
+===== FILE: __tests__\director-engine.test.js =====
+
+import { DirectorEngine } from "../engine/directorEngine.js";
+import { CuratorProfile } from "../profiles/curator.js";
+
+describe("FE-02 Director Engine", () => {
+  it("generates actions based on profile rules", () => {
+    const engine = new DirectorEngine({ profiles: [CuratorProfile] });
+
+    const insights = {
+      trendingFilms: [
+        { filmId: 10, views: 100, avgRating: 4.5 }
+      ]
+    };
+
+    const actions = engine.evaluate("curator", insights);
+
+    expect(actions.length).toBe(1);
+    expect(actions[0].type).toBe("PROMOTE_FILM");
+    expect(actions[0].payload.filmId).toBe(10);
+  });
+});
+
+===== END FILE: __tests__\director-engine.test.js =====
+

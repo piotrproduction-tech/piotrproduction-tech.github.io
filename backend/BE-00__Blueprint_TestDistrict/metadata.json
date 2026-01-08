@@ -1,0 +1,8 @@
+{
+  "id": "BE-00-BLUEPRINT",
+  "name": "Blueprint Test District",
+  "title": "Blueprint Test District",
+  "role": "district",
+  "districtType": "blueprint",
+  "version": 1
+}

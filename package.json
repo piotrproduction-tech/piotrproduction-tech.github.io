@@ -1,0 +1,56 @@
+{
+  "name": "piotrproduction-tech.github.io",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:meta": "npm test -- apps/CityCore_12.x/tests/meta",
+    "test:meta:watch": "npm test -- --watch apps/CityCore_12.x/tests/meta"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piotrproduction-tech/piotrproduction-tech.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/piotrproduction-tech.github.io/issues"
+  },
+  "homepage": "https://github.com/piotrproduction-tech.github.io#readme",
+  "devDependencies": {
+    "jest": "^30.2.0"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "react-router-dom": "^7.11.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {},
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1.js"
+    },
+    "testMatch": [
+      "**/apps/CityCore_12.x/tests/**/*.test.js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/LEGACY",
+      "<rootDir>/LEGACY/.*",
+      "node_modules_cityreset_",
+      "node_modules_cityreset_.*"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/LEGACY",
+      "<rootDir>/LEGACY/.*",
+      "node_modules_cityreset_",
+      "node_modules_cityreset_.*"
+    ]
+  }
+}

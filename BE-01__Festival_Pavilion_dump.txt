@@ -1,0 +1,1696 @@
+===== FILE: eventbus.bootstrap.js =====
+
+
+
+
+// FESTIVAL_EVENTBUS_BOOTSTRAP
+// Bootstrap file to attach Festival Pavilion to the global CityEventBus
+
+import { registerFestivalWithCityEventBus } from "./core/index.js";
+
+export function bootstrapFestivalEventBus(cityEventBus) {
+  registerFestivalWithCityEventBus(cityEventBus);
+  console.log("[FESTIVAL] Festival Pavilion connected to CityEventBus");
+}
+
+===== END FILE: eventbus.bootstrap.js =====
+
+===== FILE: index.js =====
+
+import express from "express";
+import { BE_01Api } from "./api/BE-01Api.js";
+
+export const BE_01Module = express.Router();
+BE_01Module.use("/be-01", BE_01Api);
+
+===== END FILE: index.js =====
+
+===== FILE: api\BE-01Api.js =====
+
+import express from "express";
+import { getStatus } from "../diagnostics/status.js";
+
+export const BE_01Api = express.Router();
+
+BE_01Api.get("/status", (req, res) => {
+  res.json(getStatus());
+});
+
+
+
+BE_01Api.get("/events", (req, res) => {
+  res.json({ events: [] });
+});
+
+BE_01Api.post("/actions", (req, res) => {
+  res.json({ ok: true, action: req.body });
+});
+
+
+
+// BE_API_SUBMISSIONS
+export function getFestivalSubmissions(req, res) {
+  const submissions = global.festival?.submissions || [];
+  res.json(submissions);
+}
+
+export function createFestivalSubmission(req, res) {
+  const payload = req.body || {};
+  const submission = {
+    id: "sub_" + Date.now(),
+    ...payload,
+    createdAt: Date.now(),
+    status: "submitted"
+  };
+
+  global.festival = global.festival || {};
+  global.festival.submissions = global.festival.submissions || [];
+  global.festival.submissions.push(submission);
+
+  res.json(submission);
+}
+
+export function getSubmissionDetails(req, res) {
+  const id = req.params.id;
+  const submissions = global.festival?.submissions || [];
+  const found = submissions.find(s => s.id === id);
+  res.json(found || null);
+}
+
+
+
+// BE_API_JURY
+export function getJuryMembers(req, res) {
+  const jury = global.festival?.jury || [];
+  res.json(jury);
+}
+
+export function assignSubmissionToJury(req, res) {
+  const { submissionId, juryId } = req.body || {};
+
+  global.festival = global.festival || {};
+  global.festival.assignments = global.festival.assignments || [];
+
+  const assignment = {
+    id: "assign_" + Date.now(),
+    submissionId,
+    juryId,
+    assignedAt: Date.now()
+  };
+
+  global.festival.assignments.push(assignment);
+  res.json(assignment);
+}
+
+export function getJuryAssignments(req, res) {
+  const assignments = global.festival?.assignments || [];
+  res.json(assignments);
+}
+
+export function getJuryAssignmentsForCurrent(req, res) {
+  const userId = req.user?.id || "jury_default";
+  const assignments = (global.festival?.assignments || []).filter(a => a.juryId === userId);
+  res.json(assignments);
+}
+
+export function submitJuryVote(req, res) {
+  const { submissionId, score, comment } = req.body || {};
+
+  global.festival = global.festival || {};
+  global.festival.votes = global.festival.votes || [];
+
+  const vote = {
+    id: "vote_" + Date.now(),
+    submissionId,
+    score,
+    comment,
+    votedAt: Date.now()
+  };
+
+  global.festival.votes.push(vote);
+  res.json(vote);
+}
+
+
+
+// BE_API_AWARDS
+export function getAwardCategories(req, res) {
+  const cats = global.festival?.awardCategories || [];
+  res.json(cats);
+}
+
+export function createAwardCategory(req, res) {
+  const { name, description } = req.body || {};
+
+  global.festival = global.festival || {};
+  global.festival.awardCategories = global.festival.awardCategories || [];
+
+  const category = {
+    id: "awardcat_" + Date.now(),
+    name,
+    description,
+    createdAt: Date.now()
+  };
+
+  global.festival.awardCategories.push(category);
+  res.json(category);
+}
+
+export function grantAward(req, res) {
+  const { categoryId, submissionId } = req.body || {};
+
+  global.festival = global.festival || {};
+  global.festival.awards = global.festival.awards || [];
+
+  const award = {
+    id: "award_" + Date.now(),
+    categoryId,
+    submissionId,
+    grantedAt: Date.now()
+  };
+
+  global.festival.awards.push(award);
+  res.json(award);
+}
+
+
+
+// BE_API_EVENTS
+export function getFestivalEvents(req, res) {
+  const events = global.festival?.events || [];
+  res.json(events);
+}
+
+export function createFestivalEvent(req, res) {
+  const { name, startsAt, endsAt } = req.body || {};
+
+  global.festival = global.festival || {};
+  global.festival.events = global.festival.events || [];
+
+  const event = {
+    id: "event_" + Date.now(),
+    name,
+    startsAt,
+    endsAt
+  };
+
+  global.festival.events.push(event);
+  res.json(event);
+}
+
+export function updateFestivalEvent(req, res) {
+  const id = req.params.id;
+  const patch = req.body || {};
+
+  global.festival = global.festival || {};
+  global.festival.events = global.festival.events || [];
+
+  const idx = global.festival.events.findIndex(e => e.id === id);
+  if (idx === -1) return res.json(null);
+
+  global.festival.events[idx] = {
+    ...global.festival.events[idx],
+    ...patch,
+    updatedAt: Date.now()
+  };
+
+  res.json(global.festival.events[idx]);
+}
+
+
+
+// BE_API_SCHEDULE
+export function getFestivalSchedule(req, res) {
+  const schedule = global.festival?.schedule || [];
+  res.json(schedule);
+}
+
+export function addToFestivalSchedule(req, res) {
+  const { eventId, slot } = req.body || {};
+
+  global.festival = global.festival || {};
+  global.festival.schedule = global.festival.schedule || [];
+
+  const entry = {
+    id: "schedule_" + Date.now(),
+    eventId,
+    slot,
+    addedAt: Date.now()
+  };
+
+  global.festival.schedule.push(entry);
+  res.json(entry);
+}
+
+
+
+// BE_API_STATS
+export function getFestivalStats(req, res) {
+  const f = global.festival || {};
+  res.json({
+    submissions: (f.submissions || []).length,
+    votes: (f.votes || []).length,
+    awards: (f.awards || []).length,
+    pulseBpm: 72 + Math.floor(Math.random() * 20),
+    mood: ["Calm", "Energetic", "Creative", "Tense"][Math.floor(Math.random() * 4)]
+  });
+}
+
+export function getFestivalStatsTimeline(req, res) {
+  global.festival = global.festival || {};
+  global.festival.timeline = global.festival.timeline || [];
+
+  const point = {
+    timestamp: Date.now(),
+    submissions: (global.festival.submissions || []).length,
+    votes: (global.festival.votes || []).length,
+    awards: (global.festival.awards || []).length
+  };
+
+  global.festival.timeline.push(point);
+  res.json(global.festival.timeline);
+}
+
+
+
+// BE_API_HEATMAP
+export function getFestivalHeatmap(req, res) {
+  const f = global.festival || {};
+  const subs = f.submissions || [];
+  const votes = f.votes || [];
+  const awards = f.awards || [];
+
+  const makeHeat = (arr) =>
+    arr.map((item, i) => ({
+      label: item.id,
+      value: Math.floor(Math.random() * 10),
+      max: 10
+    }));
+
+  res.json({
+    submissions: makeHeat(subs),
+    jury: makeHeat(votes),
+    awards: makeHeat(awards)
+  });
+}
+
+
+
+// BE_API_NARRATIVE
+export function getFestivalNarrative(req, res) {
+  const stories = global.festival?.narrative || [];
+  res.json(stories);
+}
+
+
+
+// BE_API_AI
+export function getFestivalAIPredictions(req, res) {
+  res.json({
+    hotCategories: ["Najlepszy Film", "Najlepsza Reżyseria"],
+    potentialWinners: ["sub_123", "sub_456"]
+  });
+}
+
+===== END FILE: api\BE-01Api.js =====
+
+===== FILE: config\metadata.json =====
+
+{
+  "id": "BE-01",
+  "name": "Festival_Pavilion",
+  "title": "Festival Pavilion",
+  "role": "district",
+  "districtType": "festival",
+  "createdFrom": "LEGACY_2025-12-30",
+  "version": 1
+}
+
+===== END FILE: config\metadata.json =====
+
+===== FILE: config\rtra.config.json =====
+
+{
+  "moduleId": "BE-01",
+  "moduleName": "Festival_Pavilion",
+  "reputation": {
+    "enabled": true,
+    "weights": {
+      "positive": 5,
+      "negative": -5,
+      "neutral": 0
+    },
+    "eventMapping": {
+      "submission": 10,
+      "accepted": 20,
+      "jury_vote": 5
+    }
+  },
+  "tokens": {
+    "enabled": true,
+    "baseReward": 0,
+    "eventMapping": {
+      "submission": 10,
+      "accepted": 50,
+      "jury_vote": 5
+    }
+  },
+  "rewards": {
+    "enabled": true,
+    "tiers": [
+      {
+        "id": "creator",
+        "name": "Festival Creator",
+        "minReputation": 30,
+        "minTokens": 50
+      },
+      {
+        "id": "laureate",
+        "name": "Festival Laureate",
+        "minReputation": 80,
+        "minTokens": 150
+      }
+    ]
+  },
+  "antiAbuse": {
+    "enabled": true,
+    "suspiciousKeywords": [
+      "plagiarism",
+      "duplicate",
+      "fake"
+    ],
+    "rateLimits": {
+      "perMinute": 30,
+      "perHour": 300
+    },
+    "cooldowns": {
+      "onFlag": 60000
+    }
+  }
+}
+
+===== END FILE: config\rtra.config.json =====
+
+===== FILE: core\index.js =====
+
+// Core logic for Festival Pavilion (BE-01)
+// Tu wchodzi logika dzielnicy.
+
+
+
+// FESTIVAL_ENGINE_BOOTSTRAP
+// Full bootstrap of Festival Pavilion Engine (BE-01)
+
+import { festivalRuntimeEngine } from "../life/runtime";
+import { festivalNarration } from "../life/narration";
+import { submissionsSync } from "../life/submissionsSync";
+import { jurySync } from "../life/jurySync";
+import { awardsSync } from "../life/awardsSync";
+import { eventsSync } from "../life/eventsSync";
+import { scheduleSync } from "../life/scheduleSync";
+
+import { getFestivalStatus } from "../diagnostics/status";
+import { getFestivalHeartbeat } from "../diagnostics/heartbeat";
+import { recordFestivalTimeline, getFestivalTimeline } from "../diagnostics/timeline";
+
+import { festivalEventRouter } from "../events/router";
+
+export function createFestivalEngine() {
+  const globalState = {
+    festival: {
+      submissions: [],
+      jury: [],
+      assignments: [],
+      votes: [],
+      awardCategories: [],
+      awards: [],
+      events: [],
+      schedule: [],
+      narrative: [],
+      timeline: []
+    }
+  };
+
+  const engine = {
+    state: globalState,
+
+    // Runtime dispatch
+    dispatch(action) {
+      const result = festivalRuntimeEngine.dispatch(globalState, action);
+      festivalRuntimeEngine.applySideEffects(globalState, result);
+      recordFestivalTimeline(globalState);
+      return result;
+    },
+
+    // Direct sync access (if needed)
+    submissions: submissionsSync,
+    jury: jurySync,
+    awards: awardsSync,
+    events: eventsSync,
+    schedule: scheduleSync,
+
+    // Diagnostics
+    status() {
+      return getFestivalStatus(globalState);
+    },
+    heartbeat() {
+      return getFestivalHeartbeat(globalState);
+    },
+    timeline() {
+      return getFestivalTimeline(globalState);
+    },
+
+    // Events
+    router: festivalEventRouter,
+
+    // Narrative
+    narrative: festivalNarration
+  };
+
+  return engine;
+}
+
+// Optional: singleton engine for the process
+let singletonEngine = null;
+
+export function getFestivalEngine() {
+  if (!singletonEngine) {
+    singletonEngine = createFestivalEngine();
+  }
+  return singletonEngine;
+}
+
+
+
+// FESTIVAL_ENGINE_EVENTBUS_EXPORT
+// Export helper for attaching Festival Pavilion to CityEventBus
+
+import { attachFestivalToCityEventBus } from "../events/listeners.js";
+
+export function registerFestivalWithCityEventBus(cityEventBus) {
+  return attachFestivalToCityEventBus(cityEventBus);
+}
+
+===== END FILE: core\index.js =====
+
+===== FILE: diagnostics\heartbeat.js =====
+
+
+
+
+// DIAG_HEARTBEAT
+// Festival Pavilion heartbeat (BPM, mood, load)
+
+export function getFestivalHeartbeat(globalState) {
+  const f = globalState.festival || {};
+
+  const bpm = 70 + Math.floor(Math.random() * 25);
+  const moods = ["Calm", "Energetic", "Creative", "Tense"];
+  const mood = moods[Math.floor(Math.random() * moods.length)];
+
+  const load = {
+    submissions: (f.submissions || []).length,
+    votes: (f.votes || []).length,
+    awards: (f.awards || []).length,
+    events: (f.events || []).length
+  };
+
+  return {
+    timestamp: Date.now(),
+    bpm,
+    mood,
+    load
+  };
+}
+
+===== END FILE: diagnostics\heartbeat.js =====
+
+===== FILE: diagnostics\status.js =====
+
+export function getStatus() {
+  return {
+    ok: true,
+    module: "BE-01__Festival_Pavilion",
+    ts: Date.now()
+  };
+}
+
+
+
+export function getStatus() {
+  return {
+    ok: true,
+    module: "BE-01",
+    name: "Festival_Pavilion",
+    ts: Date.now(),
+    eventsHandled: 0
+  };
+}
+
+
+
+import { CitySuperEngine } from "../../BE-00__City/SUPER_ENGINE/CitySuperEngine.js";
+
+export function getStatus() {
+  const sampleEvent = {
+    module: "BE-01",
+    type: "be-01.diagnostic.ping",
+    payload: {}
+  };
+  const processed = CitySuperEngine.process(sampleEvent);
+
+  return {
+    ok: true,
+    module: "BE-01",
+    name: "Festival_Pavilion",
+    ts: Date.now(),
+    sample: {
+      reputationDelta: processed.reputationDelta,
+      tokensDelta: processed.tokensDelta,
+      rewards: processed.rewards,
+      abuse: processed.abuse
+    }
+  };
+}
+
+
+
+// DIAG_STATUS
+// High-level status of Festival Pavilion
+
+export function getFestivalStatus(globalState) {
+  const f = globalState.festival || {};
+
+  return {
+    ok: true,
+    timestamp: Date.now(),
+    submissions: (f.submissions || []).length,
+    jury: (f.jury || []).length,
+    assignments: (f.assignments || []).length,
+    votes: (f.votes || []).length,
+    awards: (f.awards || []).length,
+    events: (f.events || []).length,
+    schedule: (f.schedule || []).length,
+    narrative: (f.narrative || []).length
+  };
+}
+
+===== END FILE: diagnostics\status.js =====
+
+===== FILE: diagnostics\timeline.js =====
+
+
+
+
+// DIAG_TIMELINE
+// Timeline of festival activity
+
+export function recordFestivalTimeline(globalState) {
+  globalState.festival = globalState.festival || {};
+  globalState.festival.timeline = globalState.festival.timeline || [];
+
+  const f = globalState.festival;
+
+  const point = {
+    timestamp: Date.now(),
+    submissions: (f.submissions || []).length,
+    votes: (f.votes || []).length,
+    awards: (f.awards || []).length,
+    events: (f.events || []).length,
+    schedule: (f.schedule || []).length
+  };
+
+  globalState.festival.timeline.push(point);
+  return point;
+}
+
+export function getFestivalTimeline(globalState) {
+  return globalState.festival?.timeline || [];
+}
+
+===== END FILE: diagnostics\timeline.js =====
+
+===== FILE: events\emitters.js =====
+
+// Emittery zdarzeń dla Festival Pavilion (BE-01)
+// Przykład: emitEvent("event.type", payload);
+
+
+
+export function emitDistrictEvent(type, payload = {}) {
+  return {
+    module: "BE-01",
+    type,
+    payload,
+    ts: Date.now()
+  };
+}
+
+
+// Festival Pavilion events
+export function emitFestivalSubmissionCreated(submission) {
+  return {
+    type: "festival.submission.created",
+    payload: submission
+  };
+}
+
+export function emitFestivalJuryVote(vote) {
+  return {
+    type: "festival.jury.vote",
+    payload: vote
+  };
+}
+
+export function emitFestivalAwardGranted(award) {
+  return {
+    type: "festival.award.granted",
+    payload: award
+  };
+}
+
+export function emitFestivalEventStarted(event) {
+  return {
+    type: "festival.event.started",
+    payload: event
+  };
+}
+
+export function emitFestivalEventEnded(event) {
+  return {
+    type: "festival.event.ended",
+    payload: event
+  };
+}
+
+
+// FESTIVAL_EMITTERS
+// Emitters for Festival Pavilion events
+
+export function emitSubmissionCreated(submission) {
+  return {
+    type: "FESTIVAL_SUBMISSION_CREATED",
+    submissionId: submission.id,
+    payload: submission,
+    timestamp: Date.now()
+  };
+}
+
+export function emitJuryAssigned(assignment) {
+  return {
+    type: "FESTIVAL_JURY_ASSIGNED",
+    submissionId: assignment.submissionId,
+    juryId: assignment.juryId,
+    payload: assignment,
+    timestamp: Date.now()
+  };
+}
+
+export function emitJuryVoted(vote) {
+  return {
+    type: "FESTIVAL_JURY_VOTED",
+    submissionId: vote.submissionId,
+    juryId: vote.juryId,
+    score: vote.score,
+    payload: vote,
+    timestamp: Date.now()
+  };
+}
+
+export function emitAwardCategoryCreated(category) {
+  return {
+    type: "FESTIVAL_AWARD_CATEGORY_CREATED",
+    categoryId: category.id,
+    payload: category,
+    timestamp: Date.now()
+  };
+}
+
+export function emitAwardGranted(award) {
+  return {
+    type: "FESTIVAL_AWARD_GRANTED",
+    categoryId: award.categoryId,
+    submissionId: award.submissionId,
+    payload: award,
+    timestamp: Date.now()
+  };
+}
+
+export function emitEventCreated(event) {
+  return {
+    type: "FESTIVAL_EVENT_CREATED",
+    eventId: event.id,
+    payload: event,
+    timestamp: Date.now()
+  };
+}
+
+export function emitEventUpdated(event) {
+  return {
+    type: "FESTIVAL_EVENT_UPDATED",
+    eventId: event.id,
+    payload: event,
+    timestamp: Date.now()
+  };
+}
+
+export function emitScheduleEntryAdded(entry) {
+  return {
+    type: "FESTIVAL_SCHEDULE_ENTRY_ADDED",
+    eventId: entry.eventId,
+    slot: entry.slot,
+    payload: entry,
+    timestamp: Date.now()
+  };
+}
+
+===== END FILE: events\emitters.js =====
+
+===== FILE: events\listeners.js =====
+
+// Listener'y zdarzeń dla Festival Pavilion (BE-01)
+// Tu podpinamy się pod EventBus / Life Engine.
+
+
+
+export function registerListeners(eventBus) {
+  eventBus.on("BE-01", (event) => {
+    console.log("📡 Event in BE-01:", event);
+  });
+}
+
+
+
+// FESTIVAL_LISTENERS
+// Listeners that route events into the runtime engine
+
+import { festivalRuntimeEngine } from "../life/runtime";
+
+export function handleFestivalEvent(globalState, event) {
+  const result = festivalRuntimeEngine.dispatch(globalState, {
+    type: event.type.replace("FESTIVAL_", ""), // e.g. SUBMISSION_CREATED
+    payload: event.payload
+  });
+
+  festivalRuntimeEngine.applySideEffects(globalState, result);
+
+  return result;
+}
+
+export function attachFestivalListeners(eventBus, globalState) {
+  const types = [
+    "FESTIVAL_SUBMISSION_CREATED",
+    "FESTIVAL_JURY_ASSIGNED",
+    "FESTIVAL_JURY_VOTED",
+    "FESTIVAL_AWARD_CATEGORY_CREATED",
+    "FESTIVAL_AWARD_GRANTED",
+    "FESTIVAL_EVENT_CREATED",
+    "FESTIVAL_EVENT_UPDATED",
+    "FESTIVAL_SCHEDULE_ENTRY_ADDED"
+  ];
+
+  for (const t of types) {
+    eventBus.on(t, (ev) => handleFestivalEvent(globalState, ev));
+  }
+}
+
+
+
+// FESTIVAL_GLOBAL_EVENTBUS_INTEGRATION
+// Attach Festival Pavilion listeners to the global CityEventBus
+
+import { getFestivalEngine } from "../core/index.js";
+
+export function attachFestivalToCityEventBus(cityEventBus) {
+  const engine = getFestivalEngine();
+
+  const festivalEvents = [
+    "FESTIVAL_SUBMISSION_CREATED",
+    "FESTIVAL_JURY_ASSIGNED",
+    "FESTIVAL_JURY_VOTED",
+    "FESTIVAL_AWARD_CATEGORY_CREATED",
+    "FESTIVAL_AWARD_GRANTED",
+    "FESTIVAL_EVENT_CREATED",
+    "FESTIVAL_EVENT_UPDATED",
+    "FESTIVAL_SCHEDULE_ENTRY_ADDED"
+  ];
+
+  for (const type of festivalEvents) {
+    cityEventBus.on(type, (event) => {
+      const result = engine.dispatch({
+        type: event.type.replace("FESTIVAL_", ""),
+        payload: event.payload
+      });
+
+      engine.narrative.record(engine.state, event);
+    });
+  }
+
+  return true;
+}
+
+===== END FILE: events\listeners.js =====
+
+===== FILE: events\router.js =====
+
+
+
+
+// FESTIVAL_EVENT_ROUTER
+// Central router for all Festival Pavilion events
+
+import {
+  emitSubmissionCreated,
+  emitJuryAssigned,
+  emitJuryVoted,
+  emitAwardCategoryCreated,
+  emitAwardGranted,
+  emitEventCreated,
+  emitEventUpdated,
+  emitScheduleEntryAdded
+} from "./emitters";
+
+export const festivalEventRouter = {
+  submissionCreated(submission) {
+    return emitSubmissionCreated(submission);
+  },
+  juryAssigned(assignment) {
+    return emitJuryAssigned(assignment);
+  },
+  juryVoted(vote) {
+    return emitJuryVoted(vote);
+  },
+  awardCategoryCreated(category) {
+    return emitAwardCategoryCreated(category);
+  },
+  awardGranted(award) {
+    return emitAwardGranted(award);
+  },
+  eventCreated(event) {
+    return emitEventCreated(event);
+  },
+  eventUpdated(event) {
+    return emitEventUpdated(event);
+  },
+  scheduleEntryAdded(entry) {
+    return emitScheduleEntryAdded(entry);
+  }
+};
+
+
+
+// FESTIVAL_ROUTER_TO_CITY_EVENTBUS
+// Forward Festival Pavilion events into the CityEventBus
+
+export function forwardFestivalEventToCity(eventBus, event) {
+  eventBus.emit(event.type, event);
+}
+
+===== END FILE: events\router.js =====
+
+===== FILE: life\awardsSync.js =====
+
+
+
+
+// LIFE_AWARDS_SYNC
+// Sync layer for awards workflow
+
+import {
+  listAwardCategoriesWorkflow,
+  createAwardCategoryWorkflow,
+  grantAwardWorkflow
+} from "../workflow/awards";
+
+export const awardsSync = {
+  list(globalState) {
+    return listAwardCategoriesWorkflow(globalState);
+  },
+  createCategory(globalState, payload) {
+    return createAwardCategoryWorkflow(globalState, payload);
+  },
+  grant(globalState, payload) {
+    return grantAwardWorkflow(globalState, payload);
+  }
+};
+
+===== END FILE: life\awardsSync.js =====
+
+===== FILE: life\eventsSync.js =====
+
+
+
+
+// LIFE_EVENTS_SYNC
+// Sync layer for festival events workflow
+
+import {
+  listFestivalEventsWorkflow,
+  createFestivalEventWorkflow,
+  updateFestivalEventWorkflow
+} from "../workflow/events";
+
+export const eventsSync = {
+  list(globalState) {
+    return listFestivalEventsWorkflow(globalState);
+  },
+  create(globalState, payload) {
+    return createFestivalEventWorkflow(globalState, payload);
+  },
+  update(globalState, payload) {
+    return updateFestivalEventWorkflow(globalState, payload);
+  }
+};
+
+===== END FILE: life\eventsSync.js =====
+
+===== FILE: life\festivalSync.js =====
+
+import { festivalSubmissionsWorkflow } from "../workflow/submissions";
+import { festivalJuryWorkflow } from "../workflow/jury";
+import { festivalAwardsWorkflow } from "../workflow/awards";
+
+export const festivalSync = {
+  handleSubmissionCreated(payload) {
+    return festivalSubmissionsWorkflow.createSubmission(payload);
+  },
+  handleJuryVote(payload) {
+    return festivalJuryWorkflow.recordVote(
+      payload.submissionId,
+      payload.juryId,
+      payload.score,
+      payload.comment
+    );
+  },
+  handleAwardGranted(payload) {
+    return festivalAwardsWorkflow.grantAward(
+      payload.categoryId,
+      payload.submissionId
+    );
+  }
+};
+
+===== END FILE: life\festivalSync.js =====
+
+===== FILE: life\jurySync.js =====
+
+import { festivalJuryWorkflow } from "../workflow/jury";
+
+export const jurySync = {
+  assign(submissionId, juryId) {
+    return festivalJuryWorkflow.assignToJury(submissionId, juryId);
+  }
+};
+
+
+// LIFE_JURY_SYNC
+// Sync layer for jury workflow
+
+import {
+  listJuryMembersWorkflow,
+  assignSubmissionToJuryWorkflow,
+  listJuryAssignmentsWorkflow,
+  listJuryAssignmentsForUserWorkflow,
+  submitJuryVoteWorkflow
+} from "../workflow/jury";
+
+export const jurySync = {
+  list(globalState) {
+    return listJuryMembersWorkflow(globalState);
+  },
+  assign(globalState, payload) {
+    return assignSubmissionToJuryWorkflow(globalState, payload);
+  },
+  assignments(globalState) {
+    return listJuryAssignmentsWorkflow(globalState);
+  },
+  assignmentsForUser(globalState, userId) {
+    return listJuryAssignmentsForUserWorkflow(globalState, userId);
+  },
+  vote(globalState, payload) {
+    return submitJuryVoteWorkflow(globalState, payload);
+  }
+};
+
+===== END FILE: life\jurySync.js =====
+
+===== FILE: life\mapSignals.js =====
+
+import { CitySuperEngine } from "../../BE-00__City/SUPER_ENGINE/CitySuperEngine.js";
+// Mapowanie zdarzeń na glow kafli dla Festival Pavilion (BE-01)
+export function mapEventToTileSignal(event) {
+  return null;
+}
+
+
+
+export function mapEventToTileSignal(event) {
+  if (event.module !== "BE-01") return null;
+  const processed = CitySuperEngine.process(event);
+  return {
+    tileId: processed.life.glow.tileId || "BE-01",
+    type: event.type,
+    payload: event.payload
+  };
+}
+
+===== END FILE: life\mapSignals.js =====
+
+===== FILE: life\narration.js =====
+
+import { cityNarrative } from "../../apps/FE-00__City/narrative/cityNarrativeEngine";
+
+export const festivalNarration = {
+  recordSubmissionStory(submission) {
+    cityNarrative.stories.push({
+      text: `Nowe zgłoszenie festiwalowe: ${submission.title || submission.id}.`,
+      timestamp: Date.now()
+    });
+  },
+  recordAwardStory(award) {
+    cityNarrative.stories.push({
+      text: `Przyznano nagrodę w kategorii ${award.categoryId}.`,
+      timestamp: Date.now()
+    });
+  }
+};
+
+
+// LIFE_NARRATION_ENGINE
+// Narrative engine for Festival Pavilion
+
+export const festivalNarration = {
+  record(globalState, event) {
+    globalState.festival = globalState.festival || {};
+    globalState.festival.narrative = globalState.festival.narrative || [];
+
+    const story = this.toStory(event);
+    if (story) {
+      globalState.festival.narrative.push({
+        text: story,
+        timestamp: Date.now()
+      });
+    }
+  },
+
+  toStory(event) {
+    switch (event.type) {
+      case "FESTIVAL_SUBMISSION_CREATED":
+        return "Nowe zgłoszenie festiwalowe zostało dodane.";
+
+      case "FESTIVAL_JURY_ASSIGNED":
+        return "Zgłoszenie zostało przydzielone jurorowi.";
+
+      case "FESTIVAL_JURY_VOTED":
+        return "Juror oddał głos na zgłoszenie.";
+
+      case "FESTIVAL_AWARD_CATEGORY_CREATED":
+        return "Utworzono nową kategorię nagrody.";
+
+      case "FESTIVAL_AWARD_GRANTED":
+        return "Przyznano nagrodę festiwalową.";
+
+      case "FESTIVAL_EVENT_CREATED":
+        return "Dodano nowe wydarzenie festiwalowe.";
+
+      case "FESTIVAL_EVENT_UPDATED":
+        return "Zaktualizowano wydarzenie festiwalowe.";
+
+      case "FESTIVAL_SCHEDULE_ENTRY_ADDED":
+        return "Dodano pozycję do harmonogramu.";
+
+      default:
+        return null;
+    }
+  }
+};
+
+===== END FILE: life\narration.js =====
+
+===== FILE: life\notifications.js =====
+
+import { CitySuperEngine } from "../../BE-00__City/SUPER_ENGINE/CitySuperEngine.js";
+// Powiadomienia dzielnicy Festival Pavilion (BE-01)
+export function mapEventToNotification(event) {
+  return null;
+}
+
+
+
+export function mapEventToNotification(event) {
+  if (event.module !== "BE-01") return null;
+  const processed = CitySuperEngine.process(event);
+  return processed.life.notification;
+}
+
+===== END FILE: life\notifications.js =====
+
+===== FILE: life\reactions.js =====
+
+import { CitySuperEngine } from "../../BE-00__City/SUPER_ENGINE/CitySuperEngine.js";
+// Reakcje Life Engine na zdarzenia z Festival Pavilion (BE-01)
+export function getReactions() {
+  return [];
+}
+
+
+
+export function getReactions() {
+  return [
+    {
+      match: (event) => event.module === "BE-01",
+      action: (event) => CitySuperEngine.process(event)
+    }
+  ];
+}
+
+
+
+import rtraConfig from "../config/rtra.config.json";
+// rtraConfig dostępny dla przyszłych, modułowych reakcji.
+
+===== END FILE: life\reactions.js =====
+
+===== FILE: life\runtime.js =====
+
+
+
+
+// LIFE_RUNTIME_ENGINE
+// Central runtime engine for Festival Pavilion
+
+import { submissionsSync } from "./submissionsSync";
+import { jurySync } from "./jurySync";
+import { awardsSync } from "./awardsSync";
+import { eventsSync } from "./eventsSync";
+import { scheduleSync } from "./scheduleSync";
+import { festivalNarration } from "./narration";
+
+export const festivalRuntimeEngine = {
+  dispatch(globalState, action) {
+    switch (action.type) {
+      case "CREATE_SUBMISSION":
+        return submissionsSync.create(globalState, action.payload);
+
+      case "ASSIGN_JURY":
+        return jurySync.assign(globalState, action.payload);
+
+      case "JURY_VOTE":
+        return jurySync.vote(globalState, action.payload);
+
+      case "CREATE_AWARD_CATEGORY":
+        return awardsSync.createCategory(globalState, action.payload);
+
+      case "GRANT_AWARD":
+        return awardsSync.grant(globalState, action.payload);
+
+      case "CREATE_EVENT":
+        return eventsSync.create(globalState, action.payload);
+
+      case "UPDATE_EVENT":
+        return eventsSync.update(globalState, action.payload);
+
+      case "ADD_SCHEDULE_ENTRY":
+        return scheduleSync.add(globalState, action.payload);
+
+      default:
+        return { events: [] };
+    }
+  },
+
+  applySideEffects(globalState, result) {
+    if (!result?.events) return;
+
+    for (const ev of result.events) {
+      festivalNarration.record(globalState, ev);
+    }
+  }
+};
+
+===== END FILE: life\runtime.js =====
+
+===== FILE: life\scheduleSync.js =====
+
+
+
+
+// LIFE_SCHEDULE_SYNC
+// Sync layer for festival schedule workflow
+
+import {
+  listFestivalScheduleWorkflow,
+  addToFestivalScheduleWorkflow
+} from "../workflow/schedule";
+
+export const scheduleSync = {
+  list(globalState) {
+    return listFestivalScheduleWorkflow(globalState);
+  },
+  add(globalState, payload) {
+    return addToFestivalScheduleWorkflow(globalState, payload);
+  }
+};
+
+===== END FILE: life\scheduleSync.js =====
+
+===== FILE: life\submissionsSync.js =====
+
+import { festivalSubmissionsWorkflow } from "../workflow/submissions";
+
+export const submissionsSync = {
+  submit(payload) {
+    return festivalSubmissionsWorkflow.createSubmission(payload);
+  },
+  updateStatus(submission, status) {
+    return festivalSubmissionsWorkflow.updateStatus(submission, status);
+  }
+};
+
+
+// LIFE_SUBMISSIONS_SYNC
+// Sync layer for submissions workflow
+
+import {
+  createSubmissionWorkflow,
+  listSubmissionsWorkflow,
+  getSubmissionDetailsWorkflow
+} from "../workflow/submissions";
+
+export const submissionsSync = {
+  create(globalState, payload) {
+    return createSubmissionWorkflow(globalState, payload);
+  },
+  list(globalState) {
+    return listSubmissionsWorkflow(globalState);
+  },
+  details(globalState, id) {
+    return getSubmissionDetailsWorkflow(globalState, id);
+  }
+};
+
+===== END FILE: life\submissionsSync.js =====
+
+===== FILE: life\workflowSync.js =====
+
+import { festivalEventsWorkflow } from "../workflow/events";
+import { festivalScheduleWorkflow } from "../workflow/schedule";
+
+export const festivalWorkflowSync = {
+  createEvent(name, startsAt, endsAt) {
+    return festivalEventsWorkflow.createEvent(name, startsAt, endsAt);
+  },
+  schedule(eventId, slot) {
+    return festivalScheduleWorkflow.addToSchedule(eventId, slot);
+  }
+};
+
+===== END FILE: life\workflowSync.js =====
+
+===== FILE: workflow\awards.js =====
+
+export const festivalAwardsWorkflow = {
+  createAwardCategory(name, description) {
+    return {
+      id: "award_" + Date.now(),
+      name,
+      description,
+      createdAt: Date.now()
+    };
+  },
+  grantAward(categoryId, submissionId) {
+    return {
+      categoryId,
+      submissionId,
+      grantedAt: Date.now()
+    };
+  }
+};
+
+
+// WF_AWARDS_CORE
+// Core workflow for award categories and granting awards
+
+export function listAwardCategoriesWorkflow(globalState) {
+  const cats = globalState.festival?.awardCategories || [];
+  return { categories: cats };
+}
+
+export function createAwardCategoryWorkflow(globalState, { name, description }) {
+  globalState.festival = globalState.festival || {};
+  globalState.festival.awardCategories = globalState.festival.awardCategories || [];
+
+  const category = {
+    id: "awardcat_" + Date.now(),
+    name,
+    description,
+    createdAt: Date.now()
+  };
+
+  globalState.festival.awardCategories.push(category);
+
+  return {
+    category,
+    events: [
+      {
+        type: "FESTIVAL_AWARD_CATEGORY_CREATED",
+        categoryId: category.id,
+        timestamp: Date.now()
+      }
+    ]
+  };
+}
+
+export function grantAwardWorkflow(globalState, { categoryId, submissionId }) {
+  globalState.festival = globalState.festival || {};
+  globalState.festival.awards = globalState.festival.awards || [];
+
+  const award = {
+    id: "award_" + Date.now(),
+    categoryId,
+    submissionId,
+    grantedAt: Date.now()
+  };
+
+  globalState.festival.awards.push(award);
+
+  return {
+    award,
+    events: [
+      {
+        type: "FESTIVAL_AWARD_GRANTED",
+        categoryId,
+        submissionId,
+        timestamp: Date.now()
+      }
+    ]
+  };
+}
+
+===== END FILE: workflow\awards.js =====
+
+===== FILE: workflow\events.js =====
+
+export const festivalEventsWorkflow = {
+  createEvent(name, startsAt, endsAt) {
+    return {
+      id: "event_" + Date.now(),
+      name,
+      startsAt,
+      endsAt
+    };
+  },
+  updateEvent(event, patch) {
+    return { ...event, ...patch, updatedAt: Date.now() };
+  }
+};
+
+
+// WF_EVENTS_CORE
+// Core workflow for festival events
+
+export function listFestivalEventsWorkflow(globalState) {
+  const events = globalState.festival?.events || [];
+  return { events };
+}
+
+export function createFestivalEventWorkflow(globalState, { name, startsAt, endsAt }) {
+  globalState.festival = globalState.festival || {};
+  globalState.festival.events = globalState.festival.events || [];
+
+  const event = {
+    id: "event_" + Date.now(),
+    name,
+    startsAt,
+    endsAt
+  };
+
+  globalState.festival.events.push(event);
+
+  return {
+    event,
+    events: [
+      {
+        type: "FESTIVAL_EVENT_CREATED",
+        eventId: event.id,
+        timestamp: Date.now()
+      }
+    ]
+  };
+}
+
+export function updateFestivalEventWorkflow(globalState, { id, patch }) {
+  globalState.festival = globalState.festival || {};
+  globalState.festival.events = globalState.festival.events || [];
+
+  const idx = globalState.festival.events.findIndex(e => e.id === id);
+  if (idx === -1) {
+    return { event: null };
+  }
+
+  globalState.festival.events[idx] = {
+    ...globalState.festival.events[idx],
+    ...patch,
+    updatedAt: Date.now()
+  };
+
+  const event = globalState.festival.events[idx];
+
+  return {
+    event,
+    events: [
+      {
+        type: "FESTIVAL_EVENT_UPDATED",
+        eventId: event.id,
+        timestamp: Date.now()
+      }
+    ]
+  };
+}
+
+===== END FILE: workflow\events.js =====
+
+===== FILE: workflow\jury.js =====
+
+export const festivalJuryWorkflow = {
+  assignToJury(submissionId, juryId) {
+    return {
+      submissionId,
+      juryId,
+      assignedAt: Date.now()
+    };
+  },
+  recordVote(submissionId, juryId, score, comment) {
+    return {
+      submissionId,
+      juryId,
+      score,
+      comment,
+      votedAt: Date.now()
+    };
+  }
+};
+
+
+// WF_JURY_CORE
+// Core workflow for jury assignments and voting
+
+export function listJuryMembersWorkflow(globalState) {
+  const jury = globalState.festival?.jury || [];
+  return { jury };
+}
+
+export function assignSubmissionToJuryWorkflow(globalState, { submissionId, juryId }) {
+  globalState.festival = globalState.festival || {};
+  globalState.festival.assignments = globalState.festival.assignments || [];
+
+  const assignment = {
+    id: "assign_" + Date.now(),
+    submissionId,
+    juryId,
+    assignedAt: Date.now()
+  };
+
+  globalState.festival.assignments.push(assignment);
+
+  return {
+    assignment,
+    events: [
+      {
+        type: "FESTIVAL_JURY_ASSIGNED",
+        submissionId,
+        juryId,
+        timestamp: Date.now()
+      }
+    ]
+  };
+}
+
+export function listJuryAssignmentsWorkflow(globalState) {
+  const assignments = globalState.festival?.assignments || [];
+  return { assignments };
+}
+
+export function listJuryAssignmentsForUserWorkflow(globalState, userId) {
+  const assignments = (globalState.festival?.assignments || []).filter(
+    a => a.juryId === userId
+  );
+  return { assignments };
+}
+
+export function submitJuryVoteWorkflow(globalState, { submissionId, score, comment, juryId }) {
+  globalState.festival = globalState.festival || {};
+  globalState.festival.votes = globalState.festival.votes || [];
+
+  const vote = {
+    id: "vote_" + Date.now(),
+    submissionId,
+    score,
+    comment,
+    juryId,
+    votedAt: Date.now()
+  };
+
+  globalState.festival.votes.push(vote);
+
+  return {
+    vote,
+    events: [
+      {
+        type: "FESTIVAL_JURY_VOTED",
+        submissionId,
+        juryId,
+        score,
+        timestamp: Date.now()
+      }
+    ]
+  };
+}
+
+===== END FILE: workflow\jury.js =====
+
+===== FILE: workflow\reviews.js =====
+
+export const festivalReviewsWorkflow = {
+  addReview(submissionId, reviewerId, score, comment) {
+    return {
+      submissionId,
+      reviewerId,
+      score,
+      comment,
+      createdAt: Date.now()
+    };
+  }
+};
+
+===== END FILE: workflow\reviews.js =====
+
+===== FILE: workflow\schedule.js =====
+
+export const festivalScheduleWorkflow = {
+  addToSchedule(eventId, slot) {
+    return {
+      eventId,
+      slot,
+      addedAt: Date.now()
+    };
+  }
+};
+
+
+// WF_SCHEDULE_CORE
+// Core workflow for festival schedule
+
+export function listFestivalScheduleWorkflow(globalState) {
+  const schedule = globalState.festival?.schedule || [];
+  return { schedule };
+}
+
+export function addToFestivalScheduleWorkflow(globalState, { eventId, slot }) {
+  globalState.festival = globalState.festival || {};
+  globalState.festival.schedule = globalState.festival.schedule || [];
+
+  const entry = {
+    id: "schedule_" + Date.now(),
+    eventId,
+    slot,
+    addedAt: Date.now()
+  };
+
+  globalState.festival.schedule.push(entry);
+
+  return {
+    entry,
+    events: [
+      {
+        type: "FESTIVAL_SCHEDULE_ENTRY_ADDED",
+        eventId,
+        slot,
+        timestamp: Date.now()
+      }
+    ]
+  };
+}
+
+===== END FILE: workflow\schedule.js =====
+
+===== FILE: workflow\submissions.js =====
+
+export const festivalSubmissionsWorkflow = {
+  createSubmission(payload) {
+    // TODO: validate, normalize, persist
+    return {
+      ...payload,
+      status: "submitted",
+      createdAt: Date.now()
+    };
+  },
+  updateStatus(submission, status) {
+    return { ...submission, status, updatedAt: Date.now() };
+  }
+};
+
+
+// WF_SUBMISSIONS_CORE
+// Core workflow for festival submissions
+
+export function createSubmissionWorkflow(globalState, payload) {
+  globalState.festival = globalState.festival || {};
+  globalState.festival.submissions = globalState.festival.submissions || [];
+
+  const submission = {
+    id: "sub_" + Date.now(),
+    title: payload.title,
+    director: payload.director,
+    category: payload.category,
+    synopsis: payload.synopsis,
+    createdAt: Date.now(),
+    status: "submitted"
+  };
+
+  globalState.festival.submissions.push(submission);
+
+  return {
+    submission,
+    events: [
+      {
+        type: "FESTIVAL_SUBMISSION_CREATED",
+        submissionId: submission.id,
+        timestamp: Date.now()
+      }
+    ]
+  };
+}
+
+export function listSubmissionsWorkflow(globalState) {
+  const submissions = globalState.festival?.submissions || [];
+  return { submissions };
+}
+
+export function getSubmissionDetailsWorkflow(globalState, id) {
+  const submissions = globalState.festival?.submissions || [];
+  const found = submissions.find(s => s.id === id);
+  return { submission: found || null };
+}
+
+===== END FILE: workflow\submissions.js =====
+

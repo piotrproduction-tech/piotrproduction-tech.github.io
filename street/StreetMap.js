@@ -1,0 +1,3 @@
+export function StreetMap() {
+  return "<div>Street Map</div>";
+}

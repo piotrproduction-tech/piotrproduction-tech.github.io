@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>CityDashboard 12.x</title>
+  <style>
+    body {
+      background: #0d0d0d;
+      color: #e0e0e0;
+      font-family: monospace;
+      padding: 20px;
+    }
+    h1 { color: #4cffd7; }
+    .section {
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      background: #111;
+    }
+    pre {
+      background: #000;
+      padding: 10px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>CityDashboard 12.x</h1>
+
+  <div class="section">
+    <h2>Heartbeat</h2>
+    <pre id="heartbeat"></pre>
+  </div>
+
+  <div class="section">
+    <h2>District</h2>
+    <pre id="district"></pre>
+  </div>
+
+  <div class="section">
+    <h2>View</h2>
+    <pre id="view"></pre>
+  </div>
+
+  <div class="section">
+    <h2>Panels</h2>
+    <pre id="panels"></pre>
+  </div>
+
+  <div class="section">
+    <h2>Store</h2>
+    <pre id="store"></pre>
+  </div>
+
+  <div class="section">
+    <h2>Registry</h2>
+    <pre id="registry"></pre>
+  </div>
+
+  <div class="section">
+    <h2>Workflows</h2>
+    <pre id="workflows"></pre>
+  </div>
+
+  <div class="section">
+    <h2>AI Pipeline</h2>
+    <pre id="ai"></pre>
+  </div>
+
+  <script>
+    async function refresh() {
+      const res = await fetch("http://localhost:3000/city");
+      const data = await res.json();
+
+      document.getElementById("heartbeat").textContent = JSON.stringify(data.heartbeat, null, 2);
+      document.getElementById("district").textContent = JSON.stringify(data.district, null, 2);
+      document.getElementById("view").textContent = JSON.stringify(data.view, null, 2);
+      document.getElementById("panels").textContent = JSON.stringify(data.panels, null, 2);
+      document.getElementById("store").textContent = JSON.stringify(data.store, null, 2);
+      document.getElementById("registry").textContent = JSON.stringify(data.registry, null, 2);
+      document.getElementById("workflows").textContent = JSON.stringify(data.workflows, null, 2);
+      document.getElementById("ai").textContent = JSON.stringify(data.ai, null, 2);
+    }
+
+    setInterval(refresh, 1000);
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "moduleId": "BE-00-BLUEPRINT",
+  "moduleName": "Blueprint Test District",
+  "reputation": {
+    "enabled": true,
+    "eventMapping": {}
+  },
+  "tokens": {
+    "enabled": true,
+    "eventMapping": {}
+  },
+  "rewards": {
+    "enabled": true,
+    "tiers": []
+  },
+  "antiAbuse": {
+    "enabled": true,
+    "suspiciousKeywords": [],
+    "rateLimits": {
+      "perMinute": 100,
+      "perHour": 1000
+    }
+  }
+}

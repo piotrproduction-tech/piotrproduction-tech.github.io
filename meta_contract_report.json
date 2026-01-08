@@ -1,0 +1,44 @@
+﻿[
+    {
+        "module":  "apps/CityCore_12.x/predict/CityPredictiveAI.js",
+        "expects":  [
+
+                    ],
+        "provides":  [
+
+                     ],
+        "missing":  {
+
+                    }
+    },
+    {
+        "module":  "apps/CityCore_12.x/fate/CityFateEngine.js",
+        "expects":  [
+                        "nextDistrict",
+                        "nextView",
+                        "nextLoad.ai",
+                        "nextLoad.workflow",
+                        "spirit.emotion"
+                    ],
+        "provides":  [
+
+                     ],
+        "missing":  [
+                        "nextDistrict",
+                        "nextView",
+                        "nextLoad.ai",
+                        "nextLoad.workflow",
+                        "spirit.emotion"
+                    ]
+    },
+    {
+        "module":  "apps/CityCore_12.x/prophecy/CityProphecyEngine.js",
+        "expects":  [
+                        "spirit.emotion"
+                    ],
+        "provides":  [
+
+                     ],
+        "missing":  "spirit.emotion"
+    }
+]

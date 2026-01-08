@@ -1,0 +1,1 @@
+export function useMarketplaceApi() { return { listItems:async()=>[], getItem:async(id)=>null, search:async(q)=>[], getTrending:async()=>[], getRecommended:async()=>[] }; }

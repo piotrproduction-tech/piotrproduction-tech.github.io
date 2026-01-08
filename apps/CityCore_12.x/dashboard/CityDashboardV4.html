@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>City Dashboard V4 — 3D Workflow & AI Map</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #000; }
+    #overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.6);
+      padding: 10px;
+      border-radius: 6px;
+      color: #fff;
+      font-family: monospace;
+      max-width: 400px;
+    }
+    pre { white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+
+<div id="overlay">
+  <h2>City Dashboard V4</h2>
+  <pre id="city"></pre>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+  // --- SCENA 3D ---
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 2000);
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  camera.position.set(0, 20, 40);
+
+  const districtObjects = {};
+  const workflowLines = [];
+  const aiNodes = [];
+
+  function createDistrict(id, index) {
+    const geometry = new THREE.BoxGeometry(4, 4, 4);
+    const material = new THREE.MeshBasicMaterial({ color: 0x4cffd7 });
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.x = index * 8;
+    scene.add(cube);
+    districtObjects[id] = cube;
+  }
+
+  function animateWorkflow(fromObj, toObj) {
+    const material = new THREE.LineBasicMaterial({ color: 0xff00ff });
+    const points = [fromObj.position, toObj.position];
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const line = new THREE.Line(geometry, material);
+    scene.add(line);
+
+    workflowLines.push({ line, ttl: 60 });
+  }
+
+  function animateAINode(districtObj) {
+    const geometry = new THREE.SphereGeometry(0.8, 16, 16);
+    const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+    const sphere = new THREE.Mesh(geometry, material);
+
+    sphere.position.copy(districtObj.position);
+    sphere.position.y += 5;
+
+    scene.add(sphere);
+    aiNodes.push({ sphere, ttl: 40 });
+  }
+
+  async function refreshCity() {
+    const res = await fetch("http://localhost:3000/city");
+    const json = await res.json();
+    document.getElementById("city").textContent = JSON.stringify(json, null, 2);
+
+    const districtId = json.district?.id;
+
+    // Highlight active district
+    for (const id in districtObjects) {
+      districtObjects[id].material.color.set(id === districtId ? 0xffcc00 : 0x4cffd7);
+    }
+
+    // Animate workflow
+    if (json.workflowFlow) {
+      const { from, to } = json.workflowFlow;
+      if (districtObjects[from] && districtObjects[to]) {
+        animateWorkflow(districtObjects[from], districtObjects[to]);
+      }
+    }
+
+    // Animate AI pipeline
+    if (json.aiFlow) {
+      const { district } = json.aiFlow;
+      if (districtObjects[district]) {
+        animateAINode(districtObjects[district]);
+      }
+    }
+  }
+
+  async function init() {
+    const res = await fetch("http://localhost:3001/knowledge");
+    const graph = await res.json();
+
+    const districtIds = Object.keys(graph.districts);
+    districtIds.forEach((id, i) => createDistrict(id, i));
+
+    setInterval(refreshCity, 1000);
+  }
+
+  init();
+
+  function render() {
+    requestAnimationFrame(render);
+
+    // Fade workflow lines
+    workflowLines.forEach(w => {
+      w.ttl--;
+      w.line.material.opacity = w.ttl / 60;
+      if (w.ttl <= 0) scene.remove(w.line);
+    });
+
+    // Fade AI nodes
+    aiNodes.forEach(n => {
+      n.ttl--;
+      n.sphere.material.opacity = n.ttl / 40;
+      if (n.ttl <= 0) scene.remove(n.sphere);
+    });
+
+    renderer.render(scene, camera);
+  }
+  render();
+</script>
+
+</body>
+</html>

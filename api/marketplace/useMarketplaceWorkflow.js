@@ -1,0 +1,1 @@
+export function useMarketplaceWorkflow() { return { publishItem:async(d)=>({success:true}), updateItem:async(id,d)=>({success:true}), deleteItem:async(id)=>({success:true}), runModeration:async(id)=>({status:"approved"}), syncStreet:async()=>({synced:true}) }; }
